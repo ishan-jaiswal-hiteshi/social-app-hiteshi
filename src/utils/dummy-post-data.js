@@ -5,11 +5,13 @@ const postData = [
       id: 95767,
       name: "Donna Joseph",
       username: "smithrenee",
-      profile_picture_url: "https://placeimg.com/283/570/any",
+      profile_picture_url:
+        "https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
     },
     content:
       "Social effect fish edge new leader conference.\nGo leader take not window. Make available personal father ever.\nCareer program art husband space be around. Ten then government her.",
-    media_url: "https://placeimg.com/635/515/any",
+    media_url:
+      "https://img.freepik.com/premium-vector/professional-modern-social-media-post-design-template_627383-327.jpg",
     timestamp: "1987-07-08T18:07:44",
     likes: {
       count: 63,
@@ -18,13 +20,15 @@ const postData = [
           id: 86003,
           name: "Gregory Jones",
           username: "coleherbert",
-          profile_picture_url: "https://www.lorempixel.com/424/702",
+          profile_picture_url:
+            "https://images.pexels.com/photos/14653174/pexels-photo-14653174.jpeg",
         },
         {
           id: 64139,
           name: "Michele Herring",
           username: "rodriguezcaroline",
-          profile_picture_url: "https://placekitten.com/731/737",
+          profile_picture_url:
+            "https://images.pexels.com/photos/14653174/pexels-photo-14653174.jpeg",
         },
         {
           id: 61342,
@@ -95,7 +99,8 @@ const postData = [
             id: 97597,
             name: "Michael Cooke",
             username: "howens",
-            profile_picture_url: "https://dummyimage.com/753x946",
+            profile_picture_url:
+              "https://images.pexels.com/photos/14653174/pexels-photo-14653174.jpeg",
           },
           comment: "Term cost paper bring man wind attack.",
           timestamp: "1995-06-04T15:49:53",
@@ -178,11 +183,13 @@ const postData = [
       id: 94520,
       name: "Nicholas Walker",
       username: "ywhite",
-      profile_picture_url: "https://www.lorempixel.com/77/790",
+      profile_picture_url:
+        "https://images.pexels.com/photos/14653174/pexels-photo-14653174.jpeg",
     },
     content:
       "Return firm their very.\nMain land everybody upon hundred. Information treatment chair trip with other. Reach score defense about.",
-    media_url: "https://placeimg.com/792/182/any",
+    media_url:
+      "https://s.tmimgcdn.com/scr/1200x627/260000/business-service-promotion-social-media-post-design-template-01_260077-original.jpg",
     timestamp: "1996-07-26T09:59:52",
     likes: {
       count: 68,
@@ -375,11 +382,13 @@ const postData = [
       id: 81870,
       name: "Matthew Reed",
       username: "smithamanda",
-      profile_picture_url: "https://placeimg.com/565/729/any",
+      profile_picture_url:
+        "https://plus.unsplash.com/premium_photo-1689977968861-9c91dbb16049?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZSUyMHBpY3R1cmV8ZW58MHx8MHx8fDA%3D",
     },
     content:
       "Social research technology. Provide hotel fight message seek society art reduce.\nAlthough thus bill official feel thank policy also. Few ready campaign. North feel age option night.",
-    media_url: "https://www.lorempixel.com/79/502",
+    media_url:
+      "https://cdn.dribbble.com/users/4383005/screenshots/11142457/media/0a426e21b3435b829c789a196a81ed7e.jpg?resize=400x300&vertical=center",
     timestamp: "2004-12-01T23:00:56",
     likes: {
       count: 191,
@@ -459,11 +468,13 @@ const postData = [
       id: 43566,
       name: "Amanda Russell",
       username: "seanbauer",
-      profile_picture_url: "https://www.lorempixel.com/522/1010",
+      profile_picture_url:
+        "https://images.pexels.com/photos/3792581/pexels-photo-3792581.jpeg?cs=srgb&dl=pexels-bertellifotografia-3792581.jpg&fm=jpg",
     },
     content:
       "Even low risk wall card. Common cut Republican piece now school. Human explain responsibility government about.",
-    media_url: "https://www.lorempixel.com/711/1014",
+    media_url:
+      "https://cdn.dribbble.com/users/5465239/screenshots/17740812/media/ad1248dfda3b23690c470566b99466df.jpg?resize=400x300&vertical=center",
     timestamp: "2011-12-25T03:49:46",
     likes: {
       count: 90,
@@ -604,10 +615,12 @@ const postData = [
       id: 44696,
       name: "Donna Roman",
       username: "richardskristin",
-      profile_picture_url: "https://placeimg.com/349/893/any",
+      profile_picture_url:
+        "https://wallpapers.com/images/featured/cool-profile-picture-87h46gcobjl5e4xu.jpg",
     },
     content: "Ahead among street economy write. Indicate rich base laugh.",
-    media_url: "https://www.lorempixel.com/556/248",
+    media_url:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeEHXcutDWcy2KgIxoQ-tnoe_l_W6BDcAuyw&s",
     timestamp: "2021-08-08T21:06:44",
     likes: {
       count: 173,
@@ -714,11 +727,13 @@ const postData = [
       id: 64922,
       name: "James Williams",
       username: "lbrown",
-      profile_picture_url: "https://www.lorempixel.com/212/522",
+      profile_picture_url:
+        "https://media.istockphoto.com/id/1682296067/photo/happy-studio-portrait-or-professional-man-real-estate-agent-or-asian-businessman-smile-for.jpg?s=612x612&w=0&k=20&c=9zbG2-9fl741fbTWw5fNgcEEe4ll-JegrGlQQ6m54rg=",
     },
     content:
       "Natural day leave between. School few thousand clear technology. Sometimes word coach skin that official.\nCard size art appear security serious. Step concern too none western well many soon.",
-    media_url: "https://placeimg.com/473/924/any",
+    media_url:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA1vNDiJpykwEe5IJAO0J4nSxcbMlKLru-YA&s",
     timestamp: "1991-09-11T04:13:10",
     likes: {
       count: 190,
@@ -777,11 +792,13 @@ const postData = [
       id: 65794,
       name: "Derek Escobar",
       username: "ffranco",
-      profile_picture_url: "https://dummyimage.com/951x618",
+      profile_picture_url:
+        "https://media.gettyimages.com/id/1437816897/photo/business-woman-manager-or-human-resources-portrait-for-career-success-company-we-are-hiring.jpg?s=612x612&w=gi&k=20&c=LsB3LmCoN69U82LEYU78IC2tNwOMjy7LJlmEj30UOSs=",
     },
     content:
       "Start home weight red partner in produce. Especially stage do reduce. Unit coach provide.\nTurn month anything tax interview feel. Event man such especially.",
-    media_url: "https://placeimg.com/361/76/any",
+    media_url:
+      "https://i.pinimg.com/736x/fb/14/d9/fb14d9982724cb94516edc34e16057a4.jpg",
     timestamp: "1984-01-25T10:28:07",
     likes: {
       count: 83,
@@ -845,11 +862,13 @@ const postData = [
       id: 54067,
       name: "Patrick Klein",
       username: "gregorymark",
-      profile_picture_url: "https://www.lorempixel.com/19/667",
+      profile_picture_url:
+        "https://photosly.in/wp-content/uploads/2024/07/boy-dp-profile-pic4.jpg",
     },
     content:
       "Kitchen rock receive trade light administration free. Foot big often. If nearly field hospital expert similar.\nBring walk know kid this.",
-    media_url: "https://placekitten.com/858/310",
+    media_url:
+      "https://www.creativefabrica.com/wp-content/uploads/2023/10/19/PSD-Creative-concept-social-media-Post-Graphics-81986310-2-580x387.jpg",
     timestamp: "1980-12-02T03:37:10",
     likes: {
       count: 179,
@@ -1010,11 +1029,13 @@ const postData = [
       id: 42966,
       name: "Timothy Taylor",
       username: "lcook",
-      profile_picture_url: "https://dummyimage.com/531x754",
+      profile_picture_url:
+        "https://static3.depositphotos.com/1000951/138/i/450/depositphotos_1380772-stock-photo-profile-of-beautiful-smiling-girl.jpg",
     },
     content:
       "Response finish growth style. Guy information vote letter capital turn.\nCar reveal data audience manager trade weight. Future several ahead actually administration school.",
-    media_url: "https://www.lorempixel.com/823/923",
+    media_url:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQvnGiYT1dgPnap2H_432YRagm_O9z7_W0xA&s",
     timestamp: "2011-05-31T01:19:06",
     likes: {
       count: 103,
@@ -1226,11 +1247,13 @@ const postData = [
       id: 85632,
       name: "Ryan Hart",
       username: "alex28",
-      profile_picture_url: "https://www.lorempixel.com/904/467",
+      profile_picture_url:
+        "https://marketplace.canva.com/EAFuJ5pCLLM/1/0/1600w/canva-black-and-gold-simple-business-man-linkedin-profile-picture-BM_NPo97JwE.jpg",
     },
     content:
       "Among against church over along economic matter. Collection fund particular car reach specific. Race economic cold miss.",
-    media_url: "https://www.lorempixel.com/469/906",
+    media_url:
+      "https://s.tmimgcdn.com/scr/1200x627/239900/graphics-designing-agency-social-media-post-template_239935-original.jpg",
     timestamp: "1985-02-20T06:25:24",
     likes: {
       count: 148,
