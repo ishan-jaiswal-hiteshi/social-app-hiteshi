@@ -1,125 +1,193 @@
+"use client";
+import { useState } from "react";
+
 export default function Auth() {
+  const [isSignUp, setIsSignUp] = useState(false);
+
   return (
-    <div>
-      <section className="bg-white dark:bg-gray-900">
-        <div className="container flex items-center justify-center min-h-screen px-6 mx-auto">
-          <form className="w-full max-w-md">
-            <div className="flex justify-center mx-auto">
-              <img
-                className="w-auto h-7 sm:h-8"
-                src="https://hiteshi.com/_next/static/media/logo.9b8ca92c.png"
-                alt="Logo"
-              />
-            </div>
+    <div className="bg-black">
+      <div className="container flex items-center justify-center min-h-screen px-6 mx-auto">
+        <form className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
+          <div className="flex justify-center mx-auto mb-6">
+            <img
+              className="w-auto h-8"
+              src="https://hiteshi.com/_next/static/media/logo.9b8ca92c.png"
+              alt="Logo"
+            />
+          </div>
 
-            <div className="flex items-center justify-center mt-6">
-              <a
-                href="#"
-                className="w-1/3 pb-4 font-medium text-center text-gray-500 capitalize border-b dark:border-gray-400 dark:text-gray-300"
-              >
-                sign in
-              </a>
-
-              <a
-                href="#"
-                className="w-1/3 pb-4 font-medium text-center text-gray-800 capitalize border-b-2 border-blue-500 dark:border-blue-400 dark:text-white"
-              >
-                sign up
-              </a>
-            </div>
-
-            <div className="relative flex items-center mt-8">
-              <span className="absolute">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6 mx-3 text-gray-300 dark:text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-              </span>
-
-              <input
-                type="text"
-                className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                placeholder="Username"
-              />
-            </div>
-
-            <label
-              htmlFor="dropzone-file"
-              className="flex items-center px-3 py-3 mx-auto mt-6 text-center bg-white border-2 border-dashed rounded-lg cursor-pointer dark:border-gray-600 dark:bg-gray-900"
+          <div className="flex items-center justify-center mb-6">
+            <button
+              type="button"
+              onClick={() => setIsSignUp(false)}
+              className={`w-1/2 pb-2 text-center font-medium ${
+                !isSignUp
+                  ? "text-black border-b-2 border-blue-500"
+                  : "text-gray-400"
+              }`}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 text-gray-300 dark:text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+              Sign In
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsSignUp(true)}
+              className={`w-1/2 pb-2 text-center font-medium ${
+                isSignUp
+                  ? "text-black border-b-2 border-blue-500"
+                  : "text-gray-400"
+              }`}
+            >
+              Sign Up
+            </button>
+          </div>
+
+          {isSignUp ? (
+            <>
+              <div className="relative flex items-center mb-4">
+                <span className="absolute left-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                </span>
+                <input
+                  type="text"
+                  className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:border-blue-500 focus:ring-blue-300 focus:outline-none"
+                  placeholder="Full Name"
                 />
-              </svg>
-              <h2 className="mx-3 text-gray-400">Profile Photo</h2>
-              <input id="dropzone-file" type="file" className="hidden" />
-            </label>
-
-            {/* Repeat similar updates for the remaining input fields */}
-            <div className="relative flex items-center mt-6">
-              {/* Email Input */}
-              <input
-                type="email"
-                className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                placeholder="Email address"
-              />
-            </div>
-
-            <div className="relative flex items-center mt-4">
-              {/* Password Input */}
-              <input
-                type="password"
-                className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                placeholder="Password"
-              />
-            </div>
-
-            <div className="relative flex items-center mt-4">
-              {/* Confirm Password */}
-              <input
-                type="password"
-                className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                placeholder="Confirm Password"
-              />
-            </div>
-
-            <div className="mt-6">
-              <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
-                Sign Up
-              </button>
-
-              <div className="mt-6 text-center">
-                <a
-                  href="#"
-                  className="text-sm text-blue-500 hover:underline dark:text-blue-400"
-                >
-                  Already have an account?
-                </a>
               </div>
-            </div>
-          </form>
-        </div>
-      </section>
+
+              <div className="relative flex items-center mb-4">
+                <span className="absolute left-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                </span>
+                <input
+                  type="email"
+                  className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:border-blue-500 focus:ring-blue-300 focus:outline-none"
+                  placeholder="Email address"
+                />
+              </div>
+
+              <div className="relative flex items-center mb-4">
+                <span className="absolute left-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                </span>
+                <input
+                  type="password"
+                  className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:border-blue-500 focus:ring-blue-300 focus:outline-none"
+                  placeholder="Password"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="relative flex items-center mb-4">
+                <span className="absolute left-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                </span>
+                <input
+                  type="email"
+                  className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:border-blue-500 focus:ring-blue-300 focus:outline-none"
+                  placeholder="Email address"
+                />
+              </div>
+
+              <div className="relative flex items-center mb-4">
+                <span className="absolute left-3">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                </span>
+                <input
+                  type="password"
+                  className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:border-blue-500 focus:ring-blue-300 focus:outline-none"
+                  placeholder="Password"
+                />
+              </div>
+            </>
+          )}
+
+          <button
+            type="submit"
+            className="w-full bg-red-600 text-gray-900 px-6 py-3 rounded-md text-lg font-semibold hover:bg-red-400 transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            {isSignUp ? "Sign Up" : "Sign In"}
+          </button>
+
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-sm text-blue-500 hover:underline"
+            >
+              {isSignUp
+                ? "Already have an account? Sign In"
+                : "Don't have an account? Sign Up"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
