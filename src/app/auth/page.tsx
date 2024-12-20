@@ -1,15 +1,25 @@
 // Setting this as a client component
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { redirect } from "next/navigation";
 import axios from "axios";
-
+import {
+  isValidFullName,
+  isValidUserName,
+  isValidateEmail,
+  isValidOTP,
+} from "@/utils/input_Validations";
 export default function Auth() {
+  // If the token exists redirect to Home
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    redirect("/dashboard/home");
+  }
   const [formData, setFormData] = useState({
     email: "",
     fullName: "",
     userName: "",
-    password: "",
     otp: "",
   });
 
@@ -24,9 +34,26 @@ export default function Auth() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Auto set UserName from Full Name
+  useEffect(() => {
+    if (formData.fullName) {
+      const cleanedFullName = formData.fullName
+        .replace(/\s+/g, "")
+        .toLowerCase();
+      const userName = cleanedFullName.substring(0, 7);
+      setFormData((prev) => ({ ...prev, userName }));
+    }
+  }, [formData.fullName]);
+
   // Handling email submission
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    //Check is valid email
+    if (!isValidateEmail(formData.email)) {
+      setError("Please use your Hiteshi's mail");
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -52,9 +79,26 @@ export default function Auth() {
     }
   };
 
-  // Handling full form submission
+  // Handling Create Account and OTP submition
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    //Check is Full Name valid
+    if (!isValidFullName(formData.fullName)) {
+      setError("Please enter valid Full Name");
+      return;
+    }
+    //Check is UserId valid
+    if (!isValidUserName(formData.userName)) {
+      setError("Please enter valid Username");
+      return;
+    }
+    //Check is 4 digit OTP
+    if (!isValidOTP(formData.otp)) {
+      setError("Please enter valid OTP");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -73,11 +117,11 @@ export default function Auth() {
 
       const result = await response.data;
       if (!isNewUser) {
-        localStorage.setItem("authToken", result.token);
+        localStorage.setItem("accessToken", result.token);
       }
 
-      //console.log("Process successful:", result);
-      // Redirect or further actions after success
+      //After OTP Verification
+      redirect("/dashboard/home");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "An Unknown error occurred."
@@ -121,6 +165,7 @@ export default function Auth() {
               <input
                 type="text"
                 name="fullName"
+                maxLength={16}
                 value={formData.fullName}
                 onChange={handleInputChange}
                 className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:outline-none"
@@ -132,6 +177,7 @@ export default function Auth() {
               <input
                 type="text"
                 name="userName"
+                maxLength={16}
                 value={formData.userName}
                 onChange={handleInputChange}
                 className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:outline-none"
@@ -139,27 +185,22 @@ export default function Auth() {
                 required
               />
             </div>
-            <div className="relative flex items-center mb-4">
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:outline-none"
-                placeholder="Password"
-                required
-              />
-            </div>
           </>
         )}
 
-        {emailSubmitted && !isNewUser && (
+        {emailSubmitted && (
           <div className="relative flex items-center mb-4">
             <input
               type="text"
               name="otp"
+              maxLength={6}
               value={formData.otp}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value) && value.length <= 6) {
+                  handleInputChange(e);
+                }
+              }}
               className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:outline-none"
               placeholder="Enter OTP"
               required
@@ -181,7 +222,7 @@ export default function Auth() {
             : !emailSubmitted
             ? "Next"
             : isNewUser
-            ? "Sign Up"
+            ? "Create my Acount"
             : "Verify OTP"}
         </button>
       </form>
