@@ -1,54 +1,75 @@
 // Setting this as a client component
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { redirect } from "next/navigation";
 import axios from "axios";
-
+import {
+  isValidFullName,
+  isValidUserName,
+  isValidateEmail,
+  isValidOTP,
+} from "@/utils/input_Validations";
 export default function Auth() {
-  const [isSignUp, setIsSignUp] = useState(false);
+  // If the token exists redirect to Home
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    redirect("/dashboard/home");
+  }
   const [formData, setFormData] = useState({
+    email: "",
     fullName: "",
     userName: "",
-    email: "",
-    password: "",
+    otp: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isNewUser, setIsNewUser] = useState<boolean | null>(null);
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
 
-  //Handeling inputs
+  // Handling inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  //Handeling submit
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Auto set UserName from Full Name
+  useEffect(() => {
+    if (formData.fullName) {
+      const cleanedFullName = formData.fullName
+        .replace(/\s+/g, "")
+        .toLowerCase();
+      const userName = cleanedFullName.substring(0, 7);
+      setFormData((prev) => ({ ...prev, userName }));
+    }
+  }, [formData.fullName]);
+
+  // Handling email submission
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    //Check is valid email
+    if (!isValidateEmail(formData.email)) {
+      setError("Please use your Hiteshi's mail");
+      return;
+    }
     setLoading(true);
     setError(null);
 
-    //Defining APIs endpoint
-    const endpoint = isSignUp ? "/api/signup" : "/api/signin";
-
     try {
-      const response = await axios.post(endpoint, formData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      //Checking for Existing user
+      const response = await axios.post("/api/check-user", {
+        email: formData.email,
       });
 
-      if (response.status !== 200) {
-        const errorResponse = await response.data;
-        throw new Error(errorResponse.message || "Failed to authenticate.");
+      if (response.status === 200) {
+        const { isNewUser } = response.data;
+        setIsNewUser(isNewUser);
+        setEmailSubmitted(true);
+      } else {
+        throw new Error("Failed to check, Please try again.");
       }
-
-      const result = await response.data;
-      const { token } = result;
-
-      // Saving token to local storage
-      localStorage.setItem("authToken", token);
-
-      // Redirect or perform further actions after authentication
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "An unknown error occurred."
@@ -58,10 +79,62 @@ export default function Auth() {
     }
   };
 
+  // Handling Create Account and OTP submition
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    //Check is Full Name valid
+    if (!isValidFullName(formData.fullName)) {
+      setError("Please enter valid Full Name");
+      return;
+    }
+    //Check is UserId valid
+    if (!isValidUserName(formData.userName)) {
+      setError("Please enter valid Username");
+      return;
+    }
+    //Check is 4 digit OTP
+    if (!isValidOTP(formData.otp)) {
+      setError("Please enter valid OTP");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const endpoint = isNewUser ? "/api/signup" : "/api/verify-otp";
+
+    try {
+      const response = await axios.post(endpoint, formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.status !== 200) {
+        throw new Error(
+          response.data.message || "Failed to complete, Please try again."
+        );
+      }
+
+      const result = await response.data;
+      if (!isNewUser) {
+        localStorage.setItem("accessToken", result.token);
+      }
+
+      //After OTP Verification
+      redirect("/dashboard/home");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An Unknown error occurred."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-black flex items-center justify-center min-h-screen px-6 mx-auto">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={emailSubmitted ? handleSubmit : handleEmailSubmit}
         className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg"
       >
         <div className="flex justify-center mx-auto mb-6">
@@ -72,85 +145,69 @@ export default function Auth() {
           />
         </div>
 
-        <div className="flex items-center justify-center mb-6">
-          <button
-            type="button"
-            onClick={() => setIsSignUp(false)}
-            className={`w-1/2 pb-2 text-center font-medium ${
-              !isSignUp
-                ? "text-black border-b-2 border-red-600"
-                : "text-gray-400"
-            }`}
-          >
-            Sign In
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsSignUp(true)}
-            className={`w-1/2 pb-2 text-center font-medium ${
-              isSignUp
-                ? "text-black border-b-2 border-red-600"
-                : "text-gray-400"
-            }`}
-          >
-            Sign Up
-          </button>
-        </div>
-
-        {isSignUp && (
+        {!emailSubmitted && (
           <div className="relative flex items-center mb-4">
             <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
+              type="email"
+              name="email"
+              value={formData.email}
               onChange={handleInputChange}
               className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:outline-none"
-              placeholder="Full Name"
+              placeholder="Enter your email"
               required
             />
           </div>
         )}
 
-        {isSignUp && (
+        {emailSubmitted && isNewUser && (
+          <>
+            <div className="relative flex items-center mb-4">
+              <input
+                type="text"
+                name="fullName"
+                maxLength={16}
+                value={formData.fullName}
+                onChange={handleInputChange}
+                className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:outline-none"
+                placeholder="Full Name"
+                required
+              />
+            </div>
+            <div className="relative flex items-center mb-4">
+              <input
+                type="text"
+                name="userName"
+                maxLength={16}
+                value={formData.userName}
+                onChange={handleInputChange}
+                className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:outline-none"
+                placeholder="Username"
+                required
+              />
+            </div>
+          </>
+        )}
+
+        {emailSubmitted && (
           <div className="relative flex items-center mb-4">
             <input
               type="text"
-              name="userName"
-              value={formData.userName}
-              onChange={handleInputChange}
+              name="otp"
+              maxLength={6}
+              value={formData.otp}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value) && value.length <= 6) {
+                  handleInputChange(e);
+                }
+              }}
               className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:outline-none"
-              placeholder="Username"
+              placeholder="Enter OTP"
               required
             />
           </div>
         )}
 
-        <div className="relative flex items-center mb-4">
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:outline-none"
-            placeholder="Email address"
-            required
-          />
-        </div>
-
-        <div className="relative flex items-center mb-4">
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            className="block w-full py-3 pl-10 text-gray-700 border rounded-lg focus:outline-none"
-            placeholder="Password"
-            required
-          />
-        </div>
-
-        {/* Showcasing error */}
         {error && <p className="mb-4 text-red-600">{error}</p>}
 
         <button
@@ -160,21 +217,14 @@ export default function Auth() {
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          {/* Daynamic Sign/Up button */}
-          {loading ? "Please wait..." : isSignUp ? "Sign Up" : "Sign In"}
+          {loading
+            ? "Processing..."
+            : !emailSubmitted
+            ? "Next"
+            : isNewUser
+            ? "Create my Acount"
+            : "Verify OTP"}
         </button>
-
-        <div className="mt-4 text-center">
-          <button
-            type="button"
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-sm text-red-500 hover:underline"
-          >
-            {isSignUp
-              ? "Already have an account? Sign In"
-              : "Don't have an account? Sign Up"}
-          </button>
-        </div>
       </form>
     </div>
   );
