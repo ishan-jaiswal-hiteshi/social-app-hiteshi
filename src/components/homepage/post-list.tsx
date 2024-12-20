@@ -4,7 +4,7 @@ import Post from "./post";
 
 const PostList = () => {
   return (
-    <div>
+    <div className="p-2">
       {postData?.map((post) => (
         <Post key={post?.id} postData={post} />
       ))}

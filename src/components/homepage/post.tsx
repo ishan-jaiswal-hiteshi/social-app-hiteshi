@@ -47,7 +47,7 @@ const Post: React.FC<PostProps> = ({ postData }) => {
   };
 
   return (
-    <div className="border border-gray-300 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
+    <div className="border border-gray-300 rounded-lg max-w-md mx-auto my-5 font-sans bg-black ">
       <div className="flex items-center p-3">
         <img
           src={postData?.user?.profile_picture_url}
