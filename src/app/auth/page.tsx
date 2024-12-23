@@ -1,4 +1,3 @@
-// Setting this as a client component
 "use client";
 
 import { useState, useEffect } from "react";
@@ -11,7 +10,6 @@ import {
   isValidOTP,
 } from "@/utils/input_Validations";
 export default function Auth() {
-  // If the token exists redirect to Home
   const token = localStorage.getItem("accessToken");
   if (token) {
     redirect("/dashboard/home");
@@ -25,16 +23,14 @@ export default function Auth() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isNewUser, setIsNewUser] = useState<boolean | null>(null);
-  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [isNewUser, setIsNewUser] = useState<boolean | null>(true);
+  const [emailSubmitted, setEmailSubmitted] = useState(true);
 
-  // Handling inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Auto set UserName from Full Name
   useEffect(() => {
     if (formData.fullName) {
       const cleanedFullName = formData.fullName
@@ -45,11 +41,9 @@ export default function Auth() {
     }
   }, [formData.fullName]);
 
-  // Handling email submission
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    //Check is valid email
     if (!isValidateEmail(formData.email)) {
       setError("Please use your Hiteshi's mail");
       return;
@@ -58,7 +52,6 @@ export default function Auth() {
     setError(null);
 
     try {
-      //Checking for Existing user
       const response = await axios.post("/api/check-user", {
         email: formData.email,
       });
@@ -79,21 +72,17 @@ export default function Auth() {
     }
   };
 
-  // Handling Create Account and OTP submition
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    //Check is Full Name valid
     if (!isValidFullName(formData.fullName)) {
       setError("Please enter valid Full Name");
       return;
     }
-    //Check is UserId valid
     if (!isValidUserName(formData.userName)) {
       setError("Please enter valid Username");
       return;
     }
-    //Check is 4 digit OTP
     if (!isValidOTP(formData.otp)) {
       setError("Please enter valid OTP");
       return;
@@ -120,7 +109,6 @@ export default function Auth() {
         localStorage.setItem("accessToken", result.token);
       }
 
-      //After OTP Verification
       redirect("/dashboard/home");
     } catch (err) {
       setError(
@@ -132,7 +120,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="bg-black flex items-center justify-center min-h-screen px-6 mx-auto">
+    <div className="flex items-center justify-center min-h-screen px-6 mx-auto">
       <form
         onSubmit={emailSubmitted ? handleSubmit : handleEmailSubmit}
         className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg"
