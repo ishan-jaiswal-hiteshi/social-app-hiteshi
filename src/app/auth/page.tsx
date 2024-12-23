@@ -23,8 +23,8 @@ export default function Auth() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isNewUser, setIsNewUser] = useState<boolean | null>(true);
-  const [emailSubmitted, setEmailSubmitted] = useState(true);
+  const [isNewUser, setIsNewUser] = useState<boolean | null>(null);
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
