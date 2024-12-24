@@ -46,6 +46,26 @@ const Post: React.FC<PostProps> = ({ postData }) => {
     setShowComments((prev) => !prev);
   };
 
+  const formatContentWithHashtags = (content: string) => {
+    const hashtagRegex = /#\w+/g;
+    const parts = content.split(hashtagRegex);
+
+    const hashtags = content.match(hashtagRegex) || [];
+
+    return parts.map((part, index) => {
+      const key = `part-${index}`;
+      if (hashtags[index]) {
+        return (
+          <>
+            <span>{part}</span>
+            <span className="text-blue-500"> {hashtags[index]} </span>
+          </>
+        );
+      }
+      return <span key={key}>{part}</span>;
+    });
+  };
+
   return (
     <div className="border border-gray-300 rounded-lg max-w-md mx-auto my-5 font-sans bg-black ">
       <div className="flex items-center p-3">
@@ -69,7 +89,7 @@ const Post: React.FC<PostProps> = ({ postData }) => {
           className="w-full border-t border-b border-gray-300"
         />
         <div className="p-3">
-          <p>{postData?.content}</p>
+          {formatContentWithHashtags(postData?.content)}
         </div>
       </div>
 

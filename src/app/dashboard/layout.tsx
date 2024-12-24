@@ -1,5 +1,6 @@
 import BottombarLayout from "@/components/dashboard/layout/bottombar";
 import SidebarLayout from "@/components/dashboard/layout/sidebar";
+import { ToastContainer } from "react-toastify";
 
 export default function DashboardLayout({
   children,
@@ -11,7 +12,10 @@ export default function DashboardLayout({
       <body className="h-screen">
         <div className="flex">
           <SidebarLayout />
-          <main className="flex-1 overflow-auto ">{children}</main>
+          <main className="flex-1 overflow-auto ">
+            {children}
+            <ToastContainer />
+          </main>
           <BottombarLayout />
         </div>
       </body>
