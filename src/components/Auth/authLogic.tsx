@@ -86,25 +86,37 @@ export default function Auth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isNewUser && !isValidFullName(formData.fullName)) {
-      setError("Please enter a valid Full Name");
-      return;
-    }
-    if (isNewUser && !isValidUserName(formData.userName)) {
-      setError("Please enter a valid Username");
-      return;
-    }
-    if (!isValidOTP(formData.otp)) {
-      setError("Please enter a valid OTP");
+    if (isNewUser) {
+      if (!formData.fullName.trim()) {
+        setError("Full Name is required for new users.");
+        return;
+      }
+      if (!formData.userName.trim()) {
+        setError("Username is required for new users.");
+        return;
+      }
+      if (!formData.otp.trim()) {
+        setError("OTP is required.");
+        return;
+      }
+    } else if (!isValidOTP(formData.otp)) {
+      setError("Please enter a valid OTP.");
       return;
     }
 
     setLoading(true);
     setError(null);
 
-    const endpoint = isNewUser ? "/signup" : "/verify-otp";
+    const endpoint = "/verify-otp";
     const payload = isNewUser
-      ? formData
+      ? {
+          email: formData.email,
+          otp: formData.otp,
+          username: formData.userName,
+          full_name: formData.fullName,
+          profile_picture: null,
+          other_data: null,
+        }
       : { email: formData.email, otp: formData.otp };
 
     try {
