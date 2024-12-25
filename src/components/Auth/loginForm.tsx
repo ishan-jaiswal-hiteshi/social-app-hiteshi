@@ -95,16 +95,31 @@ export default function AuthForm({
           <button
             type="submit"
             disabled={loading}
-            className={`w-fit active:bg-red-600 bg-red-500 text-white px-1 py-1 rounded-md   ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
+            className={`w-fit bg-red-500 text-white px-3 py-2 rounded-md flex items-center justify-center ${
+              loading ? "opacity-50 cursor-not-allowed" : "active:bg-red-600"
             }`}
           >
             {loading ? (
-              <MdNavigateNext size={32} />
-            ) : !emailSubmitted ? (
-              <MdNavigateNext size={32} />
-            ) : isNewUser ? (
-              <MdNavigateNext size={32} />
+              <>
+                <svg
+                  className="animate-spin h-7 w-7 mr-1 text-white"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-30"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-25"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+              </>
             ) : (
               <MdNavigateNext size={32} />
             )}

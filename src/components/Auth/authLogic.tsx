@@ -14,7 +14,6 @@ export default function Auth() {
     const token = localStorage.getItem("accessToken");
     if (token) {
       redirect("/dashboard/home");
-      console.log(token);
     }
   }
 
