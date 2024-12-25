@@ -12,7 +12,7 @@ import {
 import AuthForm from "@/components/Auth/loginForm";
 
 // Set the base URL for Axios
-axios.defaults.baseURL = "http://192.168.100.152:5000";
+axios.defaults.baseURL = "http://192.168.100.208:5000";
 
 export default function Auth() {
   if (typeof window !== "undefined") {
