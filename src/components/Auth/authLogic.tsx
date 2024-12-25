@@ -3,12 +3,7 @@
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import axios from "axios";
-import {
-  isValidFullName,
-  isValidUserName,
-  isValidateEmail,
-  isValidOTP,
-} from "@/utils/input_Validations";
+import { isValidateEmail, isValidOTP } from "@/utils/input_Validations";
 import AuthForm from "@/components/Auth/loginForm";
 
 // Set the base URL for Axios
@@ -75,7 +70,7 @@ export default function Auth() {
       }
     } catch (err: any) {
       setError(
-        err.response?.data?.message || "Failed to send OTP. Please try again."
+        err?.response?.data?.message || "Failed to send OTP. Please try again."
       );
     } finally {
       setLoading(false);

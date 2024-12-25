@@ -15,7 +15,7 @@ const SidebarLayout = () => {
           <ul className="space-y-6">
             <Link
               href="/dashboard/home"
-              className="hover:text-gray-300 cursor-pointer flex gap-2 items-center"
+              className="hover:text-gray-300 cursor-pointer active  flex gap-2 items-center"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

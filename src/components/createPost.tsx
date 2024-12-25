@@ -1,5 +1,5 @@
 import axios from "axios";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -7,6 +7,12 @@ const CreatePost = () => {
   const [image, setImage] = useState<File | null>(null);
   const [content, setContent] = useState<string>("");
   const [tags, setTags] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const router = useRouter();
+
+  // Set the base URL for Axios
+  axios.defaults.baseURL = "http://192.168.100.208:5000";
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -37,25 +43,40 @@ const CreatePost = () => {
       ?.join(" ");
 
     const updatedContent = `${content} ${formattedTags}`;
-
+    const userId = "9";
     const formData = new FormData();
-    formData.append("image", image);
-    formData.append("content", updatedContent);
+    formData.append("file", image);
 
     try {
-      const response = await axios.post("/api/posts", formData, {
+      setLoading(true);
+      const mediaResponse = await axios.post("/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      if (response) {
-        toast.success("Post Created Succesfully!!");
-        console.log("Response data:", response?.data);
-        redirect("/dashboard/home");
+
+      if (mediaResponse && mediaResponse.data?.mediaUrl) {
+        const uploadData = {
+          userId: userId,
+          content: updatedContent,
+          mediaUrl: mediaResponse.data.mediaUrl,
+        };
+
+        const postResponse = await axios.post("/create-post", uploadData);
+
+        if (postResponse) {
+          toast.success("Post Created Successfully!");
+          console.log("Response data:", postResponse.data);
+          router.push("/dashboard/home");
+        }
+      } else {
+        throw new Error("Media upload failed. No media URL received.");
       }
     } catch (error) {
       console.error("Error creating post:", error);
-      toast.error("Error in Creating Post:");
+      toast.error("Error in Creating Post.");
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -64,6 +85,17 @@ const CreatePost = () => {
         <h2 className="text-2xl font-bold text-center text-gray-900">
           Create a New Post
         </h2>
+        {loading && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div
+              className="animate-spin inline-block text-center w-12 h-12 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
+              role="status"
+              aria-label="loading"
+            >
+              <span className="sr-only">Loading...</span>
+            </div>
+          </div>
+        )}
         <form
           className="space-y-6"
           action="#"
