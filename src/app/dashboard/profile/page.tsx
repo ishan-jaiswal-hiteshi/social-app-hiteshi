@@ -232,7 +232,18 @@ export default function ProfilePage() {
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium ">
-                  Profile Picture
+                  Profile Photo
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium ">
+                  Cover Photo
                 </label>
                 <input
                   type="file"
