@@ -9,7 +9,7 @@ const postData = [
         "https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
     },
     content:
-      "Social effect fish edge new leader conference.\nGo leader take not window. Make available personal father ever.\nCareer program art husband space be around. Ten then government her.",
+      "Social effect fish edge new leader conference.\nGo leader take not window. Make available personal father ever.\nCareer program art husband space be around. Ten then government her. #tags #content #createpost #post",
     media_url:
       "https://img.freepik.com/premium-vector/professional-modern-social-media-post-design-template_627383-327.jpg",
     timestamp: "1987-07-08T18:07:44",
