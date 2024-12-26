@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
+import { useAuth } from "@/context/authContext";
 
 type PostData = {
   id: number;
@@ -46,6 +47,9 @@ const Post: React.FC<PostProps> = ({ postData }) => {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState(postData?.comments?.list || []);
   const [commentText, setCommentText] = useState("");
+  const { user } = useAuth();
+
+  console.log(user);
 
   // Set the base URL for Axios
   axios.defaults.baseURL = "http://192.168.100.208:5000";
@@ -56,7 +60,7 @@ const Post: React.FC<PostProps> = ({ postData }) => {
 
   const handleLikeClick = async () => {
     const postLikeData = {
-      userId: "9",
+      userId: user?.id,
       postId: "7",
     };
     try {
@@ -77,7 +81,7 @@ const Post: React.FC<PostProps> = ({ postData }) => {
 
     const commentData = {
       comment: commentText,
-      userId: "9",
+      userId: user?.id,
       postId: "7",
     };
     try {
@@ -143,7 +147,7 @@ const Post: React.FC<PostProps> = ({ postData }) => {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 ${isLiked ? "text-red-500" : "text-gray-500"}`}
+            className={`h-5 w-5 ${isLiked ? "bg-red-500" : "text-gray-500"}`}
             viewBox="0 -960 960 960"
             fill="currentColor"
           >

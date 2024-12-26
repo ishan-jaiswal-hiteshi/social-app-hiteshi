@@ -1,19 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { redirect } from "next/navigation";
 import axios from "axios";
 import { isValidateEmail, isValidOTP } from "@/utils/input_Validations";
 import AuthForm from "@/components/Auth/loginForm";
+import { useRouter } from "next/navigation";
 
 // Set the base URL for Axios
 axios.defaults.baseURL = "http://192.168.100.208:5000";
 
 export default function Auth() {
+  const router = useRouter();
+
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("accessToken");
     if (token) {
-      redirect("/dashboard/home");
+      router.push("/dashboard/home");
     }
   }
 
@@ -29,13 +31,11 @@ export default function Auth() {
   const [isNewUser, setIsNewUser] = useState<boolean | null>(null);
   const [emailSubmitted, setEmailSubmitted] = useState(false);
 
-  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Auto-generate username based on full name
   useEffect(() => {
     if (formData.fullName) {
       const cleanedFullName = formData.fullName
@@ -46,7 +46,6 @@ export default function Auth() {
     }
   }, [formData.fullName]);
 
-  // Call /send-otp API
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -76,7 +75,6 @@ export default function Auth() {
     }
   };
 
-  // Call /signup or /verify-otp API
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -120,10 +118,8 @@ export default function Auth() {
 
       if (response.status === 200) {
         const result = response.data;
-        if (!isNewUser) {
-          localStorage.setItem("accessToken", result.token);
-        }
-        redirect("/dashboard/home");
+        localStorage.setItem("accessToken", result.token);
+        router.push("/dashboard/home");
       }
     } catch (err: any) {
       setError(

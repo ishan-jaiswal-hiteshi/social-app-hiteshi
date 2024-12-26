@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/authContext";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -8,6 +9,7 @@ const CreatePost = () => {
   const [content, setContent] = useState<string>("");
   const [tags, setTags] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const { user } = useAuth();
 
   const router = useRouter();
 
@@ -43,7 +45,6 @@ const CreatePost = () => {
       ?.join(" ");
 
     const updatedContent = `${content} ${formattedTags}`;
-    const userId = "9";
     const formData = new FormData();
     formData.append("file", image);
 
@@ -57,7 +58,7 @@ const CreatePost = () => {
 
       if (mediaResponse && mediaResponse.data?.mediaUrl) {
         const uploadData = {
-          userId: userId,
+          userId: user?.id,
           content: updatedContent,
           mediaUrl: mediaResponse.data.mediaUrl,
         };

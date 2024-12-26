@@ -12,18 +12,14 @@ export default function Home() {
         backgroundPosition: "center",
       }}
     >
-      {/* Navbar */}
       <nav className="w-full flex justify-between items-center p-4 fixed top-0 z-10">
         <div className="lg:mx-10">
           <h1 className="font-bold text-2xl">Socialize@Hiteshi</h1>
         </div>
       </nav>
 
-      {/* Main Content */}
       <main className="flex flex-col lg:flex-row items-center justify-center w-full min-h-screen px-4 lg:px-8 pt-16">
-        {/* Left Section - Device Mockups */}
         <div className="hidden lg:flex relative flex-shrink-0 w-96">
-          {/* First Mobile Mockup (Front) */}
           <div className="relative z-10 border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-lg transform translate-x-[100px]">
             <div className="h-[32px] w-[3px] bg-gray-800 absolute -start-[17px] top-[72px] rounded-s-lg"></div>
             <div className="h-[46px] w-[3px] bg-gray-800 absolute -start-[17px] top-[124px] rounded-s-lg"></div>
@@ -40,7 +36,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Second Mobile Mockup (Back) */}
           <div className="absolute top-[-20px] left-4 border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-lg opacity-75">
             <div className="h-[32px] w-[3px] bg-gray-800 absolute -start-[17px] top-[72px] rounded-s-lg"></div>
             <div className="h-[46px] w-[3px] bg-gray-800 absolute -start-[17px] top-[124px] rounded-s-lg"></div>
@@ -58,10 +53,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Vertical Divider */}
         <div className="hidden lg:block h-[600px] w-[2px] bg-gray-600 mx-8"></div>
 
-        {/* Right Section - Login Form */}
         <div className=" flex items-center justify-center back bg-white opacity-85 rounded-lg">
           <div className="w-fit max-w-md  text-black p-6 rounded-lg shadow-lg">
             <Auth />
@@ -69,7 +62,6 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="fixed bottom-0 w-full p-4 text-center text-gray-500">
         <p>&copy; 2024 Socialize@Hiteshi. All rights reserved.</p>
       </footer>

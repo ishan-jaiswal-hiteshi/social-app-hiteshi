@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import Head from "next/head";
+import { AuthProvider } from "@/context/authContext";
 
 export const metadata: Metadata = {
   title: "Socialize @ Hiteshi",
@@ -20,7 +21,7 @@ export default function RootLayout({
         <title>My App</title>
       </Head>
       <body className={`antialiased font-spaceGrotesk background`}>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
