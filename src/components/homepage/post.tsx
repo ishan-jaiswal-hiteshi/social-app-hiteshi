@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import axios from "axios";
 import { useAuth } from "@/context/authContext";
+import axiosInstance from "@/utils/axiosInstance";
 
 type PostData = {
   id: number;
@@ -49,10 +49,6 @@ const Post: React.FC<PostProps> = ({ postData }) => {
   const [commentText, setCommentText] = useState("");
   const { user } = useAuth();
 
-  console.log(user);
-
-  axios.defaults.baseURL = "http://192.168.100.208:5000";
-
   const toggleComments = () => {
     setShowComments((prev) => !prev);
   };
@@ -63,7 +59,7 @@ const Post: React.FC<PostProps> = ({ postData }) => {
       postId: "7",
     };
     try {
-      await axios.post(`/post/like-unlike`, postLikeData);
+      await axiosInstance.post(`/post/like-unlike`, postLikeData);
       if (isLiked) {
         setLikesCount((prev) => prev - 1);
       } else {
@@ -84,7 +80,7 @@ const Post: React.FC<PostProps> = ({ postData }) => {
       postId: "7",
     };
     try {
-      const response = await axios.post(`/create-comment`, commentData);
+      const response = await axiosInstance.post(`/create-comment`, commentData);
       const newComment = response?.data?.comment;
       setComments((prev) => [...prev, newComment]);
       setCommentText("");
@@ -185,18 +181,13 @@ const Post: React.FC<PostProps> = ({ postData }) => {
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Write a comment..."
-              className="flex-grow border border-gray-400 rounded p-2 text-black"
+              className="flex-grow border border-gray-400 rounded px-2 py-1 text-black"
             />
-            <button
-              onClick={handleCommentSubmit}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
+            <button onClick={handleCommentSubmit}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                height="24px"
+                className="w-8 h-8 bg-white rounded"
                 viewBox="0 -960 960 960"
-                width="24px"
-                fill="#fff"
               >
                 <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
               </svg>

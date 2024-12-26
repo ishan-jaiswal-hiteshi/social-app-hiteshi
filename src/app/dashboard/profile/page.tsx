@@ -1,6 +1,6 @@
 "use client";
 import { FiEdit } from "react-icons/fi";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import Link from "next/link";
 import { toast } from "react-toastify";
@@ -30,18 +30,6 @@ export default function ProfilePage() {
     profilePicture?: File;
     coverPhoto?: File;
   }>({});
-
-  // useEffect(() => {
-  //   const fetchProfile = async () => {
-  //     try {
-  //       const response = await axiosInstance.get("/me");
-  //       setProfileData(response.data);
-  //     } catch (error) {
-  //       console.error("Failed to fetch profile data.", error);
-  //     }
-  //   };
-  //   fetchProfile();
-  // }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
