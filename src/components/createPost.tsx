@@ -1,5 +1,5 @@
 import { useAuth } from "@/context/authContext";
-import axios from "axios";
+import axiosInstance from "@/utils/axiosInstance";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -12,9 +12,6 @@ const CreatePost = () => {
   const { user } = useAuth();
 
   const router = useRouter();
-
-  // Set the base URL for Axios
-  axios.defaults.baseURL = "http://192.168.100.208:5000";
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -50,7 +47,7 @@ const CreatePost = () => {
 
     try {
       setLoading(true);
-      const mediaResponse = await axios.post("/upload", formData, {
+      const mediaResponse = await axiosInstance.post("/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -60,10 +57,13 @@ const CreatePost = () => {
         const uploadData = {
           userId: user?.id,
           content: updatedContent,
-          mediaUrl: mediaResponse.data.mediaUrl,
+          mediaUrl: mediaResponse?.data?.mediaUrl,
         };
 
-        const postResponse = await axios.post("/create-post", uploadData);
+        const postResponse = await axiosInstance.post(
+          "/create-post",
+          uploadData
+        );
 
         if (postResponse) {
           toast.success("Post Created Successfully!");
