@@ -22,7 +22,7 @@ type User = {
   username: string;
   email: string;
   full_name: string;
-  profile_picture: string | null;
+  profile_picture: string | undefined;
   otp: string | null;
   other_data: OtherData | null;
   createdAt: string;
@@ -33,16 +33,12 @@ type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   setUser: Dispatch<SetStateAction<User | null>>;
-  login: (user: User) => void;
-  logout: () => void;
 };
 
 const authContextDefaultValues: AuthContextType = {
   user: null,
   isAuthenticated: false,
   setUser: () => {},
-  login: () => {},
-  logout: () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(authContextDefaultValues);
@@ -64,30 +60,21 @@ export function AuthProvider({ children }: Props) {
 
     if (response && response?.data?.user) {
       setUser(response?.data?.user);
-      console.log(response?.data?.user);
     }
   };
 
   useEffect(() => {
-    getCurrentUser();
-  }, []);
-
-  const login = (user: User) => {
-    setUser(user);
-    setIsAuthenticated(true);
-  };
-
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-  };
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      setIsAuthenticated(true);
+      getCurrentUser();
+    }
+  }, [isAuthenticated]);
 
   const value = {
     user,
     setUser,
     isAuthenticated,
-    login,
-    logout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,9 +1,11 @@
 "use client";
 
+import { useAuth } from "@/context/authContext";
 import Link from "next/link";
 import React from "react";
 
 const SidebarLayout = () => {
+  const { user } = useAuth();
   return (
     <aside className="hidden md:flex bg-[#00070C] text-white p-4 w-52 fixed left-0 top-0 bottom-0">
       <div className="flex flex-col h-full justify-between items-center">
@@ -63,7 +65,7 @@ const SidebarLayout = () => {
               className="hover:text-gray-300 cursor-pointer flex gap-2 items-center"
             >
               <img
-                src="https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                src={user?.profile_picture}
                 alt="profile"
                 className="w-6 h-6 rounded-full"
               />

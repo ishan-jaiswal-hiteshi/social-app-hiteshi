@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Auth from "../components/Auth/authLogic";
 
 export default function Home() {
