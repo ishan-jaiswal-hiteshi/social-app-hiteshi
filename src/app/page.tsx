@@ -1,10 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
+import Auth from "../components/Auth/authLogic";
 
 export default function Home() {
   return (
     <div
-      className="min-h-screen bg-black text-white flex flex-col items-center justify-center"
+      className="min-h-screen bg-black text-white flex items-center justify-center"
       style={{
         backgroundImage:
           "url('https://media.istockphoto.com/id/670353238/video/4k-abstract-loop-futuristic-technology-background-with-lines-and-dots.jpg?s=640x640&k=20&c=kmxLhX7IZ5aa0KyphoUnEvFuawL-Un7G3-hfeokZFZo=')",
@@ -13,48 +13,56 @@ export default function Home() {
       }}
     >
       <nav className="w-full flex justify-between items-center p-4 fixed top-0 z-10">
-        <div className="lg:mx-10 ">
+        <div className="lg:mx-10">
           <h1 className="font-bold text-2xl">Socialize@Hiteshi</h1>
         </div>
-
-        <Link
-          href="/auth"
-          className="text-white px-4 py-2 rounded-md hover:bg-red-400 transition duration-300 ease-in-out transform hover:scale-105"
-        >
-          Login
-        </Link>
       </nav>
 
-      <main className="mx-auto file:flex-1 flex flex-col lg:flex-row items-center justify-center px-4 text-center mt-16 animate__animated animate__fadeIn animate__delay-1s gap-2">
-        <div>
-          <h2 className="text-4xl font-extrabold mb-4 animate__animated animate__fadeIn animate__delay-1s">
-            Welcome to <span className="text-[red]">Socialize @ Hiteshi</span>
-          </h2>
-          <p className="text-2xl max-w-2xl mb-8">
-            A vibrant social media app designed for Users to connect, share, and
-            explore. Join the ultimate hub where gaming meets community.
-          </p>
+      <main className="flex flex-col lg:flex-row items-center justify-center w-full min-h-screen px-4 lg:px-8 pt-16">
+        <div className="hidden lg:flex relative flex-shrink-0 w-96">
+          <div className="relative z-10 border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-lg transform translate-x-[100px]">
+            <div className="h-[32px] w-[3px] bg-gray-800 absolute -start-[17px] top-[72px] rounded-s-lg"></div>
+            <div className="h-[46px] w-[3px] bg-gray-800 absolute -start-[17px] top-[124px] rounded-s-lg"></div>
+            <div className="h-[46px] w-[3px] bg-gray-800 absolute -start-[17px] top-[178px] rounded-s-lg"></div>
+            <div className="h-[64px] w-[3px] bg-gray-800 absolute -end-[17px] top-[142px] rounded-e-lg"></div>
+            <div className="rounded-[2rem] overflow-hidden w-[272px] h-[572px] bg-white">
+              <div className="h-full w-full">
+                <img
+                  src="./profile.png"
+                  className="w-[272px] h-[572px] object-cover"
+                  alt="Mobile Slide 1"
+                />
+              </div>
+            </div>
+          </div>
 
-          <Link
-            href="/auth"
-            className="bg-red-600 text-[white] px-6 py-3 rounded-md text-lg font-semibold hover:bg-red-400 transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            Get Started
-          </Link>
+          <div className="absolute top-[-20px] left-4 border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-lg opacity-75">
+            <div className="h-[32px] w-[3px] bg-gray-800 absolute -start-[17px] top-[72px] rounded-s-lg"></div>
+            <div className="h-[46px] w-[3px] bg-gray-800 absolute -start-[17px] top-[124px] rounded-s-lg"></div>
+            <div className="h-[46px] w-[3px] bg-gray-800 absolute -start-[17px] top-[178px] rounded-s-lg"></div>
+            <div className="h-[64px] w-[3px] bg-gray-800 absolute -end-[17px] top-[142px] rounded-e-lg"></div>
+            <div className="rounded-[2rem] overflow-hidden w-[272px] h-[572px] bg-white">
+              <div className="h-full w-full">
+                <img
+                  src="./home1.png"
+                  className="w-[272px] h-[572px] object-cover"
+                  alt="Mobile Slide 2"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-8">
-          <Image
-            src={"https://images.ui8.net/uploads/group-811_1617800621177.png"}
-            alt="Social Connect"
-            width={700}
-            height={500}
-            className="rounded-xl object-cover max-w-full h-auto"
-          />
+        <div className="hidden lg:block h-[600px] w-[2px] bg-gray-600 mx-8"></div>
+
+        <div className=" flex items-center justify-center back bg-white opacity-85 rounded-lg">
+          <div className="w-fit max-w-md  text-black p-6 rounded-lg shadow-lg">
+            <Auth />
+          </div>
         </div>
       </main>
 
-      <footer className="fixed bottom-0  w-full p-4 text-center text-gray-500">
+      <footer className="fixed bottom-0 w-full p-4 text-center text-gray-500">
         <p>&copy; 2024 Socialize@Hiteshi. All rights reserved.</p>
       </footer>
     </div>
