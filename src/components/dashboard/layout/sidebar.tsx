@@ -76,7 +76,6 @@ const SidebarLayout = () => {
           <Link
             href="/"
             onClick={() => {
-              // Clear the accessToken from localStorage
               localStorage.removeItem("accessToken");
             }}
             className="hover:text-gray-300 cursor-pointer flex gap-2 items-center"

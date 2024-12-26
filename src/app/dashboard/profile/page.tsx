@@ -2,6 +2,7 @@
 import { FiEdit } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -113,6 +114,7 @@ export default function ProfilePage() {
     <div className="min-h-screen flex flex-col md:ml-52">
       <div className="flex-grow flex flex-col">
         <section className="relative block h-[500px]">
+          {/* Background Image */}
           <div
             className="absolute top-0 w-full h-full bg-center bg-cover"
             style={{
@@ -121,6 +123,30 @@ export default function ProfilePage() {
           >
             <span className="w-full h-full absolute opacity-50 bg-black"></span>
           </div>
+
+          {/* Log Out Button - Mobile Only */}
+          <div className="absolute top-4 right-4 sm:hidden">
+            <Link
+              href="/"
+              onClick={() => {
+                localStorage.removeItem("accessToken");
+              }}
+              className="hover:text-gray-300 cursor-pointer flex gap-2 items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="red"
+              >
+                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
+              </svg>
+              <p className="text-red-500">Log out</p>
+            </Link>
+          </div>
+
+          {/* Bottom SVG Decoration */}
           <div
             className="absolute bottom-0 left-0 right-0 w-full overflow-hidden h-[70px] pointer-events-none"
             style={{ transform: "translateZ(0px)" }}

@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
-import { isValidateEmail, isValidOTP } from "@/utils/input_Validations";
+import {
+  isValidateEmail,
+  isValidOTP,
+  isValidFullName,
+  isValidUserName,
+} from "@/utils/input_Validations";
 import AuthForm from "@/components/Auth/loginForm";
 import { useRouter } from "next/navigation";
 
@@ -87,6 +92,12 @@ export default function Auth() {
         return;
       }
     } else if (!isValidOTP(formData.otp)) {
+      setError("Please enter a valid OTP.");
+      return;
+    } else if (!isValidFullName(formData.fullName)) {
+      setError("Please enter a valid OTP.");
+      return;
+    } else if (!isValidUserName(formData.userName)) {
       setError("Please enter a valid OTP.");
       return;
     }
