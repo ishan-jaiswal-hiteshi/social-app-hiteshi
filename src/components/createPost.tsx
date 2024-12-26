@@ -13,7 +13,6 @@ const CreatePost = () => {
 
   const router = useRouter();
 
-  // Set the base URL for Axios
   axios.defaults.baseURL = "http://192.168.100.208:5000";
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {

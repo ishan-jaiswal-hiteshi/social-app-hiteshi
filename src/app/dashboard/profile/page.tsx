@@ -3,6 +3,7 @@ import { FiEdit } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 export default function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,7 +88,6 @@ export default function ProfilePage() {
     try {
       const updateData = { ...editData };
 
-      // Upload files and add public URLs to updateData
       if (files.profilePicture) {
         updateData.profilePicture = await uploadFile(files.profilePicture);
       }
@@ -98,12 +98,10 @@ export default function ProfilePage() {
       }
 
       const response = await axiosInstance.put("/updateprofile", updateData);
-      console.log("Profile updated successfully:", response.data);
-      alert("Profile updated successfully!");
+      toast.success("Profile Updated");
       setProfileData(response.data);
     } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Failed to update profile. Please try again.");
+      toast.error("Unable to Update");
     } finally {
       setIsSubmitting(false);
       setIsModalOpen(false);
@@ -114,7 +112,6 @@ export default function ProfilePage() {
     <div className="min-h-screen flex flex-col md:ml-52">
       <div className="flex-grow flex flex-col">
         <section className="relative block h-[500px]">
-          {/* Background Image */}
           <div
             className="absolute top-0 w-full h-full bg-center bg-cover"
             style={{
@@ -124,7 +121,6 @@ export default function ProfilePage() {
             <span className="w-full h-full absolute opacity-50 bg-black"></span>
           </div>
 
-          {/* Log Out Button - Mobile Only */}
           <div className="absolute top-4 right-4 sm:hidden">
             <Link
               href="/"
@@ -146,7 +142,6 @@ export default function ProfilePage() {
             </Link>
           </div>
 
-          {/* Bottom SVG Decoration */}
           <div
             className="absolute bottom-0 left-0 right-0 w-full overflow-hidden h-[70px] pointer-events-none"
             style={{ transform: "translateZ(0px)" }}

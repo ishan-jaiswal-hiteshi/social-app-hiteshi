@@ -51,7 +51,6 @@ const Post: React.FC<PostProps> = ({ postData }) => {
 
   console.log(user);
 
-  // Set the base URL for Axios
   axios.defaults.baseURL = "http://192.168.100.208:5000";
 
   const toggleComments = () => {

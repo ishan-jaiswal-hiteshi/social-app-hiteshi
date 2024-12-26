@@ -90,7 +90,6 @@ export default function AuthForm({
 
         {error && <p className="mb-4 text-red-500 flex">{error}</p>}
 
-        {/* Button aligned to the right */}
         <div className="flex justify-end">
           <button
             type="submit"
