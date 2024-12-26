@@ -29,17 +29,17 @@ export default function ProfilePage() {
     coverPhoto?: File;
   }>({});
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axiosInstance.get("/me");
-        setProfileData(response.data);
-      } catch (error) {
-        console.error("Failed to fetch profile data.", error);
-      }
-    };
-    fetchProfile();
-  }, []);
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const response = await axiosInstance.get("/me");
+  //       setProfileData(response.data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch profile data.", error);
+  //     }
+  //   };
+  //   fetchProfile();
+  // }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -116,7 +116,7 @@ export default function ProfilePage() {
           <div
             className="absolute top-0 w-full h-full bg-center bg-cover"
             style={{
-              backgroundImage: `url(${profileData.otherDetails.coverPicture})`,
+              backgroundImage: `url(${profileData?.otherDetails?.coverPicture})`,
             }}
           >
             <span className="w-full h-full absolute opacity-50 bg-black"></span>
@@ -150,7 +150,7 @@ export default function ProfilePage() {
                     <div className="relative">
                       <img
                         alt="Profile"
-                        src={profileData.profilePicture}
+                        src={profileData?.profilePicture}
                         className="ring-4 ring-red-500 shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-[150px]"
                       />
                       <span className="top-14 left-10 absolute bg-red-600 p-2 rounded-full text-white hover:bg-red-600 cursor-pointer">
@@ -182,7 +182,7 @@ export default function ProfilePage() {
                     <div className="flex justify-center py-4 lg:pt-4 pt-8">
                       <div className="mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData.otherDetails.friends}
+                          {profileData?.otherDetails?.friends}
                         </span>
                         <span className="text-sm text-blueGray-400">
                           Friends
@@ -190,13 +190,13 @@ export default function ProfilePage() {
                       </div>
                       <div className="mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData.otherDetails.posts}
+                          {profileData?.otherDetails?.posts}
                         </span>
                         <span className="text-sm text-blueGray-400">Posts</span>
                       </div>
                       <div className="lg:mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData.otherDetails.following}
+                          {profileData?.otherDetails?.following}
                         </span>
                         <span className="text-sm text-blueGray-400">
                           Following
@@ -207,27 +207,27 @@ export default function ProfilePage() {
                 </div>
                 <div className="text-center mt-5">
                   <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
-                    {profileData.fullName}
+                    {profileData?.fullName}
                   </h3>
                   <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                     <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-                    {profileData.otherDetails.location}
+                    {profileData?.otherDetails?.location}
                   </div>
                   <hr className="w-72 h-0.5 mx-auto my-4 bg-red-500 border-0 rounded md:my-10" />
                   <div className="mb-2 text-blueGray-600 mt-10">
                     <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-                    {profileData.otherDetails.jobTitle}
+                    {profileData?.otherDetails?.jobTitle}
                   </div>
                   <div className="mb-2 text-blueGray-600">
                     <i className="fas fa-university mr-2 text-lg text-blueGray-400"></i>
-                    {profileData.otherDetails.university}
+                    {profileData?.otherDetails?.university}
                   </div>
                 </div>
                 <div className="mt-10 py-10 border-t border-red-500 text-center">
                   <div className="flex flex-wrap justify-center">
                     <div className="w-full lg:w-9/12 px-4">
                       <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                        {profileData.otherDetails.bio}
+                        {profileData?.otherDetails?.bio}
                       </p>
                       <a href="#pablo" className="font-normal text-red-500">
                         Show more
