@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
-import axios from "axios";
+import axiosInstance from "@/utils/axiosInstance";
 import {
   isValidFullName,
   isValidUserName,
@@ -10,9 +10,6 @@ import {
   isValidOTP,
 } from "@/utils/input_Validations";
 import AuthForm from "@/components/Auth/loginForm";
-
-// Set the base URL for Axios
-axios.defaults.baseURL = "http://192.168.100.208:5000";
 
 export default function Auth() {
   if (typeof window !== "undefined") {
@@ -63,7 +60,7 @@ export default function Auth() {
     setError(null);
 
     try {
-      const response = await axios.post("/send-otp", {
+      const response = await axiosInstance.post("/send-otp", {
         email: formData.email,
       });
 
@@ -119,7 +116,7 @@ export default function Auth() {
       : { email: formData.email, otp: formData.otp };
 
     try {
-      const response = await axios.post(endpoint, payload, {
+      const response = await axiosInstance.post(endpoint, payload, {
         headers: { "Content-Type": "application/json" },
       });
 

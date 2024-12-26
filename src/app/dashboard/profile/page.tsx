@@ -1,44 +1,112 @@
 "use client";
 import { FiEdit } from "react-icons/fi";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axiosInstance from "@/utils/axiosInstance";
 
 export default function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [profileData, setProfileData] = useState({
-    name: "Jenna Stones",
-    location: "Los Angeles, California",
-    jobTitle: "Solution Manager - Creative Tim Officer",
-    university: "University of Computer Science",
-    bio: "An artist of considerable range, Jenna the name taken by Melbourne-raised, Brooklyn-based Nick Murphy writes, performs and records all of his own music, giving it a warm, intimate feel with a solid groove structure. An artist of considerable range.",
+    fullName: "Jenna Stones",
+    username: "jennastones",
     profilePicture:
       "https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg",
-    friends: 23,
-    following: 48,
-    posts: 75,
+    otherDetails: {
+      coverPicture:
+        "https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2710&q=80",
+      location: "Los Angeles, California",
+      jobTitle: "Solution Manager - Creative Tim Officer",
+      university: "University of Computer Science",
+      bio: "An artist of considerable range, Jenna writes, performs, and records all her music.",
+      friends: 23,
+      following: 48,
+      posts: 75,
+    },
   });
+  const [editData, setEditData] = useState(profileData);
+  const [files, setFiles] = useState<{
+    profilePicture?: File;
+    coverPhoto?: File;
+  }>({});
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axiosInstance.get("/me");
+        setProfileData(response.data);
+      } catch (error) {
+        console.error("Failed to fetch profile data.", error);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setProfileData((prev) => ({ ...prev, [name]: value }));
+    if (name === "fullName" || name === "username") {
+      setEditData((prev) => ({ ...prev, [name]: value }));
+    } else {
+      setEditData((prev) => ({
+        ...prev,
+        otherDetails: { ...prev.otherDetails, [name]: value },
+      }));
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const fileURL = URL.createObjectURL(e.target.files[0]);
-      setProfileData((prev) => ({ ...prev, profilePicture: fileURL }));
+      const file = e.target.files[0];
+      const { name } = e.target;
+      setFiles((prev) => ({ ...prev, [name]: file }));
     }
+  };
+
+  const uploadFile = async (file: string | Blob) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axiosInstance.post("/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data.publicUrl;
   };
 
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen);
+    if (!isModalOpen) {
+      setEditData(profileData);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsModalOpen(false); // Close the modal after submission
-    console.log("Updated Profile Data:", profileData);
+    setIsSubmitting(true);
+
+    try {
+      const updateData = { ...editData };
+
+      // Upload files and add public URLs to updateData
+      if (files.profilePicture) {
+        updateData.profilePicture = await uploadFile(files.profilePicture);
+      }
+      if (files.coverPhoto) {
+        updateData.otherDetails.coverPicture = await uploadFile(
+          files.coverPhoto
+        );
+      }
+
+      const response = await axiosInstance.put("/updateprofile", updateData);
+      console.log("Profile updated successfully:", response.data);
+      alert("Profile updated successfully!");
+      setProfileData(response.data);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+      setIsModalOpen(false);
+    }
   };
 
   return (
@@ -48,8 +116,7 @@ export default function ProfilePage() {
           <div
             className="absolute top-0 w-full h-full bg-center bg-cover"
             style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2710&q=80')",
+              backgroundImage: `url(${profileData.otherDetails.coverPicture})`,
             }}
           >
             <span className="w-full h-full absolute opacity-50 bg-black"></span>
@@ -83,7 +150,7 @@ export default function ProfilePage() {
                     <div className="relative">
                       <img
                         alt="Profile"
-                        src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
+                        src={profileData.profilePicture}
                         className="ring-4 ring-red-500 shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-[150px]"
                       />
                       <span className="top-14 left-10 absolute bg-red-600 p-2 rounded-full text-white hover:bg-red-600 cursor-pointer">
@@ -115,7 +182,7 @@ export default function ProfilePage() {
                     <div className="flex justify-center py-4 lg:pt-4 pt-8">
                       <div className="mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData.friends}
+                          {profileData.otherDetails.friends}
                         </span>
                         <span className="text-sm text-blueGray-400">
                           Friends
@@ -123,13 +190,13 @@ export default function ProfilePage() {
                       </div>
                       <div className="mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData.posts}
+                          {profileData.otherDetails.posts}
                         </span>
                         <span className="text-sm text-blueGray-400">Posts</span>
                       </div>
                       <div className="lg:mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData.following}
+                          {profileData.otherDetails.following}
                         </span>
                         <span className="text-sm text-blueGray-400">
                           Following
@@ -140,28 +207,27 @@ export default function ProfilePage() {
                 </div>
                 <div className="text-center mt-5">
                   <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
-                    {profileData.name}
+                    {profileData.fullName}
                   </h3>
                   <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                     <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-                    {profileData.location}{" "}
+                    {profileData.otherDetails.location}
                   </div>
                   <hr className="w-72 h-0.5 mx-auto my-4 bg-red-500 border-0 rounded md:my-10" />
-
-                  <div className="mb-2 text-blueGray-600 mt-10 ">
+                  <div className="mb-2 text-blueGray-600 mt-10">
                     <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-                    {profileData.jobTitle}{" "}
+                    {profileData.otherDetails.jobTitle}
                   </div>
                   <div className="mb-2 text-blueGray-600">
                     <i className="fas fa-university mr-2 text-lg text-blueGray-400"></i>
-                    {profileData.university}{" "}
+                    {profileData.otherDetails.university}
                   </div>
                 </div>
                 <div className="mt-10 py-10 border-t border-red-500 text-center">
                   <div className="flex flex-wrap justify-center">
                     <div className="w-full lg:w-9/12 px-4">
                       <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                        {profileData.bio}
+                        {profileData.otherDetails.bio}
                       </p>
                       <a href="#pablo" className="font-normal text-red-500">
                         Show more
@@ -180,11 +246,11 @@ export default function ProfilePage() {
             <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium ">Name</label>
+                <label className="block text-sm font-medium">Name</label>
                 <input
                   type="text"
-                  name="name"
-                  value={profileData.name}
+                  name="fullName"
+                  value={editData.fullName}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                   required
@@ -195,58 +261,58 @@ export default function ProfilePage() {
                 <input
                   type="text"
                   name="location"
-                  value={profileData.location}
+                  value={editData.otherDetails.location}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium ">Job Title</label>
+                <label className="block text-sm font-medium">Job Title</label>
                 <input
                   type="text"
                   name="jobTitle"
-                  value={profileData.jobTitle}
+                  value={editData.otherDetails.jobTitle}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium ">University</label>
+                <label className="block text-sm font-medium">University</label>
                 <input
                   type="text"
                   name="university"
-                  value={profileData.university}
+                  value={editData.otherDetails.university}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium ">Bio</label>
+                <label className="block text-sm font-medium">Bio</label>
                 <textarea
                   name="bio"
-                  value={profileData.bio}
+                  value={editData.otherDetails.bio}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                   rows={4}
                 ></textarea>
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium ">
+                <label className="block text-sm font-medium">
                   Profile Photo
                 </label>
                 <input
                   type="file"
+                  name="profilePicture"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="w-full p-2 border rounded"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium ">
-                  Cover Photo
-                </label>
+                <label className="block text-sm font-medium">Cover Photo</label>
                 <input
                   type="file"
+                  name="coverPhoto"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="w-full p-2 border rounded"
@@ -263,8 +329,32 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   className="px-4 py-2 bg-red-500 active:bg-red-600 text-white rounded"
+                  disabled={isSubmitting}
                 >
-                  Save Changes
+                  {isSubmitting ? (
+                    <>
+                      <svg
+                        className="animate-spin h-7 w-7 mr-1 text-white"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-30"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-25"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        ></path>
+                      </svg>
+                    </>
+                  ) : (
+                    "Save"
+                  )}
                 </button>
               </div>
             </form>
