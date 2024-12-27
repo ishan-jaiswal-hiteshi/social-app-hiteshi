@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/authContext";
 import axiosInstance from "@/utils/axiosInstance";
 import { FaRegHeart } from "react-icons/fa";
@@ -38,6 +38,7 @@ type PostData = {
   timestamp: string;
   likesCount: number;
   commentsCount: number;
+  PostLikes: { userId: number }[];
 };
 
 type PostProps = {
@@ -71,6 +72,13 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     }
     setShowComments((prev) => !prev);
   };
+
+  useEffect(() => {
+    const userLikedPost = postData?.PostLikes?.some(
+      (like) => like?.userId === user?.id
+    );
+    setIsLiked(userLikedPost);
+  }, [postData, user?.id]);
 
   const handleLikeClick = async () => {
     const postLikeData = {
