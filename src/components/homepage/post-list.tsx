@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Post from "./post";
 import axiosInstance from "@/utils/axiosInstance";
+import { toast } from "react-toastify";
 
 interface PostData {
   id: number;
@@ -35,10 +36,14 @@ const PostList = () => {
         setPosts(response?.data?.posts);
       }
     } catch (error) {
-      console.error("Failed to fetch posts", error);
+      toast.error("Unknown error occured.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePostDelete = (postId: number) => {
+    setPosts((prev) => prev?.filter((post) => post.id !== postId) || null);
   };
 
   useEffect(() => {
@@ -58,11 +63,19 @@ const PostList = () => {
           </div>
         </div>
       )}
-      {!loading && posts && posts.length > 0
-        ? posts.map((post) => <Post key={post.id} postData={post} />)
-        : !loading && (
-            <p className="text-center text-gray-500">No Posts Available</p>
-          )}
+      <div className="mb-10">
+        {!loading && posts && posts.length > 0
+          ? posts.map((post) => (
+              <Post
+                key={post.id}
+                postData={post}
+                onDeletePost={handlePostDelete}
+              />
+            ))
+          : !loading && (
+              <p className="text-center text-gray-500">No Posts Available</p>
+            )}
+      </div>
     </div>
   );
 };

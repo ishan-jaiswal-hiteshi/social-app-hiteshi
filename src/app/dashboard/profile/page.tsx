@@ -3,29 +3,29 @@ import { FiEdit } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import Link from "next/link";
-//import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useAuth } from "@/context/authContext";
 
 export default function ProfilePage() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isFriendsOpen, setIsFriendsOpen] = useState(false);
+  const [isFollowingOpen, setIsFollowingOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [profileData, setProfileData] = useState({
-    full_name: "Jenna Stones",
-    username: "jennastones",
-    profile_picture:
-      "https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg",
+    full_name: "",
+    username: "",
+    profile_picture: "",
     other_data: {
-      cover_picture:
-        "https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2710&q=80",
-      location: "Los Angeles, California",
-      job_title: "Solution Manager - Creative Tim Officer",
-      university: "University of Computer Science",
-      bio: "An artist of considerable range, Jenna writes, performs, and records all her music.",
-      friends: 23,
-      following: 48,
-      posts: 75,
+      cover_picture: "",
+      location: "",
+      job_title: "",
+      university: "",
+      bio: "",
+      friends: 0,
+      following: 0,
+      posts: 0,
     },
   });
 
@@ -99,17 +99,15 @@ export default function ProfilePage() {
       const response = await axiosInstance.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log("File uploaded, URL:", response.data.mediaUrl);
       return response.data.mediaUrl;
     } catch (error) {
-      console.error("File upload failed:", error);
       throw new Error("File upload failed");
     }
   };
 
   const handleModalToggle = () => {
-    setIsModalOpen(!isModalOpen);
-    if (!isModalOpen) {
+    setIsEditOpen(!isEditOpen);
+    if (!isEditOpen) {
       setEditData(profileData);
     }
   };
@@ -131,14 +129,15 @@ export default function ProfilePage() {
 
       const response = await axiosInstance.post("/profile-update", updateData);
       setProfileData(response.data.profile);
-      console.log(response.data.profile);
+      toast.success("Profile Updated");
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to Update");
     } finally {
       setIsSubmitting(false);
-      setIsModalOpen(false);
+      setIsEditOpen(false);
     }
   };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
     if (event.key === "Enter" && !isSubmitting) {
       event.preventDefault();
@@ -148,8 +147,8 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isModalOpen) {
-        setIsModalOpen(false);
+      if (event.key === "Escape" && isEditOpen) {
+        setIsEditOpen(false);
       }
     };
 
@@ -157,7 +156,7 @@ export default function ProfilePage() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isModalOpen]);
+  }, [isEditOpen]);
 
   const Skeleton = () => (
     <div className="min-h-screen flex flex-col md:ml-52 p-6">
@@ -224,7 +223,7 @@ export default function ProfilePage() {
   );
 
   if (loading) {
-    return <Skeleton />; // Show skeleton loader while profile data is being fetched
+    return <Skeleton />;
   }
 
   return (
@@ -384,7 +383,7 @@ export default function ProfilePage() {
           </div>
         </section>
       </div>
-      {isModalOpen && (
+      {isEditOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
