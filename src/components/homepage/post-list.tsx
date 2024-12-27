@@ -15,12 +15,14 @@ interface PostData {
     full_name: string;
     profile_picture: string;
   };
+
   content: string;
   mediaUrl: string;
   createdAt: string;
   timestamp: string;
   likesCount: number;
   commentsCount: number;
+  PostLikes: { userId: number }[];
 }
 
 const PostList = () => {
@@ -36,7 +38,8 @@ const PostList = () => {
         setPosts(response?.data?.posts);
       }
     } catch (error) {
-      toast.error("Unknown error occured.");
+      console.error("Error in fetching posts", error);
+      toast.error("Error in fetching posts.");
     } finally {
       setLoading(false);
     }

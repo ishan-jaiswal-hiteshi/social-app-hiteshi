@@ -76,6 +76,7 @@ const CreatePost = () => {
         throw new Error("Media upload failed. No media URL received.");
       }
     } catch (error) {
+      console.log("Error in uploading a post", error);
       toast.error("Error in Creating Post.");
     } finally {
       setLoading(false);
