@@ -2,12 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
-import {
-  isValidateEmail,
-  isValidOTP,
-  isValidFullName,
-  isValidUserName,
-} from "@/utils/input_Validations";
+import { isValidateEmail, isValidOTP } from "@/utils/input_Validations";
 import AuthForm from "@/components/Auth/loginForm";
 import { useRouter } from "next/navigation";
 
