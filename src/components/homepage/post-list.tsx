@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Post from "./post";
 import axiosInstance from "@/utils/axiosInstance";
+import { toast } from "react-toastify";
 
 interface PostData {
   id: number;
@@ -35,7 +36,7 @@ const PostList = () => {
         setPosts(response?.data?.posts);
       }
     } catch (error) {
-      console.error("Failed to fetch posts", error);
+      toast.error("Unknown error occured.");
     } finally {
       setLoading(false);
     }

@@ -99,10 +99,8 @@ export default function ProfilePage() {
       const response = await axiosInstance.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log("File uploaded, URL:", response.data.mediaUrl);
       return response.data.mediaUrl;
     } catch (error) {
-      console.error("File upload failed:", error);
       throw new Error("File upload failed");
     }
   };
@@ -131,14 +129,15 @@ export default function ProfilePage() {
 
       const response = await axiosInstance.post("/profile-update", updateData);
       setProfileData(response.data.profile);
-      console.log(response.data.profile);
+      toast.success("Profile Updated");
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to Update");
     } finally {
       setIsSubmitting(false);
       setIsEditOpen(false);
     }
   };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
     if (event.key === "Enter" && !isSubmitting) {
       event.preventDefault();
@@ -224,7 +223,7 @@ export default function ProfilePage() {
   );
 
   if (loading) {
-    return <Skeleton />; // Show skeleton loader while profile data is being fetched
+    return <Skeleton />;
   }
 
   return (

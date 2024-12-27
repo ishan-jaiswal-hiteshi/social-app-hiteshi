@@ -70,14 +70,12 @@ const CreatePost = () => {
 
         if (postResponse) {
           toast.success("Post Created Successfully!");
-          console.log("Response data:", postResponse.data);
           router.push("/dashboard/home");
         }
       } else {
         throw new Error("Media upload failed. No media URL received.");
       }
     } catch (error) {
-      console.error("Error creating post:", error);
       toast.error("Error in Creating Post.");
     } finally {
       setLoading(false);
