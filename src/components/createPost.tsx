@@ -36,10 +36,13 @@ const CreatePost = () => {
       toast.error("Both image and content are required.");
       return;
     }
+
     const formattedTags = tags
-      ?.split(/[\s,]+/)
-      ?.map((tag) => `#${tag?.trim()}`)
-      ?.join(" ");
+      ? tags
+          ?.split(/[\s,]+/)
+          ?.map((tag) => `#${tag?.trim()}`)
+          ?.join(" ")
+      : "";
 
     const updatedContent = `${content} ${formattedTags}`;
     const formData = new FormData();

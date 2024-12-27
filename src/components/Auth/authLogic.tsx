@@ -2,21 +2,12 @@
 
 import { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
-import {
-  isValidateEmail,
-  isValidOTP,
-  isValidFullName,
-  isValidUserName,
-} from "@/utils/input_Validations";
+import { isValidateEmail, isValidOTP } from "@/utils/input_Validations";
 import AuthForm from "@/components/Auth/loginForm";
 import { useRouter } from "next/navigation";
 
 export default function Auth() {
   const router = useRouter();
-  const token = localStorage.getItem("accessToken");
-  if (token) {
-    router.push("/dashboard/home");
-  }
 
   const [formData, setFormData] = useState({
     email: "",

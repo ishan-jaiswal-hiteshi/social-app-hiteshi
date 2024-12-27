@@ -2,39 +2,41 @@
 import React, { useState } from "react";
 import { useAuth } from "@/context/authContext";
 import axiosInstance from "@/utils/axiosInstance";
+import { FaRegHeart } from "react-icons/fa";
+import { FaRegComment } from "react-icons/fa6";
+import { IoSend } from "react-icons/io5";
+import { FcLike } from "react-icons/fc";
+import { MdDelete } from "react-icons/md";
+
+type Comment = {
+  id: number;
+  userId: number;
+  postId: number;
+  comment: string;
+  likesCount: number;
+  createdAt: string;
+  User: {
+    id: number;
+    username: string;
+    profile_picture: string | undefined;
+    full_name: string;
+  };
+};
 
 type PostData = {
   id: number;
-  user: {
+  User: {
     id: number;
-    name: string;
+    full_name: string;
     username: string;
-    profile_picture_url: string;
+    profile_picture: string | undefined;
   };
+  userId: number;
   content: string;
-  media_url: string;
+  mediaUrl: string;
   timestamp: string;
-  likes: {
-    count: number;
-    users: {
-      id: number;
-      name: string;
-      username: string;
-      profile_picture_url: string;
-    }[];
-  };
-  comments: {
-    count: number;
-    list: {
-      id: number;
-      user: {
-        id: number;
-        name: string;
-        username: string;
-      };
-      comment: string;
-    }[];
-  };
+  likesCount: number;
+  commentsCount: number;
 };
 
 type PostProps = {
@@ -43,31 +45,56 @@ type PostProps = {
 
 const Post: React.FC<PostProps> = ({ postData }) => {
   const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(postData?.likes?.count);
+  const [likesCount, setLikesCount] = useState(postData?.likesCount);
+  const [commnetsCount, setCommentsCount] = useState(postData?.commentsCount);
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState(postData?.comments?.list || []);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loadingComments, setLoadingComments] = useState(false);
   const [commentText, setCommentText] = useState("");
   const { user } = useAuth();
 
-  const toggleComments = () => {
+  const toggleComments = async () => {
+    if (!showComments) {
+      setLoadingComments(true);
+      try {
+        const response = await axiosInstance.get(`get-comments/${postData.id}`);
+        if (response?.data) {
+          setComments(response.data.comments);
+        }
+      } catch (error) {
+        console.error("Error fetching comments", error);
+      } finally {
+        setLoadingComments(false);
+      }
+    }
     setShowComments((prev) => !prev);
   };
 
   const handleLikeClick = async () => {
     const postLikeData = {
       userId: user?.id,
-      postId: "7",
+      postId: postData.id,
     };
     try {
       await axiosInstance.post(`/post/like-unlike`, postLikeData);
-      if (isLiked) {
-        setLikesCount((prev) => prev - 1);
-      } else {
-        setLikesCount((prev) => prev + 1);
-      }
+      setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
       setIsLiked((prev) => !prev);
     } catch (error) {
       console.error("Error updating like status", error);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && commentText.trim()) {
+      handleCommentSubmit();
+    }
+  };
+
+  const handleDeletePost = async () => {
+    const response = await axiosInstance.delete(`/delete-post/${postData?.id}`);
+
+    if (response) {
+      console.log(response);
     }
   };
 
@@ -77,15 +104,21 @@ const Post: React.FC<PostProps> = ({ postData }) => {
     const commentData = {
       comment: commentText,
       userId: user?.id,
-      postId: "7",
+      postId: postData.id,
     };
+
     try {
+      setLoadingComments(true);
       const response = await axiosInstance.post(`/create-comment`, commentData);
       const newComment = response?.data?.comment;
+      newComment.User = user;
       setComments((prev) => [...prev, newComment]);
+      setCommentsCount(() => commnetsCount + 1);
       setCommentText("");
     } catch (error) {
       console.error("Error submitting comment", error);
+    } finally {
+      setLoadingComments(false);
     }
   };
 
@@ -95,44 +128,50 @@ const Post: React.FC<PostProps> = ({ postData }) => {
 
     const hashtags = content?.match(hashtagRegex) || [];
 
-    return parts?.map((part, index) => {
-      if (hashtags[index]) {
-        return (
-          <div key={index} className="inline-block">
-            <span>{part}</span>
-            <span className="text-blue-500"> {hashtags[index]} </span>
-          </div>
-        );
-      }
-      return <span key={index}>{part}</span>;
-    });
+    return parts?.map((part, index) => (
+      <span key={index}>
+        {part}
+        {hashtags[index] && (
+          <span className="text-blue-500">{` ${hashtags[index]}`}</span>
+        )}
+      </span>
+    ));
   };
 
   return (
-    <div className="border border-gray-300 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
-      <div className="flex items-center p-3">
+    <div className="border border-gray-600 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
+      <div className="relative flex items-center p-3">
         <img
-          src={postData?.user?.profile_picture_url}
+          src={postData?.User?.profile_picture}
           alt="profile"
           className="w-10 h-10 rounded-full mr-3"
         />
         <div>
-          <strong>{postData?.user?.name}</strong>
+          <strong>{postData?.User?.full_name}</strong>
           <p className="m-0 text-gray-500 text-sm">
-            @{postData?.user?.username}
+            @{postData?.User?.username}
           </p>
         </div>
+        {user?.id === postData?.userId && (
+          <div className="absolute top-4 right-2 cursor-pointer">
+            <MdDelete size={20} onClick={handleDeletePost} color="red" />
+          </div>
+        )}
       </div>
-
       <div>
-        <img
-          src={postData?.media_url}
-          alt="post"
-          className="w-full border-t border-b border-gray-300"
-        />
-        <div className="p-3">
-          {formatContentWithHashtags(postData?.content)}
-        </div>
+        {postData?.mediaUrl && (
+          <img
+            src={postData?.mediaUrl}
+            alt="post"
+            className="w-full border-t border-b border-gray-300"
+            onDoubleClick={handleLikeClick}
+          />
+        )}
+        {postData?.content && (
+          <div className="p-3">
+            {formatContentWithHashtags(postData?.content)}
+          </div>
+        )}
       </div>
 
       <div className="border-t border-gray-300 p-2 flex justify-start gap-4">
@@ -140,57 +179,64 @@ const Post: React.FC<PostProps> = ({ postData }) => {
           onClick={handleLikeClick}
           className="cursor-pointer flex items-center gap-1"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 ${isLiked ? "bg-red-500" : "text-gray-500"}`}
-            viewBox="0 -960 960 960"
-            fill="currentColor"
-          >
-            <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" />
-          </svg>
+          {isLiked ? <FcLike size={20} /> : <FaRegHeart size={20} />}
+
           <p>{likesCount} likes</p>
         </div>
         <div
           onClick={toggleComments}
           className="cursor-pointer flex items-center gap-1"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 cursor-pointer"
-            viewBox="0 -960 960 960"
-            fill="currentColor"
-          >
-            <path d="M320-60v-221q-101-8-170.5-82T80-540q0-109 75.5-184.5T340-800h27l-63-64 56-56 160 160-160 160-56-56 63-64h-27q-75 0-127.5 52.5T160-540q0 75 52.5 127.5T340-360h60v107l107-107h113q75 0 127.5-52.5T800-540q0-75-52.5-127.5T620-720h-20v-80h20q109 0 184.5 75.5T880-540q0 109-75.5 184.5T620-280h-80L320-60Z" />
-          </svg>
-          <p>{postData?.comments?.count} comments</p>
+          <FaRegComment size={20} />
+          <p>{commnetsCount} comments</p>
         </div>
       </div>
 
       {showComments && (
         <div className="p-3 border-t border-gray-300">
-          {comments?.map((comment) => (
-            <div key={comment?.id} className="mb-3">
-              <strong>{comment?.user?.name}</strong>{" "}
-              <span className="text-gray-500">@{comment?.user?.username}</span>
-              <p className="mt-1">{comment?.comment}</p>
+          {loadingComments ? (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div
+                className="animate-spin inline-block text-center w-12 h-12 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
+                role="status"
+                aria-label="loading"
+              >
+                <span className="sr-only">Loading...</span>
+              </div>
             </div>
-          ))}
+          ) : (
+            comments?.map((comment) => (
+              <div key={comment?.id} className="mb-3">
+                <div className=" flex">
+                  <img
+                    src={comment?.User?.profile_picture}
+                    alt="profile"
+                    className="w-8 h-8 rounded-full mr-3"
+                  />
+                  <strong>{comment.User?.full_name}</strong>
+                  <span className="m-0 ml-2 text-gray-500 text-sm">
+                    @{comment.User?.username}
+                  </span>
+                </div>
+                <p className=" ml-10 text-sm">{comment?.comment}</p>
+              </div>
+            ))
+          )}
+
           <div className="mt-3 flex items-center gap-2">
             <input
               type="text"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
+              onKeyDown={(e) => handleKeyDown(e)}
               placeholder="Write a comment..."
-              className="flex-grow border border-gray-400 rounded px-2 py-1 text-black"
+              className="flex-grow bg-black rounded px-2 py-1 text-white"
             />
-            <button onClick={handleCommentSubmit}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-8 h-8 bg-white rounded"
-                viewBox="0 -960 960 960"
-              >
-                <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
-              </svg>
+            <button
+              onClick={handleCommentSubmit}
+              disabled={!commentText.trim()}
+            >
+              <IoSend size={20} />
             </button>
           </div>
         </div>
