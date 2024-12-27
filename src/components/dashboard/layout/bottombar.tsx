@@ -1,7 +1,11 @@
+"use client";
+
+import { useAuth } from "@/context/authContext";
 import Link from "next/link";
 import React from "react";
 
 const BottombarLayout = () => {
+  const { user } = useAuth();
   return (
     <footer className="md:hidden bg-[#00070C] text-white py-3 text-center fixed bottom-0 left-0 right-0 ">
       <div className="flex justify-around">
@@ -52,7 +56,7 @@ const BottombarLayout = () => {
           className="hover:text-gray-300 cursor-pointer"
         >
           <img
-            src="https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+            src={user?.profile_picture}
             alt="profile"
             className="w-6 h-6 rounded-full"
           />

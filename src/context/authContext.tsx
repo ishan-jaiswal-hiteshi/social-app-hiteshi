@@ -1,5 +1,6 @@
 "use client";
 
+import axiosInstance from "@/utils/axiosInstance";
 import {
   createContext,
   ReactNode,
@@ -7,16 +8,28 @@ import {
   useState,
   Dispatch,
   SetStateAction,
+  useEffect,
 } from "react";
+
+type OtherData = {
+  cover_picture: string | null;
+  location: string | null;
+  job_title: string | null;
+  university: string | null;
+  bio: string | null;
+  friends: number | null;
+  following: number | null;
+  posts: number | null;
+};
 
 type User = {
   id: number;
   username: string;
   email: string;
   full_name: string;
-  profile_picture: string | null;
+  profile_picture: string | undefined;
   otp: string | null;
-  other_data: any | null;
+  other_data: OtherData | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -25,16 +38,12 @@ type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   setUser: Dispatch<SetStateAction<User | null>>;
-  login: (user: User) => void;
-  logout: () => void;
 };
 
 const authContextDefaultValues: AuthContextType = {
   user: null,
   isAuthenticated: false,
   setUser: () => {},
-  login: () => {},
-  logout: () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(authContextDefaultValues);
@@ -51,22 +60,26 @@ export function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  const login = (user: User) => {
-    setUser(user);
-    setIsAuthenticated(true);
+  const getCurrentUser = async () => {
+    const response = await axiosInstance.get("/me");
+
+    if (response && response?.data?.user) {
+      setUser(response?.data?.user);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      setIsAuthenticated(true);
+      getCurrentUser();
+    }
+  }, [isAuthenticated]);
 
   const value = {
     user,
     setUser,
     isAuthenticated,
-    login,
-    logout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

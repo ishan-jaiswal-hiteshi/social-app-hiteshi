@@ -9,13 +9,6 @@ import { useRouter } from "next/navigation";
 export default function Auth() {
   const router = useRouter();
 
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      router.push("/dashboard/home");
-    }
-  }
-
   const [formData, setFormData] = useState({
     email: "",
     fullName: "",
