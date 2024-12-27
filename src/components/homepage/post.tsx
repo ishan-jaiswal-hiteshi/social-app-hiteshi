@@ -7,6 +7,7 @@ import { FaRegComment } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
 import { FcLike } from "react-icons/fc";
 import { MdDelete } from "react-icons/md";
+import { toast } from "react-toastify";
 
 type Comment = {
   id: number;
@@ -41,9 +42,10 @@ type PostData = {
 
 type PostProps = {
   postData: PostData;
+  onDeletePost: (postId: number) => void;
 };
 
-const Post: React.FC<PostProps> = ({ postData }) => {
+const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(postData?.likesCount);
   const [commnetsCount, setCommentsCount] = useState(postData?.commentsCount);
@@ -91,10 +93,18 @@ const Post: React.FC<PostProps> = ({ postData }) => {
   };
 
   const handleDeletePost = async () => {
-    const response = await axiosInstance.delete(`/delete-post/${postData?.id}`);
+    try {
+      const response = await axiosInstance.delete(
+        `/delete-post/${postData?.id}`
+      );
 
-    if (response) {
-      console.log(response);
+      if (response) {
+        toast.success(response?.data?.message);
+        onDeletePost(postData?.id);
+      }
+    } catch (error) {
+      console.error("Error Deleting Post", error);
+      toast.error("Post did not deleted");
     }
   };
 
@@ -142,7 +152,10 @@ const Post: React.FC<PostProps> = ({ postData }) => {
     <div className="border border-gray-600 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
       <div className="relative flex items-center p-3">
         <img
-          src={postData?.User?.profile_picture}
+          src={
+            postData?.User?.profile_picture ||
+            "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
+          }
           alt="profile"
           className="w-10 h-10 rounded-full mr-3"
         />

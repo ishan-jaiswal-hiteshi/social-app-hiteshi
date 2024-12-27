@@ -41,6 +41,10 @@ const PostList = () => {
     }
   };
 
+  const handlePostDelete = (postId: number) => {
+    setPosts((prev) => prev?.filter((post) => post.id !== postId) || null);
+  };
+
   useEffect(() => {
     getAllPosts();
   }, []);
@@ -58,11 +62,19 @@ const PostList = () => {
           </div>
         </div>
       )}
-      {!loading && posts && posts.length > 0
-        ? posts.map((post) => <Post key={post.id} postData={post} />)
-        : !loading && (
-            <p className="text-center text-gray-500">No Posts Available</p>
-          )}
+      <div className="mb-10">
+        {!loading && posts && posts.length > 0
+          ? posts.map((post) => (
+              <Post
+                key={post.id}
+                postData={post}
+                onDeletePost={handlePostDelete}
+              />
+            ))
+          : !loading && (
+              <p className="text-center text-gray-500">No Posts Available</p>
+            )}
+      </div>
     </div>
   );
 };
