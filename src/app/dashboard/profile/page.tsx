@@ -1,23 +1,26 @@
 "use client";
 import { FiEdit } from "react-icons/fi";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import Link from "next/link";
-import { toast } from "react-toastify";
+//import { toast } from "react-toastify";
+import { useAuth } from "@/context/authContext";
 
 export default function ProfilePage() {
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [profileData, setProfileData] = useState({
-    fullName: "Jenna Stones",
+    full_name: "Jenna Stones",
     username: "jennastones",
-    profilePicture:
+    profile_picture:
       "https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg",
-    otherDetails: {
-      coverPicture:
+    other_data: {
+      cover_picture:
         "https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2710&q=80",
       location: "Los Angeles, California",
-      jobTitle: "Solution Manager - Creative Tim Officer",
+      job_title: "Solution Manager - Creative Tim Officer",
       university: "University of Computer Science",
       bio: "An artist of considerable range, Jenna writes, performs, and records all her music.",
       friends: 23,
@@ -25,22 +28,52 @@ export default function ProfilePage() {
       posts: 75,
     },
   });
+
   const [editData, setEditData] = useState(profileData);
   const [files, setFiles] = useState<{
-    profilePicture?: File;
-    coverPhoto?: File;
+    profile_picture?: File;
+    cover_picture?: File;
   }>({});
+
+  useEffect(() => {
+    if (user) {
+      setLoading(true);
+      setProfileData({
+        full_name: user.full_name || "",
+        username: user.username || "",
+        profile_picture:
+          user?.profile_picture ||
+          "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg",
+        other_data: {
+          cover_picture:
+            user?.other_data?.cover_picture ||
+            "https://hiteshi.com/_next/static/media/logo.9b8ca92c.png",
+          location: user?.other_data?.location || "No location added.",
+          job_title: user?.other_data?.job_title || "No work details added.",
+          university:
+            user?.other_data?.university || "No education details added.",
+          bio: user?.other_data?.bio || "No bio added.",
+          friends: user?.other_data?.friends || 0,
+          following: user?.other_data?.following || 0,
+          posts: user?.other_data?.posts || 0,
+        },
+      });
+      setLoading(false);
+    }
+  }, [user]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    if (name === "fullName" || name === "username") {
+
+    if (name === "full_name" || name === "username") {
       setEditData((prev) => ({ ...prev, [name]: value }));
-    } else {
+    } else if (name.startsWith("other_data.")) {
+      const field = name.split(".")[1];
       setEditData((prev) => ({
         ...prev,
-        otherDetails: { ...prev.otherDetails, [name]: value },
+        other_data: { ...prev.other_data, [field]: value },
       }));
     }
   };
@@ -48,6 +81,12 @@ export default function ProfilePage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      if (!file.type.startsWith("image/")) {
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        return;
+      }
       const { name } = e.target;
       setFiles((prev) => ({ ...prev, [name]: file }));
     }
@@ -56,10 +95,16 @@ export default function ProfilePage() {
   const uploadFile = async (file: string | Blob) => {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await axiosInstance.post("/upload", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return response.data.publicUrl;
+    try {
+      const response = await axiosInstance.post("/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("File uploaded, URL:", response.data.mediaUrl);
+      return response.data.mediaUrl;
+    } catch (error) {
+      console.error("File upload failed:", error);
+      throw new Error("File upload failed");
+    }
   };
 
   const handleModalToggle = () => {
@@ -74,27 +119,113 @@ export default function ProfilePage() {
     setIsSubmitting(true);
 
     try {
-      const updateData = { ...editData };
-
-      if (files.profilePicture) {
-        updateData.profilePicture = await uploadFile(files.profilePicture);
+      const updateData = { ...editData, userId: user?.id };
+      if (files.profile_picture) {
+        updateData.profile_picture = await uploadFile(files.profile_picture);
       }
-      if (files.coverPhoto) {
-        updateData.otherDetails.coverPicture = await uploadFile(
-          files.coverPhoto
+      if (files.cover_picture) {
+        updateData.other_data.cover_picture = await uploadFile(
+          files.cover_picture
         );
       }
 
-      const response = await axiosInstance.put("/updateprofile", updateData);
-      toast.success("Profile Updated");
-      setProfileData(response.data);
+      const response = await axiosInstance.post("/profile-update", updateData);
+      setProfileData(response.data.profile);
+      console.log(response.data.profile);
     } catch (error) {
-      toast.error("Unable to Update");
+      console.log(error);
     } finally {
       setIsSubmitting(false);
       setIsModalOpen(false);
     }
   };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    if (event.key === "Enter" && !isSubmitting) {
+      event.preventDefault();
+      handleSubmit;
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isModalOpen) {
+        setIsModalOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isModalOpen]);
+
+  const Skeleton = () => (
+    <div className="min-h-screen flex flex-col md:ml-52 p-6">
+      {/* Cover Image */}
+      <div className="relative block h-[500px] bg-gray-300 animate-pulse">
+        <div className="absolute top-0 w-full h-full bg-center bg-cover bg-gray-400 animate-pulse"></div>
+      </div>
+
+      <div className="relative py-16 bg-blueGray-200 animate-pulse">
+        <div className="container mx-auto px-4">
+          <div className="relative flex flex-col min-w-0 break-words bg-black text-white w-full mb-6 shadow-xl rounded-lg -mt-64">
+            <div className="px-6">
+              <div className="flex flex-wrap justify-center">
+                {/* Profile Picture */}
+                <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
+                  <div className="relative">
+                    <div className="rounded-full ring-4 ring-red-500 shadow-xl overflow-hidden h-[150px] w-[150px] absolute -m-16 -ml-20 lg:-ml-16 bg-gray-400 animate-pulse"></div>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-24 lg:justify-end items-center gap-4 mt-24 ">
+                  <button className="bg-gray-400 animate-pulse w-24 h-8 rounded-md"></button>
+                  <button className="bg-gray-400 animate-pulse w-24 h-8 rounded-md"></button>
+                </div>
+                <div className="w-full lg:w-4/12 px-4 lg:order-1">
+                  <div className="flex justify-center py-4 lg:pt-4 pt-8">
+                    <div className="mr-4 p-3 text-center">
+                      <div className="w-24 h-6 bg-gray-400 animate-pulse rounded-md"></div>
+                    </div>
+                    <div className="mr-4 p-3 text-center">
+                      <div className="w-24 h-6 bg-gray-400 animate-pulse rounded-md"></div>
+                    </div>
+                    <div className="lg:mr-4 p-3 text-center">
+                      <div className="w-24 h-6 bg-gray-400 animate-pulse rounded-md"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Profile Name, Location, and Job */}
+              <div className="text-center mt-5">
+                <div className="w-48 h-8 bg-gray-400 animate-pulse mx-auto rounded-md mb-4"></div>
+                <div className="w-36 h-6 bg-gray-400 animate-pulse mx-auto rounded-md mb-2"></div>
+                <div className="w-72 h-0.5 mx-auto my-4 bg-red-500 border-0 rounded md:my-10"></div>
+                <div className="w-48 h-6 bg-gray-400 animate-pulse mx-auto rounded-md mb-2"></div>
+                <div className="w-48 h-6 bg-gray-400 animate-pulse mx-auto rounded-md mb-2"></div>
+              </div>
+
+              {/* Bio Section */}
+              <div className="mt-10 py-10 border-t border-red-500 text-center">
+                <div className="flex flex-wrap justify-center">
+                  <div className="w-full lg:w-9/12 px-4">
+                    <div className="w-72 h-6 bg-gray-400 animate-pulse mx-auto rounded-md mb-6"></div>
+                    <div className="w-40 h-6 bg-gray-400 animate-pulse mx-auto rounded-md"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (loading) {
+    return <Skeleton />; // Show skeleton loader while profile data is being fetched
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:ml-52">
@@ -103,13 +234,16 @@ export default function ProfilePage() {
           <div
             className="absolute top-0 w-full h-full bg-center bg-cover"
             style={{
-              backgroundImage: `url(${profileData?.otherDetails?.coverPicture})`,
+              backgroundImage: `url(${profileData?.other_data?.cover_picture})`,
+              backgroundSize: "contain",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
             }}
           >
             <span className="w-full h-full absolute opacity-50 bg-black"></span>
           </div>
 
-          <div className="absolute top-4 right-4 sm:hidden">
+          <div className="fixed top-5 right-5 sm:hidden">
             <Link
               href="/"
               onClick={() => {
@@ -126,7 +260,6 @@ export default function ProfilePage() {
               >
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
               </svg>
-              <p className="text-red-500">Log out</p>
             </Link>
           </div>
 
@@ -157,11 +290,13 @@ export default function ProfilePage() {
                 <div className="flex flex-wrap justify-center">
                   <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
                     <div className="relative">
-                      <img
-                        alt="Profile"
-                        src={profileData?.profilePicture}
-                        className="ring-4 ring-red-500 shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-[150px]"
-                      />
+                      <div className="rounded-full ring-4 ring-red-500 shadow-xl overflow-hidden h-[150px] w-[150px] absolute -m-16 -ml-20 lg:-ml-16">
+                        <img
+                          alt="Profile"
+                          src={profileData?.profile_picture}
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
                       <span className="top-14 left-10 absolute bg-red-600 p-2 rounded-full text-white hover:bg-red-600 cursor-pointer">
                         <button
                           type="button"
@@ -191,7 +326,7 @@ export default function ProfilePage() {
                     <div className="flex justify-center py-4 lg:pt-4 pt-8">
                       <div className="mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData?.otherDetails?.friends}
+                          {profileData?.other_data?.friends}
                         </span>
                         <span className="text-sm text-blueGray-400">
                           Friends
@@ -199,13 +334,13 @@ export default function ProfilePage() {
                       </div>
                       <div className="mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData?.otherDetails?.posts}
+                          {profileData?.other_data?.posts}
                         </span>
                         <span className="text-sm text-blueGray-400">Posts</span>
                       </div>
                       <div className="lg:mr-4 p-3 text-center">
                         <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData?.otherDetails?.following}
+                          {profileData?.other_data?.following}
                         </span>
                         <span className="text-sm text-blueGray-400">
                           Following
@@ -216,27 +351,27 @@ export default function ProfilePage() {
                 </div>
                 <div className="text-center mt-5">
                   <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
-                    {profileData?.fullName}
+                    {profileData?.full_name}
                   </h3>
                   <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                     <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-                    {profileData?.otherDetails?.location}
+                    {profileData?.other_data?.location}
                   </div>
                   <hr className="w-72 h-0.5 mx-auto my-4 bg-red-500 border-0 rounded md:my-10" />
                   <div className="mb-2 text-blueGray-600 mt-10">
                     <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-                    {profileData?.otherDetails?.jobTitle}
+                    {profileData?.other_data?.job_title}
                   </div>
                   <div className="mb-2 text-blueGray-600">
                     <i className="fas fa-university mr-2 text-lg text-blueGray-400"></i>
-                    {profileData?.otherDetails?.university}
+                    {profileData?.other_data?.university}
                   </div>
                 </div>
                 <div className="mt-10 py-10 border-t border-red-500 text-center">
                   <div className="flex flex-wrap justify-center">
                     <div className="w-full lg:w-9/12 px-4">
                       <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                        {profileData?.otherDetails?.bio}
+                        {profileData?.other_data?.bio}
                       </p>
                       <a href="#pablo" className="font-normal text-red-500">
                         Show more
@@ -258,8 +393,8 @@ export default function ProfilePage() {
                 <label className="block text-sm font-medium">Name</label>
                 <input
                   type="text"
-                  name="fullName"
-                  value={editData.fullName}
+                  name="full_name"
+                  value={editData.full_name}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                   required
@@ -269,8 +404,8 @@ export default function ProfilePage() {
                 <label className="block text-sm font-medium">Location</label>
                 <input
                   type="text"
-                  name="location"
-                  value={editData.otherDetails.location}
+                  name="other_data.location"
+                  value={editData.other_data.location}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                 />
@@ -279,8 +414,8 @@ export default function ProfilePage() {
                 <label className="block text-sm font-medium">Job Title</label>
                 <input
                   type="text"
-                  name="jobTitle"
-                  value={editData.otherDetails.jobTitle}
+                  name="other_data.job_title"
+                  value={editData.other_data.job_title}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                 />
@@ -289,8 +424,8 @@ export default function ProfilePage() {
                 <label className="block text-sm font-medium">University</label>
                 <input
                   type="text"
-                  name="university"
-                  value={editData.otherDetails.university}
+                  name="other_data.university"
+                  value={editData.other_data.university}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                 />
@@ -298,8 +433,8 @@ export default function ProfilePage() {
               <div className="mb-4">
                 <label className="block text-sm font-medium">Bio</label>
                 <textarea
-                  name="bio"
-                  value={editData.otherDetails.bio}
+                  name="other_data.bio"
+                  value={editData.other_data.bio}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                   rows={4}
@@ -311,7 +446,7 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="file"
-                  name="profilePicture"
+                  name="profile_picture"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="w-full p-2 border rounded"
@@ -321,7 +456,7 @@ export default function ProfilePage() {
                 <label className="block text-sm font-medium">Cover Photo</label>
                 <input
                   type="file"
-                  name="coverPhoto"
+                  name="cover_picture"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="w-full p-2 border rounded"
@@ -341,26 +476,13 @@ export default function ProfilePage() {
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
-                    <>
-                      <svg
-                        className="animate-spin h-7 w-7 mr-1 text-white"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-30"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-25"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v8H4z"
-                        ></path>
-                      </svg>
-                    </>
+                    <div
+                      className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
+                      role="status"
+                      aria-label="loading"
+                    >
+                      <span className="sr-only">Loading...</span>
+                    </div>
                   ) : (
                     "Save"
                   )}

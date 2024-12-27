@@ -12,9 +12,14 @@ import {
 } from "react";
 
 type OtherData = {
-  key1: string;
-  key2: number;
-  key3?: boolean;
+  cover_picture: string | null;
+  location: string | null;
+  job_title: string | null;
+  university: string | null;
+  bio: string | null;
+  friends: number | null;
+  following: number | null;
+  posts: number | null;
 };
 
 type User = {

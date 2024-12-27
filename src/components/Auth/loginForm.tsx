@@ -11,6 +11,12 @@ export default function AuthForm({
   handleEmailSubmit,
   handleSubmit,
 }: AuthFormProps) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    if (event.key === "Enter" && !loading) {
+      event.preventDefault();
+      emailSubmitted ? handleSubmit : handleEmailSubmit;
+    }
+  };
   return (
     <div className="flex items-center justify-center h-96 w-96">
       <form
@@ -95,32 +101,19 @@ export default function AuthForm({
             type="submit"
             disabled={loading}
             className={`w-fit bg-red-500 text-white px-3 py-2 rounded-md flex items-center justify-center ${
-              loading ? "opacity-50 cursor-not-allowed" : "active:bg-red-600"
+              loading ? "opacity-75 cursor-not-allowed" : "active:bg-red-600"
             }`}
           >
             {loading ? (
-              <>
-                <svg
-                  className="animate-spin h-7 w-7 mr-1 text-white"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-30"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-25"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
-                  ></path>
-                </svg>
-              </>
+              <div
+                className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
+                role="status"
+                aria-label="loading"
+              >
+                <span className="sr-only">Loading...</span>
+              </div>
             ) : (
-              <MdNavigateNext size={32} />
+              <MdNavigateNext size={24} />
             )}
           </button>
         </div>
