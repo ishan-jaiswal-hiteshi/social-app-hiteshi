@@ -5,6 +5,8 @@ import axiosInstance from "@/utils/axiosInstance";
 import { FaRegHeart } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
+import { FcLike } from "react-icons/fc";
+import { MdDelete } from "react-icons/md";
 
 type Comment = {
   id: number;
@@ -29,7 +31,7 @@ type PostData = {
     username: string;
     profile_picture: string | undefined;
   };
-  userId: string;
+  userId: number;
   content: string;
   mediaUrl: string;
   timestamp: string;
@@ -82,6 +84,20 @@ const Post: React.FC<PostProps> = ({ postData }) => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && commentText.trim()) {
+      handleCommentSubmit();
+    }
+  };
+
+  const handleDeletePost = async () => {
+    const response = await axiosInstance.delete(`/delete-post/${postData?.id}`);
+
+    if (response) {
+      console.log(response);
+    }
+  };
+
   const handleCommentSubmit = async () => {
     if (!commentText.trim()) return;
 
@@ -124,7 +140,7 @@ const Post: React.FC<PostProps> = ({ postData }) => {
 
   return (
     <div className="border border-gray-600 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
-      <div className="flex items-center p-3">
+      <div className="relative flex items-center p-3">
         <img
           src={postData?.User?.profile_picture}
           alt="profile"
@@ -136,6 +152,11 @@ const Post: React.FC<PostProps> = ({ postData }) => {
             @{postData?.User?.username}
           </p>
         </div>
+        {user?.id === postData?.userId && (
+          <div className="absolute top-4 right-2 cursor-pointer">
+            <MdDelete size={20} onClick={handleDeletePost} color="red" />
+          </div>
+        )}
       </div>
       <div>
         {postData?.mediaUrl && (
@@ -143,6 +164,7 @@ const Post: React.FC<PostProps> = ({ postData }) => {
             src={postData?.mediaUrl}
             alt="post"
             className="w-full border-t border-b border-gray-300"
+            onDoubleClick={handleLikeClick}
           />
         )}
         {postData?.content && (
@@ -157,10 +179,8 @@ const Post: React.FC<PostProps> = ({ postData }) => {
           onClick={handleLikeClick}
           className="cursor-pointer flex items-center gap-1"
         >
-          <FaRegHeart
-            size={20}
-            className={` ${isLiked ? "bg-red-500" : "text-gray-500"}`}
-          />
+          {isLiked ? <FcLike size={20} /> : <FaRegHeart size={20} />}
+
           <p>{likesCount} likes</p>
         </div>
         <div
@@ -187,7 +207,7 @@ const Post: React.FC<PostProps> = ({ postData }) => {
           ) : (
             comments?.map((comment) => (
               <div key={comment?.id} className="mb-3">
-                <div className="mb-1 flex">
+                <div className=" flex">
                   <img
                     src={comment?.User?.profile_picture}
                     alt="profile"
@@ -198,19 +218,24 @@ const Post: React.FC<PostProps> = ({ postData }) => {
                     @{comment.User?.username}
                   </span>
                 </div>
-                <p className="mt-1 ml-10">{comment?.comment}</p>
+                <p className=" ml-10 text-sm">{comment?.comment}</p>
               </div>
             ))
           )}
+
           <div className="mt-3 flex items-center gap-2">
             <input
               type="text"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
+              onKeyDown={(e) => handleKeyDown(e)}
               placeholder="Write a comment..."
-              className="flex-grow bg-black  rounded px-2 py-1 text-white"
+              className="flex-grow bg-black rounded px-2 py-1 text-white"
             />
-            <button onClick={handleCommentSubmit} disabled={!commentText}>
+            <button
+              onClick={handleCommentSubmit}
+              disabled={!commentText.trim()}
+            >
               <IoSend size={20} />
             </button>
           </div>

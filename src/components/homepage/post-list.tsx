@@ -6,7 +6,7 @@ import axiosInstance from "@/utils/axiosInstance";
 
 interface PostData {
   id: number;
-  userId: string;
+  userId: number;
   User: {
     id: number;
     name: string;
@@ -30,7 +30,7 @@ const PostList = () => {
     try {
       setLoading(true);
 
-      const response = await axiosInstance("get-posts");
+      const response = await axiosInstance("/get-posts");
       if (response?.data) {
         setPosts(response?.data?.posts);
       }
