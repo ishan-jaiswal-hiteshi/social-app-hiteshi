@@ -70,12 +70,13 @@ export function AuthProvider({ children }: Props) {
 
       if (response && response?.data?.user) {
         setUser(response?.data?.user);
-      } else if (response && response.status === 401) {
-        console.log(response.status);
+      }
+    } catch (err: any) {
+      if ((err && err.status === 401) || (err && err.status === 404)) {
+        console.log(err.status);
         localStorage.removeItem("accessToken");
         router.push("/");
       }
-    } catch (err) {
       console.error("Error in token authorization: ", err);
     }
   };

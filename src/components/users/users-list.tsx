@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "react-toastify";
 import UserCard from "./user-card";
+import { useAuth } from "@/context/authContext";
 
 interface UserData {
   id: number;
@@ -15,8 +16,10 @@ interface UserData {
 }
 
 const UsersList = () => {
+  const { user } = useAuth();
   const [users, setUsers] = useState<UserData[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [followings, setFollowings] = useState<UserData[] | null>(null);
 
   const getAllUsers = async () => {
     try {
@@ -34,9 +37,23 @@ const UsersList = () => {
     }
   };
 
+  const fetchFollowing = async () => {
+    try {
+      const response = await axiosInstance.get(`get-followings/${user?.id}`);
+      if (response && response?.data) {
+        setFollowings(response?.data?.following);
+      }
+    } catch (err) {
+      console.log("Error In Fetching list of Followings,", err);
+    }
+  };
+
   useEffect(() => {
     getAllUsers();
-  }, []);
+    if (user) {
+      fetchFollowing();
+    }
+  }, [user]);
 
   return (
     <div className="p-2">
@@ -53,7 +70,18 @@ const UsersList = () => {
       )}
       <div className="mb-10">
         {!loading && users && users.length > 0
-          ? users.map((user) => <UserCard key={user.id} userData={user} />)
+          ? users.map((user) => {
+              const isFollowing = followings?.some(
+                (data) => data?.id === user?.id
+              );
+              return (
+                <UserCard
+                  key={user.id}
+                  userData={user}
+                  followStatus={isFollowing}
+                />
+              );
+            })
           : !loading && (
               <p className="text-center text-gray-500">No User Available</p>
             )}

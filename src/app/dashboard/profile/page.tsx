@@ -13,6 +13,9 @@ export default function ProfilePage() {
   const [isFriendsOpen, setIsFriendsOpen] = useState(false);
   const [isFollowingOpen, setIsFollowingOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [friends, setFriends] = useState([]);
+  const [followings, setFollowings] = useState([]);
+
   const [profileData, setProfileData] = useState({
     full_name: "",
     username: "",
@@ -101,7 +104,7 @@ export default function ProfilePage() {
       });
       return response.data.mediaUrl;
     } catch (error) {
-      throw new Error("File upload failed");
+      console.error("Failed to Upload", error);
     }
   };
 
@@ -112,9 +115,11 @@ export default function ProfilePage() {
     }
   };
   const handleFollowingToggle = () => {
+    fetchAllFollowings();
     setIsFollowingOpen(!isFollowingOpen);
   };
   const handleFriendsToggle = () => {
+    fetchAllFriends();
     setIsFriendsOpen(!isFriendsOpen);
   };
 
@@ -138,16 +143,10 @@ export default function ProfilePage() {
       toast.success("Profile Updated");
     } catch (error) {
       toast.error("Failed to Update");
+      console.error("Failed to Upload", error);
     } finally {
       setIsSubmitting(false);
       setIsEditOpen(false);
-    }
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
-    if (event.key === "Enter" && !isSubmitting) {
-      event.preventDefault();
-      handleSubmit;
     }
   };
 
@@ -171,6 +170,28 @@ export default function ProfilePage() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isEditOpen, isFollowingOpen, isFriendsOpen]);
+
+  const fetchAllFriends = async () => {
+    try {
+      const response = await axiosInstance.get(`/get-followers/${user?.id}`);
+      if (response && response?.data) {
+        setFriends(response?.data?.followers);
+      }
+    } catch (err) {
+      console.log("Error In Fetching friends list", err);
+    }
+  };
+
+  const fetchAllFollowings = async () => {
+    try {
+      const response = await axiosInstance.get(`/get-followings/${user?.id}`);
+      if (response && response?.data) {
+        setFollowings(response?.data?.following);
+      }
+    } catch (err) {
+      console.log("Error In Fetching friends list", err);
+    }
+  };
 
   const Skeleton = () => (
     <div className="min-h-screen flex flex-col md:ml-52 p-6">
