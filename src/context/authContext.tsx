@@ -27,7 +27,9 @@ type User = {
   username: string;
   email: string;
   full_name: string;
-  profile_picture: string | undefined;
+  profile_picture:
+    | string
+    | "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg";
   otp: string | null;
   other_data: OtherData | null;
   createdAt: string;
