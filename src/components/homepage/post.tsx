@@ -167,7 +167,10 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
           alt="profile"
           className="w-10 h-10 rounded-full mr-3"
         />
-        <div>
+        <div
+          className="cursor-pointer"
+          onClick={() => console.log(postData.userId)}
+        >
           <strong>{postData?.User?.full_name}</strong>
           <p className="m-0 text-gray-500 text-sm">
             @{postData?.User?.username}
