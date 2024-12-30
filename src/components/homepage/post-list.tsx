@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Post from "./post";
 import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "react-toastify";
-
+import { PostSkeleton } from "@/utils/skeletons";
 interface PostData {
   id: number;
   userId: number;
@@ -38,7 +38,6 @@ const PostList = () => {
         setPosts(response?.data?.posts);
       }
     } catch (error) {
-      console.error("Error in fetching posts", error);
       toast.error("Error in fetching posts.");
     } finally {
       setLoading(false);
@@ -52,29 +51,6 @@ const PostList = () => {
   useEffect(() => {
     getAllPosts();
   }, []);
-
-  const PostSkeleton = () => {
-    return (
-      <div className="animate-pulse p-4 border w-96 border-gray-400 rounded-lg max-w-md mx-4 my-5 bg-gray-900">
-        <div className="flex items-center space-x-4 mb-4">
-          <div className="w-12 h-12 rounded-full bg-gray-400"></div>
-          <div className="flex-1 space-y-2">
-            <div className="h-4 bg-gray-400 rounded w-1/2"></div>
-            <div className="h-4 bg-gray-400 rounded w-1/4"></div>
-          </div>
-        </div>
-        <div className="w-full h-48 bg-gray-400 rounded mb-4"></div>
-        <div className="space-y-3 mb-4">
-          <div className="h-4 bg-gray-400 rounded w-full"></div>
-          <div className="h-4 bg-gray-400 rounded w-3/4"></div>
-        </div>
-        <div className="flex space-x-4">
-          <div className="h-4 bg-gray-400 rounded w-16"></div>
-          <div className="h-4 bg-gray-400 rounded w-16"></div>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="p-2">
