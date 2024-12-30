@@ -1,6 +1,7 @@
 "use client";
 
 import axiosInstance from "@/utils/axiosInstance";
+import { useRouter } from "next/navigation";
 import {
   createContext,
   ReactNode,
@@ -59,12 +60,21 @@ type Props = {
 export function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const router = useRouter();
 
   const getCurrentUser = async () => {
-    const response = await axiosInstance.get("/me");
+    try {
+      const response = await axiosInstance.get("/me");
 
-    if (response && response?.data?.user) {
-      setUser(response?.data?.user);
+      if (response && response?.data?.user) {
+        setUser(response?.data?.user);
+      } else if (response && response.status === 401) {
+        console.log(response.status);
+        localStorage.removeItem("accessToken");
+        router.push("/");
+      }
+    } catch (err) {
+      console.error("Error in token authorization: ", err);
     }
   };
 
