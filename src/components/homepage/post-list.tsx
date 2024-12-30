@@ -15,17 +15,19 @@ interface PostData {
     full_name: string;
     profile_picture: string;
   };
+
   content: string;
   mediaUrl: string;
   createdAt: string;
   timestamp: string;
   likesCount: number;
   commentsCount: number;
+  PostLikes: { userId: number }[];
 }
 
 const PostList = () => {
   const [posts, setPosts] = useState<PostData[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const getAllPosts = async () => {
     try {
@@ -36,7 +38,8 @@ const PostList = () => {
         setPosts(response?.data?.posts);
       }
     } catch (error) {
-      toast.error("Unknown error occured.");
+      console.error("Error in fetching posts", error);
+      toast.error("Error in fetching posts.");
     } finally {
       setLoading(false);
     }
@@ -50,17 +53,36 @@ const PostList = () => {
     getAllPosts();
   }, []);
 
+  const PostSkeleton = () => {
+    return (
+      <div className="animate-pulse p-4 border w-96 border-gray-400 rounded-lg max-w-md mx-4 my-5 bg-gray-900">
+        <div className="flex items-center space-x-4 mb-4">
+          <div className="w-12 h-12 rounded-full bg-gray-400"></div>
+          <div className="flex-1 space-y-2">
+            <div className="h-4 bg-gray-400 rounded w-1/2"></div>
+            <div className="h-4 bg-gray-400 rounded w-1/4"></div>
+          </div>
+        </div>
+        <div className="w-full h-48 bg-gray-400 rounded mb-4"></div>
+        <div className="space-y-3 mb-4">
+          <div className="h-4 bg-gray-400 rounded w-full"></div>
+          <div className="h-4 bg-gray-400 rounded w-3/4"></div>
+        </div>
+        <div className="flex space-x-4">
+          <div className="h-4 bg-gray-400 rounded w-16"></div>
+          <div className="h-4 bg-gray-400 rounded w-16"></div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="p-2">
       {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div
-            className="animate-spin inline-block text-center w-12 h-12 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
-            role="status"
-            aria-label="loading"
-          >
-            <span className="sr-only">Loading...</span>
-          </div>
+        <div className="w-full">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <PostSkeleton key={index} />
+          ))}
         </div>
       )}
       <div className="mb-10">
