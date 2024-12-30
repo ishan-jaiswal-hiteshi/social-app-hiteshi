@@ -105,11 +105,17 @@ export default function ProfilePage() {
     }
   };
 
-  const handleModalToggle = () => {
+  const handleEditToggle = () => {
     setIsEditOpen(!isEditOpen);
     if (!isEditOpen) {
       setEditData(profileData);
     }
+  };
+  const handleFollowingToggle = () => {
+    setIsFollowingOpen(!isFollowingOpen);
+  };
+  const handleFriendsToggle = () => {
+    setIsFriendsOpen(!isFriendsOpen);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -147,8 +153,16 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isEditOpen) {
-        setIsEditOpen(false);
+      if (event.key === "Escape") {
+        if (isEditOpen) {
+          setIsEditOpen(false);
+        }
+        if (isFriendsOpen) {
+          setIsFriendsOpen(false);
+        }
+        if (isFollowingOpen) {
+          setIsFollowingOpen(false);
+        }
       }
     };
 
@@ -156,11 +170,10 @@ export default function ProfilePage() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isEditOpen]);
+  }, [isEditOpen, isFollowingOpen, isFriendsOpen]);
 
   const Skeleton = () => (
     <div className="min-h-screen flex flex-col md:ml-52 p-6">
-      {/* Cover Image */}
       <div className="relative block h-[500px] bg-gray-300 animate-pulse">
         <div className="absolute top-0 w-full h-full bg-center bg-cover bg-gray-400 animate-pulse"></div>
       </div>
@@ -170,14 +183,12 @@ export default function ProfilePage() {
           <div className="relative flex flex-col min-w-0 break-words bg-black text-white w-full mb-6 shadow-xl rounded-lg -mt-64">
             <div className="px-6">
               <div className="flex flex-wrap justify-center">
-                {/* Profile Picture */}
                 <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
                   <div className="relative">
                     <div className="rounded-full ring-4 ring-red-500 shadow-xl overflow-hidden h-[150px] w-[150px] absolute -m-16 -ml-20 lg:-ml-16 bg-gray-400 animate-pulse"></div>
                   </div>
                 </div>
 
-                {/* Stats */}
                 <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-24 lg:justify-end items-center gap-4 mt-24 ">
                   <button className="bg-gray-400 animate-pulse w-24 h-8 rounded-md"></button>
                   <button className="bg-gray-400 animate-pulse w-24 h-8 rounded-md"></button>
@@ -197,7 +208,6 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Profile Name, Location, and Job */}
               <div className="text-center mt-5">
                 <div className="w-48 h-8 bg-gray-400 animate-pulse mx-auto rounded-md mb-4"></div>
                 <div className="w-36 h-6 bg-gray-400 animate-pulse mx-auto rounded-md mb-2"></div>
@@ -206,7 +216,6 @@ export default function ProfilePage() {
                 <div className="w-48 h-6 bg-gray-400 animate-pulse mx-auto rounded-md mb-2"></div>
               </div>
 
-              {/* Bio Section */}
               <div className="mt-10 py-10 border-t border-red-500 text-center">
                 <div className="flex flex-wrap justify-center">
                   <div className="w-full lg:w-9/12 px-4">
@@ -299,7 +308,7 @@ export default function ProfilePage() {
                       <span className="top-14 left-10 absolute bg-red-600 p-2 rounded-full text-white hover:bg-red-600 cursor-pointer">
                         <button
                           type="button"
-                          onClick={handleModalToggle}
+                          onClick={handleEditToggle}
                           className="p-0 m-0 flex items-center justify-center rounded-full bg-red-600 hover:bg-red-700 focus:outline-none"
                         >
                           <FiEdit size={20} />
@@ -324,26 +333,35 @@ export default function ProfilePage() {
                   <div className="w-full lg:w-4/12 px-4 lg:order-1">
                     <div className="flex justify-center py-4 lg:pt-4 pt-8">
                       <div className="mr-4 p-3 text-center">
-                        <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData?.other_data?.friends}
-                        </span>
-                        <span className="text-sm text-blueGray-400">
-                          Friends
-                        </span>
+                        <button onClick={handleFriendsToggle}>
+                          <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
+                            {profileData?.other_data?.friends}
+                          </span>
+                          <span className="text-sm text-blueGray-400">
+                            Friends
+                          </span>
+                        </button>
                       </div>
+
                       <div className="mr-4 p-3 text-center">
-                        <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData?.other_data?.posts}
-                        </span>
-                        <span className="text-sm text-blueGray-400">Posts</span>
+                        <Link href="/dashboard/profile//myposts">
+                          <span className="cursor-pointer text-xl font-bold block uppercase tracking-wide text-blueGray-600">
+                            {profileData?.other_data?.posts}
+                          </span>
+                          <span className="text-sm text-blueGray-400">
+                            Posts
+                          </span>
+                        </Link>
                       </div>
                       <div className="lg:mr-4 p-3 text-center">
-                        <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          {profileData?.other_data?.following}
-                        </span>
-                        <span className="text-sm text-blueGray-400">
-                          Following
-                        </span>
+                        <button onClick={handleFollowingToggle}>
+                          <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
+                            {profileData?.other_data?.following}
+                          </span>
+                          <span className="text-sm text-blueGray-400">
+                            Following
+                          </span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -353,20 +371,17 @@ export default function ProfilePage() {
                     {profileData?.full_name}
                   </h3>
                   <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
-                    <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
                     {profileData?.other_data?.location}
                   </div>
-                  <hr className="w-72 h-0.5 mx-auto my-4 bg-red-500 border-0 rounded md:my-10" />
-                  <div className="mb-2 text-blueGray-600 mt-10">
-                    <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
+                  <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                  <div className="mb-2 text-blueGray-600 mt-2">
                     {profileData?.other_data?.job_title}
                   </div>
                   <div className="mb-2 text-blueGray-600">
-                    <i className="fas fa-university mr-2 text-lg text-blueGray-400"></i>
                     {profileData?.other_data?.university}
                   </div>
                 </div>
-                <div className="mt-10 py-10 border-t border-red-500 text-center">
+                <div className="mt-7 py-10 border-t border-red-500 text-center">
                   <div className="flex flex-wrap justify-center">
                     <div className="w-full lg:w-9/12 px-4">
                       <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
@@ -464,7 +479,7 @@ export default function ProfilePage() {
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={handleModalToggle}
+                  onClick={handleEditToggle}
                   className="px-4 py-2 bg-gray-300 active:bg-gray-400 text-gray-800 rounded"
                 >
                   Cancel
@@ -488,6 +503,22 @@ export default function ProfilePage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {isFriendsOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4 text-red-500">{`${user?.full_name}'s friends`}</h3>
+            <p>Nothing to show here....</p>
+          </div>
+        </div>
+      )}
+      {isFollowingOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4 text-red-500">{`${user?.full_name}'s followings`}</h3>
+            <p>Nothing to show here....</p>
           </div>
         </div>
       )}
