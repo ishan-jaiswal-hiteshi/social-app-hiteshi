@@ -34,15 +34,13 @@ const PostList = () => {
       setLoading(true);
 
       const response = await axiosInstance("/get-posts");
-      console.log(response);
 
       if (response?.data) {
         setPosts(response?.data?.posts);
+        setLoading(false);
       }
     } catch (error) {
-      toast.error("Error in fetching posts.");
-    } finally {
-      setLoading(false);
+      console.error(error);
     }
   };
 

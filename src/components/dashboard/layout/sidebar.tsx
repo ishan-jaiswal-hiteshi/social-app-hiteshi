@@ -56,7 +56,7 @@ const SidebarLayout = () => {
               <img
                 src={
                   user?.profile_picture ||
-                  "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
+                  "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
                 }
                 alt="profile"
                 className="w-6 h-6 rounded-full"

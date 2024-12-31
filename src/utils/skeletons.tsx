@@ -59,7 +59,7 @@ export const ProfileSkeleton = () => (
 
 export const PostSkeleton = () => {
   return (
-    <div className="animate-pulse p-4 border w-96 border-gray-400 rounded-lg max-w-md mx-4 my-5 bg-gray-900">
+    <div className="animate-pulse p-4 border w-96 border-gray-400 rounded-lg max-w-md mx-4 my-5 bg-black">
       <div className="flex items-center space-x-4 mb-4">
         <div className="w-12 h-12 rounded-full bg-gray-400"></div>
         <div className="flex-1 space-y-2">

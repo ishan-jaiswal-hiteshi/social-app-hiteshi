@@ -56,6 +56,24 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   const [commentText, setCommentText] = useState("");
   const { user } = useAuth();
 
+  /////
+  const [isExpanded, setIsExpanded] = useState(false);
+  const wordLimit = 20; // Specify the word limit for truncation.
+
+  const toggleContent = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  const shouldTruncate = postData?.content?.split(" ").length > wordLimit;
+
+  const getDisplayContent = () => {
+    if (!postData?.content) return "";
+    if (isExpanded || !shouldTruncate) return postData.content;
+
+    return postData.content.split(" ").slice(0, wordLimit).join(" ") + "...";
+  };
+  /////
+
   const toggleComments = async () => {
     if (!showComments) {
       setLoadingComments(true);
@@ -162,7 +180,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
         <img
           src={
             postData?.User?.profile_picture ||
-            "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
+            "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
           }
           alt="profile"
           className="w-10 h-10 rounded-full mr-3"
@@ -171,9 +189,9 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
           className="cursor-pointer"
           onClick={() => console.log(postData.userId)}
         >
-          <strong>{postData?.User?.full_name}</strong>
+          <strong>@{postData?.User?.username}</strong>
           <p className="m-0 text-gray-500 text-sm">
-            @{postData?.User?.username}
+            {postData?.User?.full_name}
           </p>
         </div>
         {user?.id === postData?.userId && (
@@ -193,26 +211,36 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
         )}
         {postData?.content && (
           <div className="p-3">
-            {formatContentWithHashtags(postData?.content)}
+            <div className="text-justify">{getDisplayContent()}</div>
+
+            {/* Conditionally render buttons */}
+            {shouldTruncate && (
+              <button
+                onClick={toggleContent}
+                className="text-red-600 text-opacity-80 mt-2 focus:outline-none"
+              >
+                {isExpanded ? "See Less" : "See More"}
+              </button>
+            )}
           </div>
         )}
       </div>
 
-      <div className="border-t border-gray-300 p-2 flex justify-start gap-4">
+      <div className="border-t border-gray-300 p-2 flex justify-start gap-5">
         <div
           onClick={handleLikeClick}
           className="cursor-pointer flex items-center gap-1"
         >
           {isLiked ? <FcLike size={20} /> : <FaRegHeart size={20} />}
 
-          <p>{likesCount} likes</p>
+          <p>{likesCount} </p>
         </div>
         <div
           onClick={toggleComments}
           className="cursor-pointer flex items-center gap-1"
         >
           <FaRegComment size={20} />
-          <p>{commnetsCount} comments</p>
+          <p>{commnetsCount} </p>
         </div>
       </div>
 
