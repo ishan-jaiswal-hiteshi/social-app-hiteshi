@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import Post from "./post";
 import axiosInstance from "@/utils/axiosInstance";
-import { toast } from "react-toastify";
 import { PostSkeleton } from "@/utils/skeletons";
 interface PostData {
   id: number;
@@ -17,7 +16,7 @@ interface PostData {
   };
 
   content: string;
-  mediaUrl: string;
+  mediaUrls: string[];
   createdAt: string;
   timestamp: string;
   likesCount: number;
@@ -38,6 +37,7 @@ const PostList = () => {
       if (response?.data) {
         setPosts(response?.data?.posts);
         setLoading(false);
+        console.log(response.data);
       }
     } catch (error) {
       console.error(error);

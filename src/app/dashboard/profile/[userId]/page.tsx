@@ -1,0 +1,168 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import axiosInstance from "@/utils/axiosInstance";
+import { ProfileSkeleton } from "@/utils/skeletons"; // Make sure ProfileSkeleton is imported correctly
+import { usePathname } from "next/navigation";
+import { toast } from "react-toastify";
+
+const UserProfile = () => {
+  const pathname = usePathname();
+  const userId = pathname?.split("/")[3]; // Extract userId from the URL
+  const [userData, setUserData] = useState({
+    full_name: "",
+    username: "",
+    profile_picture: "",
+    other_data: {
+      cover_picture: "",
+      location: "",
+      job_title: "",
+      university: "",
+      bio: "",
+      friends: 0,
+      following: 0,
+      posts: 0,
+    },
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        if (userId) {
+          const response = await axiosInstance.get(`/get-user-by-id/${userId}`);
+          setUserData(response.data?.user);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId]);
+
+  if (loading) {
+    return <ProfileSkeleton />;
+  }
+
+  if (!userData) {
+    return <p>Profile not found.</p>;
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col md:ml-52">
+      <div className="flex-grow flex flex-col">
+        <section className="relative block h-[500px]">
+          <div
+            className="absolute top-0 w-full h-full bg-center bg-cover"
+            style={{
+              backgroundImage: `url(${
+                userData?.other_data?.cover_picture ||
+                "https://hiteshi.com/_next/static/media/logo.9b8ca92c.png"
+              })`,
+              backgroundSize: "contain",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+            }}
+          >
+            <span className="w-full h-full absolute opacity-50 bg-black"></span>
+          </div>
+        </section>
+
+        <section className="relative py-16 bg-blueGray-200">
+          <div className="container mx-auto px-4">
+            <div className="relative flex flex-col min-w-0 break-words bg-black text-white w-full mb-6 shadow-xl rounded-lg -mt-64">
+              <div className="px-6">
+                <div className="flex flex-wrap justify-center">
+                  <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
+                    <div className="relative">
+                      <div className="rounded-full ring-4 ring-red-500 shadow-xl overflow-hidden h-[150px] w-[150px] absolute -m-16 -ml-20 lg:-ml-16">
+                        <img
+                          alt="Profile"
+                          src={
+                            userData?.profile_picture ||
+                            "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
+                          }
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-24 lg:justify-end items-center gap-4 mt-24">
+                    <button className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150">
+                      Connect
+                    </button>
+                    <button className="border-2 border-red-500 active:border-red-300 active:text-red-300 uppercase text-red-400 font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150">
+                      Message
+                    </button>
+                  </div>
+
+                  <div className="w-full lg:w-4/12 px-4 lg:order-1">
+                    <div className="flex justify-center py-4 lg:pt-4 pt-8">
+                      <div className="mr-4 p-3 text-center">
+                        <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
+                          {userData?.other_data?.friends || 0}
+                        </span>
+                        <span className="text-sm text-blueGray-400">
+                          Friends
+                        </span>
+                      </div>
+                      <div className="mr-4 p-3 text-center">
+                        <span className="cursor-pointer text-xl font-bold block uppercase tracking-wide text-blueGray-600">
+                          {userData?.other_data?.posts || 0}
+                        </span>
+                        <span className="text-sm text-blueGray-400">Posts</span>
+                      </div>
+                      <div className="lg:mr-4 p-3 text-center">
+                        <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
+                          {userData?.other_data?.following || 0}
+                        </span>
+                        <span className="text-sm text-blueGray-400">
+                          Following
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-center mt-5">
+                  <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
+                    {userData?.full_name}
+                  </h3>
+                  <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
+                    {userData?.other_data?.location || "No location added"}
+                  </div>
+                  <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                  <div className="mb-2 text-blueGray-600 mt-2">
+                    {userData?.other_data?.job_title || "No work details added"}
+                  </div>
+                  <div className="mb-2 text-blueGray-600">
+                    {userData?.other_data?.university ||
+                      "No education details added"}
+                  </div>
+                </div>
+
+                <div className="mt-7 py-10 border-t border-red-500 text-center">
+                  <div className="flex flex-wrap justify-center">
+                    <div className="w-full lg:w-9/12 px-4">
+                      <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
+                        {userData?.other_data?.bio || "No bio added"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+};
+
+export default UserProfile;
