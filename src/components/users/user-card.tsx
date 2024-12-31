@@ -12,36 +12,20 @@ type UserData = {
 };
 type UserDataProps = {
   userData: UserData;
+  followStatus: boolean;
 };
 
-const UserCard: React.FC<UserDataProps> = ({ userData }) => {
+const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   const { user } = useAuth();
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
-
-  // useEffect(() => {
-  //   const checkFollowStatus = async () => {
-  //     try {
-  //       const response = await axiosInstance.get(
-  //         `/check-follow-status/${user?.id}/${userData?.id}`
-  //       );
-  //       setIsFollowing(response.data.isFollowing);
-  //     } catch (err) {
-  //       console.error("Error checking follow status: ", err);
-  //     }
-  //   };
-
-  //   if (user?.id && userData?.id) {
-  //     checkFollowStatus();
-  //   }
-  // }, [user?.id, userData?.id]);
+  const [isFollowing, setIsFollowing] = useState<boolean>(followStatus);
 
   const handleFollow = async () => {
     try {
-      await axiosInstance.post(`add-follower/${userData?.id}`, {
+      await axiosInstance.post(`/add-follower/${userData?.id}`, {
         followerId: user?.id,
       });
-      await axiosInstance.post(`add-following/${user?.id}`, {
-        followerId: userData?.id,
+      await axiosInstance.post(`/add-following/${user?.id}`, {
+        followingId: userData?.id,
       });
       setIsFollowing(true);
     } catch (err) {
@@ -51,7 +35,7 @@ const UserCard: React.FC<UserDataProps> = ({ userData }) => {
 
   const handleUnfollow = async () => {
     try {
-      await axiosInstance.post(`remove-following/${user?.id}`, {
+      await axiosInstance.post(`/remove-follower/${user?.id}`, {
         followerId: userData?.id,
       });
       setIsFollowing(false);
