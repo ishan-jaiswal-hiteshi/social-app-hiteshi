@@ -18,7 +18,7 @@ interface PostData {
   };
 
   content: string;
-  mediaUrl: string;
+  mediaUrls: string[];
   createdAt: string;
   timestamp: string;
   likesCount: number;
