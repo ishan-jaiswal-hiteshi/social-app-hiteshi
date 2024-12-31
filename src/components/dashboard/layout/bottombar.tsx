@@ -7,6 +7,7 @@ import { AiOutlineHome } from "react-icons/ai";
 import { IoMdSearch } from "react-icons/io";
 import { MdAddCircleOutline } from "react-icons/md";
 import { LuUsersRound } from "react-icons/lu";
+import UserProfilePicture from "@/utils/user-profile-picture";
 
 const BottombarLayout = () => {
   const { user } = useAuth();
@@ -41,14 +42,18 @@ const BottombarLayout = () => {
           href="/dashboard/profile"
           className="hover:text-gray-300 cursor-pointer"
         >
-          <img
-            src={
-              user?.profile_picture ||
-              "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
-            }
-            alt="profile"
-            className="w-6 h-6 rounded-full"
-          />
+          {user?.profile_picture ? (
+            <img
+              src={
+                user?.profile_picture ||
+                "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
+              }
+              alt="profile"
+              className="w-6 h-6 rounded-full"
+            />
+          ) : (
+            <UserProfilePicture fullName={user?.full_name} size={20} />
+          )}
         </Link>
       </div>
     </footer>

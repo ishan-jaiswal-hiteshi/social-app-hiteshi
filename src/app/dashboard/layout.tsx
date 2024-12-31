@@ -21,9 +21,9 @@ export default function DashboardLayout({
   }, [router]);
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen">
       <SidebarLayout />
-      <main className="flex-1 overflow-auto ">
+      <main className="flex-auto overflow-auto p-4">
         {children}
         <ToastContainer />
       </main>

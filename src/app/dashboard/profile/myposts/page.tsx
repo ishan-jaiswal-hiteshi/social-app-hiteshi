@@ -5,7 +5,7 @@ import Post from "../../../../components/homepage/post";
 import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/authContext";
-
+import { PostSkeleton } from "@/utils/skeletons";
 interface PostData {
   id: number;
   userId: number;
@@ -18,7 +18,7 @@ interface PostData {
   };
 
   content: string;
-  mediaUrl: string;
+  mediaUrls: string[];
   createdAt: string;
   timestamp: string;
   likesCount: number;
@@ -29,7 +29,7 @@ interface PostData {
 const MyPosts: React.FC = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState<PostData[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const getUserPosts = async () => {
     if (!user?.id) return;
@@ -44,6 +44,7 @@ const MyPosts: React.FC = () => {
       }
     } catch (error) {
       toast.error("Error in fetching your posts.");
+      console.error("Error in fetching your posts.", error);
       setLoading(false);
     } finally {
       setLoading(false);
@@ -59,16 +60,12 @@ const MyPosts: React.FC = () => {
   }, [user?.id]);
 
   return (
-    <div className="p-2">
+    <div className="p-2 justify-center items-center flex flex-col">
       {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div
-            className="animate-spin inline-block text-center w-12 h-12 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
-            role="status"
-            aria-label="loading"
-          >
-            <span className="sr-only">Loading...</span>
-          </div>
+        <div className="flex flex-col items-center justify-center space-y-4 w-full">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <PostSkeleton key={index} />
+          ))}
         </div>
       )}
       <div className="mb-10 text-white">

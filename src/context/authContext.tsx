@@ -1,5 +1,6 @@
 "use client";
 
+import { User } from "@/props/authProps";
 import axiosInstance from "@/utils/axiosInstance";
 import { useRouter } from "next/navigation";
 import {
@@ -11,31 +12,6 @@ import {
   SetStateAction,
   useEffect,
 } from "react";
-
-type OtherData = {
-  cover_picture: string | null;
-  location: string | null;
-  job_title: string | null;
-  university: string | null;
-  bio: string | null;
-  friends: number | null;
-  following: number | null;
-  posts: number | null;
-};
-
-type User = {
-  id: number;
-  username: string;
-  email: string;
-  full_name: string;
-  profile_picture:
-    | string
-    | "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg";
-  otp: string | null;
-  other_data: OtherData | null;
-  createdAt: string;
-  updatedAt: string;
-};
 
 type AuthContextType = {
   user: User | null;
@@ -73,7 +49,6 @@ export function AuthProvider({ children }: Props) {
       }
     } catch (err: any) {
       if ((err && err.status === 401) || (err && err.status === 404)) {
-        console.log(err.status);
         localStorage.removeItem("accessToken");
         router.push("/");
       }

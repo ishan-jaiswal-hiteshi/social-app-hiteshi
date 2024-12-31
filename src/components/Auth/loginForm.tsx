@@ -28,6 +28,7 @@ export default function AuthForm({
             className="w-auto h-12"
             src="https://hiteshi.com/_next/static/media/logo.9b8ca92c.png"
             alt="Logo"
+            onDragStart={(e) => e.preventDefault()}
           />
         </div>
 

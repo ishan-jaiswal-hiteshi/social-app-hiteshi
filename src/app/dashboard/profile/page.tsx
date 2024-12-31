@@ -5,6 +5,15 @@ import axiosInstance from "@/utils/axiosInstance";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/authContext";
+import { ProfileSkeleton } from "@/utils/skeletons";
+import FriendsList from "@/components/profile-page/friend-list";
+import UserProfilePicture from "@/utils/user-profile-picture";
+import { IoClose } from "react-icons/io5";
+
+interface FilesState {
+  profile_picture?: File;
+  cover_picture?: File;
+}
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -15,6 +24,11 @@ export default function ProfilePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [friends, setFriends] = useState([]);
   const [followings, setFollowings] = useState([]);
+  const [files, setFiles] = useState<FilesState>({});
+  const [previews, setPreviews] = useState<{
+    profile_picture?: string;
+    cover_picture?: string;
+  }>({});
 
   const [profileData, setProfileData] = useState({
     full_name: "",
@@ -33,10 +47,6 @@ export default function ProfilePage() {
   });
 
   const [editData, setEditData] = useState(profileData);
-  const [files, setFiles] = useState<{
-    profile_picture?: File;
-    cover_picture?: File;
-  }>({});
 
   useEffect(() => {
     if (user) {
@@ -44,9 +54,7 @@ export default function ProfilePage() {
       setProfileData({
         full_name: user.full_name || "",
         username: user.username || "",
-        profile_picture:
-          user?.profile_picture ||
-          "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg",
+        profile_picture: user?.profile_picture,
         other_data: {
           cover_picture:
             user?.other_data?.cover_picture ||
@@ -92,6 +100,9 @@ export default function ProfilePage() {
       }
       const { name } = e.target;
       setFiles((prev) => ({ ...prev, [name]: file }));
+
+      const previewURL = URL.createObjectURL(file);
+      setPreviews((prev) => ({ ...prev, [name]: previewURL }));
     }
   };
 
@@ -99,7 +110,7 @@ export default function ProfilePage() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const response = await axiosInstance.post("/upload", formData, {
+      const response = await axiosInstance.post("/single-upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       return response.data.mediaUrl;
@@ -109,18 +120,33 @@ export default function ProfilePage() {
   };
 
   const handleEditToggle = () => {
-    setIsEditOpen(!isEditOpen);
-    if (!isEditOpen) {
-      setEditData(profileData);
-    }
+    setIsEditOpen((prevState) => {
+      const newState = !prevState;
+      if (newState) {
+        setEditData(profileData);
+      }
+      return newState;
+    });
   };
+
   const handleFollowingToggle = () => {
-    fetchAllFollowings();
-    setIsFollowingOpen(!isFollowingOpen);
+    setIsFollowingOpen((prevState) => {
+      const newState = !prevState;
+      if (newState) {
+        fetchAllFollowings();
+      }
+      return newState;
+    });
   };
+
   const handleFriendsToggle = () => {
-    fetchAllFriends();
-    setIsFriendsOpen(!isFriendsOpen);
+    setIsFriendsOpen((prevState) => {
+      const newState = !prevState;
+      if (newState) {
+        fetchAllFriends();
+      }
+      return newState;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -193,67 +219,8 @@ export default function ProfilePage() {
     }
   };
 
-  const Skeleton = () => (
-    <div className="min-h-screen flex flex-col md:ml-52 p-6">
-      <div className="relative block h-[500px] bg-gray-300 animate-pulse">
-        <div className="absolute top-0 w-full h-full bg-center bg-cover bg-gray-400 animate-pulse"></div>
-      </div>
-
-      <div className="relative py-16 bg-blueGray-200 animate-pulse">
-        <div className="container mx-auto px-4">
-          <div className="relative flex flex-col min-w-0 break-words bg-black text-white w-full mb-6 shadow-xl rounded-lg -mt-64">
-            <div className="px-6">
-              <div className="flex flex-wrap justify-center">
-                <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
-                  <div className="relative">
-                    <div className="rounded-full ring-4 ring-red-500 shadow-xl overflow-hidden h-[150px] w-[150px] absolute -m-16 -ml-20 lg:-ml-16 bg-gray-400 animate-pulse"></div>
-                  </div>
-                </div>
-
-                <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-24 lg:justify-end items-center gap-4 mt-24 ">
-                  <button className="bg-gray-400 animate-pulse w-24 h-8 rounded-md"></button>
-                  <button className="bg-gray-400 animate-pulse w-24 h-8 rounded-md"></button>
-                </div>
-                <div className="w-full lg:w-4/12 px-4 lg:order-1">
-                  <div className="flex justify-center py-4 lg:pt-4 pt-8">
-                    <div className="mr-4 p-3 text-center">
-                      <div className="w-24 h-6 bg-gray-400 animate-pulse rounded-md"></div>
-                    </div>
-                    <div className="mr-4 p-3 text-center">
-                      <div className="w-24 h-6 bg-gray-400 animate-pulse rounded-md"></div>
-                    </div>
-                    <div className="lg:mr-4 p-3 text-center">
-                      <div className="w-24 h-6 bg-gray-400 animate-pulse rounded-md"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-center mt-5">
-                <div className="w-48 h-8 bg-gray-400 animate-pulse mx-auto rounded-md mb-4"></div>
-                <div className="w-36 h-6 bg-gray-400 animate-pulse mx-auto rounded-md mb-2"></div>
-                <div className="w-72 h-0.5 mx-auto my-4 bg-red-500 border-0 rounded md:my-10"></div>
-                <div className="w-48 h-6 bg-gray-400 animate-pulse mx-auto rounded-md mb-2"></div>
-                <div className="w-48 h-6 bg-gray-400 animate-pulse mx-auto rounded-md mb-2"></div>
-              </div>
-
-              <div className="mt-10 py-10 border-t border-red-500 text-center">
-                <div className="flex flex-wrap justify-center">
-                  <div className="w-full lg:w-9/12 px-4">
-                    <div className="w-72 h-6 bg-gray-400 animate-pulse mx-auto rounded-md mb-6"></div>
-                    <div className="w-40 h-6 bg-gray-400 animate-pulse mx-auto rounded-md"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   if (loading) {
-    return <Skeleton />;
+    return <ProfileSkeleton />;
   }
 
   return (
@@ -320,11 +287,18 @@ export default function ProfilePage() {
                   <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
                     <div className="relative">
                       <div className="rounded-full ring-4 ring-red-500 shadow-xl overflow-hidden h-[150px] w-[150px] absolute -m-16 -ml-20 lg:-ml-16">
-                        <img
-                          alt="Profile"
-                          src={profileData?.profile_picture}
-                          className="object-cover w-full h-full"
-                        />
+                        {profileData?.profile_picture ? (
+                          <img
+                            alt="Profile"
+                            src={profileData?.profile_picture}
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <UserProfilePicture
+                            fullName={profileData?.full_name}
+                            size={150}
+                          />
+                        )}
                       </div>
                       <span className="top-14 left-10 absolute bg-red-600 p-2 rounded-full text-white hover:bg-red-600 cursor-pointer">
                         <button
@@ -338,12 +312,12 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-24 lg:justify-end items-center gap-4 mt-24 ">
-                    <button
+                    {/* <button
                       className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       type="button"
                     >
                       Connect
-                    </button>
+                    </button> */}
                     <button
                       className="border-2 border-red-500 active:border-red-300 active:text-red-300 uppercase text-red-400 font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       type="button"
@@ -421,7 +395,7 @@ export default function ProfilePage() {
       </div>
       {isEditOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md">
+          <div className="bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md max-h-screen overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
@@ -476,25 +450,60 @@ export default function ProfilePage() {
                 ></textarea>
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium">
+                <label className="block text-sm font-medium mb-2">
                   Profile Photo
                 </label>
+                <div
+                  className="w-32 h-32 border-2 border-dashed rounded-full flex items-center justify-center overflow-hidden cursor-pointer"
+                  onClick={() =>
+                    document.getElementsByName("profile_picture")[0]?.click()
+                  }
+                >
+                  {previews.profile_picture ? (
+                    <img
+                      src={previews.profile_picture}
+                      alt="Profile Preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-gray-500">Choose Picture</span>
+                  )}
+                </div>
                 <input
                   type="file"
                   name="profile_picture"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="w-full p-2 border rounded"
+                  className="hidden"
                 />
               </div>
+
               <div className="mb-4">
-                <label className="block text-sm font-medium">Cover Photo</label>
+                <label className="block text-sm font-medium mb-2">
+                  Cover Photo
+                </label>
+                <div
+                  className="w-full h-32 border-2 border-dashed rounded flex items-center justify-center overflow-hidden cursor-pointer"
+                  onClick={() =>
+                    document.getElementsByName("cover_picture")[0]?.click()
+                  }
+                >
+                  {previews.cover_picture ? (
+                    <img
+                      src={previews.cover_picture}
+                      alt="Cover Preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-gray-500">Choose Picture</span>
+                  )}
+                </div>
                 <input
                   type="file"
                   name="cover_picture"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="w-full p-2 border rounded"
+                  className="hidden"
                 />
               </div>
               <div className="flex justify-end gap-2">
@@ -527,19 +536,32 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+
       {isFriendsOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md">
+          <div className="relative bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md">
+            <button
+              onClick={handleFriendsToggle}
+              className="absolute top-2 right-2 text-white hover:text-gray-300"
+            >
+              <IoClose className="h-6 w-6" />
+            </button>
             <h3 className="text-lg font-semibold mb-4 text-red-500">{`${user?.full_name}'s friends`}</h3>
-            <p>Nothing to show here....</p>
+            <FriendsList users={friends} />
           </div>
         </div>
       )}
       {isFollowingOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md">
+          <div className="relative bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md">
+            <button
+              onClick={handleFollowingToggle}
+              className="absolute top-2 right-2 text-white hover:text-gray-300"
+            >
+              <IoClose className="h-6 w-6" />
+            </button>
             <h3 className="text-lg font-semibold mb-4 text-red-500">{`${user?.full_name}'s followings`}</h3>
-            <p>Nothing to show here....</p>
+            <FriendsList users={followings} />
           </div>
         </div>
       )}

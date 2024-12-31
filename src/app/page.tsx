@@ -43,6 +43,7 @@ export default function Home() {
                   src="./profile.png"
                   className="w-[272px] h-[572px] object-cover"
                   alt="Mobile Slide 1"
+                  onDragStart={(e) => e.preventDefault()}
                 />
               </div>
             </div>
@@ -59,6 +60,7 @@ export default function Home() {
                   src="./home1.png"
                   className="w-[272px] h-[572px] object-cover"
                   alt="Mobile Slide 2"
+                  onDragStart={(e) => e.preventDefault()}
                 />
               </div>
             </div>
