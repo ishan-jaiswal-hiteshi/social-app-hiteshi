@@ -8,6 +8,7 @@ import { IoMdSearch } from "react-icons/io";
 import { MdAddCircleOutline } from "react-icons/md";
 import { LuUsersRound } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
+import UserProfilePicture from "@/utils/user-profile-picture";
 
 const SidebarLayout = () => {
   const { user } = useAuth();
@@ -24,21 +25,21 @@ const SidebarLayout = () => {
               href="/dashboard/home"
               className="hover:text-gray-300 cursor-pointer active  flex gap-2 items-center"
             >
-              <AiOutlineHome size={20} />
+              <AiOutlineHome size={24} />
               <p>Home</p>
             </Link>
             <Link
               href="/dashboard/search"
               className="hover:text-gray-300 cursor-pointer flex gap-2 items-center"
             >
-              <IoMdSearch size={20} />
+              <IoMdSearch size={24} />
               <p>Search</p>
             </Link>
             <Link
               href="/dashboard/create-post"
               className="hover:text-gray-300 cursor-pointer flex gap-2 items-center"
             >
-              <MdAddCircleOutline size={20} />
+              <MdAddCircleOutline size={24} />
               <p>Create Post</p>
             </Link>
 
@@ -46,21 +47,25 @@ const SidebarLayout = () => {
               href="/dashboard/users"
               className="hover:text-gray-300 cursor-pointer flex gap-2 items-center"
             >
-              <LuUsersRound size={20} />
+              <LuUsersRound size={24} />
               <p>Users</p>
             </Link>
             <Link
               href="/dashboard/profile"
               className="hover:text-gray-300 cursor-pointer flex gap-2 items-center"
             >
-              <img
-                src={
-                  user?.profile_picture ||
-                  "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
-                }
-                alt="profile"
-                className="w-6 h-6 rounded-full"
-              />
+              {user?.profile_picture ? (
+                <img
+                  src={
+                    user?.profile_picture ||
+                    "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
+                  }
+                  alt="profile"
+                  className="w-6 h-6 rounded-full"
+                />
+              ) : (
+                <UserProfilePicture fullName={user?.full_name} size={24} />
+              )}
               <p>Profile</p>
             </Link>
           </ul>

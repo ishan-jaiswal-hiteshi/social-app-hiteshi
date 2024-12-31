@@ -26,7 +26,7 @@ interface PostData {
 }
 
 const PostList = () => {
-  const [posts, setPosts] = useState<PostData[] | null>(null);
+  const [posts, setPosts] = useState<PostData[] | []>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const getAllPosts = async () => {

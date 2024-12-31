@@ -1,5 +1,7 @@
 import { useAuth } from "@/context/authContext";
 import axiosInstance from "@/utils/axiosInstance";
+import UserProfilePicture from "@/utils/user-profile-picture";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 type UserData = {
@@ -18,6 +20,11 @@ type UserDataProps = {
 const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   const { user } = useAuth();
   const [isFollowing, setIsFollowing] = useState<boolean>(followStatus);
+  const router = useRouter();
+
+  const profileNavigation = () => {
+    router.push(`/dashboard/profile/${userData?.id}`);
+  };
 
   const handleFollow = async () => {
     try {
@@ -35,8 +42,8 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
 
   const handleUnfollow = async () => {
     try {
-      await axiosInstance.post(`/remove-follower/${user?.id}`, {
-        followerId: userData?.id,
+      await axiosInstance.post(`/remove-following/${user?.id}`, {
+        followingId: userData?.id,
       });
       setIsFollowing(false);
     } catch (err) {
@@ -48,16 +55,20 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
     <>
       {user?.id !== userData?.id && (
         <div className="border border-gray-600 rounded-lg w-full mx-2  my-5 font-sans bg-black">
-          <div className="flex justify-between items-center p-3">
-            <div className="flex items-center">
-              <img
-                src={
-                  userData?.profile_picture ||
-                  "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
-                }
-                alt="profile"
-                className="w-16 h-16 rounded-full mr-3"
-              />
+          <div className="flex justify-between items-center p-3 gap-10">
+            <div
+              className="flex items-center gap-3"
+              onClick={profileNavigation}
+            >
+              {userData?.profile_picture ? (
+                <img
+                  alt="Profile"
+                  src={userData?.profile_picture}
+                  className="object-cover w-16 h-16 rounded-full"
+                />
+              ) : (
+                <UserProfilePicture fullName={userData?.full_name} size={64} />
+              )}
               <div>
                 <strong>{userData?.full_name}</strong>
                 <p className="m-0 text-gray-500 text-sm truncate w-[ch-20]">

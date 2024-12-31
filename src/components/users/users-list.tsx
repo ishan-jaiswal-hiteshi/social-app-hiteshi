@@ -5,6 +5,7 @@ import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "react-toastify";
 import UserCard from "./user-card";
 import { useAuth } from "@/context/authContext";
+import { UserListSkeleton } from "@/utils/skeletons";
 
 interface UserData {
   id: number;
@@ -17,9 +18,9 @@ interface UserData {
 
 const UsersList = () => {
   const { user } = useAuth();
-  const [users, setUsers] = useState<UserData[] | null>(null);
+  const [users, setUsers] = useState<UserData[] | []>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [followings, setFollowings] = useState<UserData[] | null>(null);
+  const [followings, setFollowings] = useState<UserData[] | []>([]);
 
   const getAllUsers = async () => {
     try {
@@ -55,22 +56,15 @@ const UsersList = () => {
     }
   }, [user]);
 
+  if (loading) {
+    <UserListSkeleton />;
+  }
+
   return (
     <div className="p-2">
-      {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div
-            className="animate-spin inline-block text-center w-12 h-12 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
-            role="status"
-            aria-label="loading"
-          >
-            <span className="sr-only">Loading...</span>
-          </div>
-        </div>
-      )}
-      <div className="mb-10">
-        {!loading && users && users.length > 0
-          ? users.map((user) => {
+      <div className="m-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 sm:ml-52 lg:grid-cols-3 gap-2">
+        {!loading && users && users?.length > 0
+          ? users?.map((user) => {
               const isFollowing = followings?.some(
                 (data) => data?.id === user?.id
               );

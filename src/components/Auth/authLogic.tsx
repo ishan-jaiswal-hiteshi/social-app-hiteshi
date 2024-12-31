@@ -96,17 +96,6 @@ export default function Auth() {
           otp: formData.otp,
           username: formData.userName,
           full_name: formData.fullName,
-          profile_picture: null,
-          other_data: {
-            cover_picture: "",
-            location: "",
-            job_title: "",
-            university: "",
-            bio: "",
-            friends: 0,
-            following: 0,
-            posts: 0,
-          },
         }
       : { email: formData.email, otp: formData.otp };
 

@@ -44,6 +44,7 @@ const MyPosts: React.FC = () => {
       }
     } catch (error) {
       toast.error("Error in fetching your posts.");
+      console.error("Error in fetching your posts.", error);
       setLoading(false);
     } finally {
       setLoading(false);
