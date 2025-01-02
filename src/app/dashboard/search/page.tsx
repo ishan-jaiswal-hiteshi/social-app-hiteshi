@@ -52,6 +52,7 @@ const SearchPage = () => {
       const response = await axiosInstance(`/latest-users`);
       if (response?.data) {
         setUsers(response.data.users);
+        console.log(users);
       }
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -115,7 +116,7 @@ const SearchPage = () => {
 
   return (
     <div className="text-white min-h-screen py-10">
-      {/* Search Form */}
+      {/* Search Bar */}
       <form
         onSubmit={handleSearchSubmit}
         className="max-w-xl mx-auto mb-10 px-4 sm:px-6 lg:px-8"
@@ -155,13 +156,11 @@ const SearchPage = () => {
         </div>
       </form>
 
-      {/* Content */}
-      <div className="md:ml-60 px-4 sm:px-6 lg:px-8">
-        {/* Users Section */}
+      {/* Users Section */}
+      <div className="px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-4">Latest Users</h2>
           <div className="flex justify-center">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {loadingUsers
                 ? Array.from({ length: 6 }).map((_, index) => (
                     <UserCardSkeleton key={index} />
@@ -182,7 +181,6 @@ const SearchPage = () => {
                 : !loadingUsers && (
                     <p className="col-span-full text-center">No users found</p>
                   )}
-              {/* See More Card */}
               {!loadingUsers && (
                 <div className="flex my-2 mx-3 items-center justify-center p-4 border rounded-lg border-gray-700">
                   <button
@@ -198,39 +196,38 @@ const SearchPage = () => {
         </div>
 
         {/* Posts Section */}
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Latest Posts</h2>
-          <div className="flex justify-center">
-            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {loadingPosts
-                ? Array.from({ length: 4 }).map((_, index) => (
-                    <PostSkeleton key={index} />
-                  ))
-                : posts.length > 0
-                ? posts.map((post) => (
-                    <Post
-                      key={post.id}
-                      postData={post}
-                      onDeletePost={handlePostDelete}
-                    />
-                  ))
-                : !loadingPosts && (
-                    <p className="col-span-full text-center">
-                      No posts available
-                    </p>
-                  )}
-              {/* See More Card */}
-              {!loadingPosts && (
-                <div className="flex items-center justify-center p-4 border rounded-lg border-gray-700">
-                  <button
-                    className="text-red-500 hover:text-red-700"
-                    onClick={postListNavigation}
-                  >
-                    See More
-                  </button>
-                </div>
-              )}
+        <div className="p-2 mx-60">
+          {loadingPosts && (
+            <div className="w-full">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <PostSkeleton key={index} />
+              ))}
             </div>
+          )}
+          <div className="mb-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+            {!loadingPosts && posts.length > 0
+              ? posts.map((post) => (
+                  <Post
+                    key={post.id}
+                    postData={post}
+                    onDeletePost={handlePostDelete}
+                  />
+                ))
+              : !loadingPosts && (
+                  <p className="col-span-full text-center text-gray-500">
+                    No Posts Available
+                  </p>
+                )}
+            {!loadingPosts && posts.length > 0 && (
+              <div className="col-span-full flex items-center justify-center p-4 border rounded-lg border-gray-700">
+                <button
+                  className="text-red-500 hover:text-red-700"
+                  onClick={postListNavigation}
+                >
+                  See More
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

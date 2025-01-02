@@ -354,16 +354,23 @@ export default function ProfilePage() {
       </div>
       {isEditOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="relative bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md max-h-screen overflow-y-auto">
+          <div
+            className="relative bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md max-h-screen overflow-y-auto "
+            style={{ scrollbarWidth: "none" }}
+          >
             <button
               onClick={handleEditToggle}
               className="absolute top-2 right-2 text-white hover:text-gray-300"
             >
               <IoClose className="h-6 w-6" />
             </button>
-            <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
+            <div className="border-b-[1px] border-red-600">
+              <h3 className=" font-bold mb-2 text-center text-2xl ">
+                Edit Profile
+              </h3>
+            </div>
+            <form onSubmit={handleSubmit} className="mt-2">
+              <div className="mb-4 flex flex-col items-center ">
                 <label className="block text-sm font-medium mb-2">
                   Profile Photo
                 </label>
