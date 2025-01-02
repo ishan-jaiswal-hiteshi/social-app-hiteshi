@@ -54,45 +54,83 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   return (
     <>
       {user?.id !== userData?.id && (
-        <div className="border border-gray-600 rounded-lg w-full mx-2  my-5 font-sans bg-black">
-          <div className="flex justify-between items-center p-3 gap-10">
-            <div
-              className="flex items-center gap-3"
-              onClick={profileNavigation}
-            >
-              {userData?.profile_picture ? (
+        <div>
+          {/* Mobile UI */}
+          <div className="block md:hidden border border-gray-600 rounded-lg w-full mx-2 my-2 font-sans bg-black">
+            <div className="flex justify-between items-center p-3">
+              <div className="flex items-center">
                 <img
-                  alt="Profile"
-                  src={userData?.profile_picture}
-                  className="object-cover w-16 h-16 rounded-full"
+                  src={
+                    userData?.profile_picture ||
+                    "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
+                  }
+                  alt="profile"
+                  className="w-16 h-16 rounded-full mr-3"
+                  onDragStart={(e) => e.preventDefault()}
                 />
-              ) : (
-                <UserProfilePicture fullName={userData?.full_name} size={64} />
-              )}
-              <div>
-                <strong>{userData?.full_name}</strong>
-                <p className="m-0 text-gray-500 text-sm truncate w-[ch-20]">
-                  @{userData?.username}
-                </p>
+                <div>
+                  <strong>{userData?.full_name}</strong>
+                  <p className="m-0 text-gray-500 text-sm truncate w-[ch-20]">
+                    @{userData?.username}
+                  </p>
+                </div>
+              </div>
+
+              <div className="cursor-pointer">
+                {isFollowing ? (
+                  <button
+                    className="bg-red-500 text-white px-2 py-1 rounded"
+                    onClick={handleUnfollow}
+                  >
+                    Following
+                  </button>
+                ) : (
+                  <button
+                    className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-400"
+                    onClick={handleFollow}
+                  >
+                    Follow
+                  </button>
+                )}
               </div>
             </div>
+          </div>
 
-            <div className="cursor-pointer">
-              {isFollowing ? (
-                <button
-                  className="bg-red-500 text-white px-2 py-1 rounded"
-                  onClick={handleUnfollow}
-                >
-                  Following
-                </button>
-              ) : (
-                <button
-                  className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-400"
-                  onClick={handleFollow}
-                >
-                  Follow
-                </button>
-              )}
+          {/* Desktop UI */}
+          <div className="hidden md:block w-72 m-2 max-w-sm bg-black border border-gray-600 rounded-lg shadow-lg">
+            <div className="flex flex-col items-center pt-7 pb-7">
+              <img
+                className="w-24 h-24 mb-3 rounded-full shadow-lg"
+                src={
+                  userData?.profile_picture ||
+                  "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
+                }
+                alt="profile"
+                onDragStart={(e) => e.preventDefault()}
+              />
+              <h5 className="mb-1 text-lg font-medium text-white">
+                {userData?.full_name}
+              </h5>
+              <span className="text-sm text-gray-500">
+                @{userData?.username}
+              </span>
+              <div className="flex mt-4">
+                {isFollowing ? (
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 text-sm rounded hover:bg-red-400"
+                    onClick={handleUnfollow}
+                  >
+                    Following
+                  </button>
+                ) : (
+                  <button
+                    className="bg-red-600 text-white px-4 py-2 text-sm rounded hover:bg-red-400"
+                    onClick={handleFollow}
+                  >
+                    Follow
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

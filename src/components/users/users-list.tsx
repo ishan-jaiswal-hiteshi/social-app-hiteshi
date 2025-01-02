@@ -72,7 +72,7 @@ const UsersList = () => {
                 <UserCard
                   key={user.id}
                   userData={user}
-                  followStatus={isFollowing}
+                  followStatus={!!isFollowing}
                 />
               );
             })
