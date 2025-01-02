@@ -16,69 +16,69 @@ interface UserData {
   updatedAt: string;
 }
 
-const UsersList = () => {
+const UsersList: React.FC = () => {
   const { user } = useAuth();
-  const [users, setUsers] = useState<UserData[] | []>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [followings, setFollowings] = useState<UserData[] | []>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [followings, setFollowings] = useState<UserData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const getAllUsers = async () => {
+  const fetchData = async () => {
+    if (!user?.id) return;
+
     try {
       setLoading(true);
 
-      const response = await axiosInstance("/get-all-users");
-      if (response?.data) {
-        setUsers(response?.data?.users);
+      const [usersResponse, followingsResponse] = await Promise.all([
+        axiosInstance.get("/get-all-users"),
+        axiosInstance.get(`/get-followings/${user.id}`),
+      ]);
+
+      if (usersResponse?.data?.users) {
+        setUsers(usersResponse.data.users);
+      } else {
+        console.warn("No users data received from API.");
+      }
+
+      if (followingsResponse?.data?.following) {
+        setFollowings(followingsResponse.data.following);
+      } else {
+        console.warn("No followings data received from API.");
       }
     } catch (error) {
-      console.error("Error in fetching users", error);
-      toast.error("Error in fetching users.");
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch users or followings.");
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchFollowing = async () => {
-    try {
-      const response = await axiosInstance.get(`get-followings/${user?.id}`);
-      if (response && response?.data) {
-        setFollowings(response?.data?.following);
-      }
-    } catch (err) {
-      console.log("Error In Fetching list of Followings,", err);
-    }
-  };
-
   useEffect(() => {
-    getAllUsers();
-    if (user) {
-      fetchFollowing();
-    }
+    fetchData();
   }, [user]);
 
   if (loading) {
-    <UserListSkeleton />;
+    return <UserListSkeleton />;
   }
 
   return (
     <div className="p-2">
       <div className="m-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 sm:ml-52 lg:grid-cols-3 gap-2">
-        {!loading && users && users?.length > 0
-          ? users?.map((user) => {
-              const isFollowing = followings?.some(
-                (data) => data?.id === user?.id
-              );
-              return (
-                <UserCard
-                  key={user.id}
-                  userData={user}
-                  followStatus={isFollowing}
-                />
-              );
-            })
-          : !loading && (
-              <p className="text-center text-gray-500">No User Available</p>
-            )}
+        {users && users.length > 0 ? (
+          users.map((userData) => {
+            const isFollowing = followings.some(
+              (data) => data.id === userData.id
+            );
+            return user?.id !== userData.id ? (
+              <UserCard
+                key={userData.id}
+                userData={userData}
+                followStatus={isFollowing}
+              />
+            ) : null;
+          })
+        ) : (
+          <p className="text-center text-gray-500">No Users Available</p>
+        )}
       </div>
     </div>
   );

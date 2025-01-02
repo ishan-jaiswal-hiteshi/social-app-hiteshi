@@ -6,9 +6,10 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/authContext";
 import { ProfileSkeleton } from "@/utils/skeletons";
-import FriendsList from "@/components/profile-page/friend-list";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import { IoClose } from "react-icons/io5";
+import FriendsListModel from "@/components/profile-page/friendlist-model";
+import FollowingListModel from "@/components/profile-page/followinglist-model";
 
 interface FilesState {
   profile_picture?: File;
@@ -22,8 +23,6 @@ export default function ProfilePage() {
   const [isFriendsOpen, setIsFriendsOpen] = useState(false);
   const [isFollowingOpen, setIsFollowingOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [friends, setFriends] = useState([]);
-  const [followings, setFollowings] = useState([]);
   const [files, setFiles] = useState<FilesState>({});
   const [previews, setPreviews] = useState<{
     profile_picture?: string;
@@ -41,7 +40,7 @@ export default function ProfilePage() {
       university: "",
       bio: "",
       friends: 0,
-      following: 0,
+      followings: 0,
       posts: 0,
     },
   });
@@ -65,7 +64,7 @@ export default function ProfilePage() {
             user?.other_data?.university || "No education details added.",
           bio: user?.other_data?.bio || "No bio added.",
           friends: user?.other_data?.friends || 0,
-          following: user?.other_data?.following || 0,
+          followings: user?.other_data?.followings || 0,
           posts: user?.other_data?.posts || 0,
         },
       });
@@ -130,23 +129,11 @@ export default function ProfilePage() {
   };
 
   const handleFollowingToggle = () => {
-    setIsFollowingOpen((prevState) => {
-      const newState = !prevState;
-      if (newState) {
-        fetchAllFollowings();
-      }
-      return newState;
-    });
+    setIsFollowingOpen(!isFollowingOpen);
   };
 
   const handleFriendsToggle = () => {
-    setIsFriendsOpen((prevState) => {
-      const newState = !prevState;
-      if (newState) {
-        fetchAllFriends();
-      }
-      return newState;
-    });
+    setIsFriendsOpen(!isFriendsOpen);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -196,28 +183,6 @@ export default function ProfilePage() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isEditOpen, isFollowingOpen, isFriendsOpen]);
-
-  const fetchAllFriends = async () => {
-    try {
-      const response = await axiosInstance.get(`/get-followers/${user?.id}`);
-      if (response && response?.data) {
-        setFriends(response?.data?.followers);
-      }
-    } catch (err) {
-      console.log("Error In Fetching friends list", err);
-    }
-  };
-
-  const fetchAllFollowings = async () => {
-    try {
-      const response = await axiosInstance.get(`/get-followings/${user?.id}`);
-      if (response && response?.data) {
-        setFollowings(response?.data?.following);
-      }
-    } catch (err) {
-      console.log("Error In Fetching friends list", err);
-    }
-  };
 
   if (loading) {
     return <ProfileSkeleton />;
@@ -312,12 +277,6 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-24 lg:justify-end items-center gap-4 mt-24 ">
-                    {/* <button
-                      className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                    >
-                      Connect
-                    </button> */}
                     <button
                       className="border-2 border-red-500 active:border-red-300 active:text-red-300 uppercase text-red-400 font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       type="button"
@@ -351,7 +310,7 @@ export default function ProfilePage() {
                       <div className="lg:mr-4 p-3 text-center">
                         <button onClick={handleFollowingToggle}>
                           <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                            {profileData?.other_data?.following}
+                            {profileData?.other_data?.followings}
                           </span>
                           <span className="text-sm text-blueGray-400">
                             Following
@@ -395,9 +354,43 @@ export default function ProfilePage() {
       </div>
       {isEditOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md max-h-screen overflow-y-auto">
+          <div className="relative bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md max-h-screen overflow-y-auto">
+            <button
+              onClick={handleEditToggle}
+              className="absolute top-2 right-2 text-white hover:text-gray-300"
+            >
+              <IoClose className="h-6 w-6" />
+            </button>
             <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
             <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  Profile Photo
+                </label>
+                <div
+                  className="w-32 h-32 border-2 border-dashed rounded-full flex items-center justify-center overflow-hidden cursor-pointer"
+                  onClick={() =>
+                    document.getElementsByName("profile_picture")[0]?.click()
+                  }
+                >
+                  {previews.profile_picture ? (
+                    <img
+                      src={previews.profile_picture}
+                      alt="Profile Preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-gray-500">Choose Picture</span>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  name="profile_picture"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium">Name</label>
                 <input
@@ -448,34 +441,6 @@ export default function ProfilePage() {
                   className="w-full p-2 border rounded text-gray-500"
                   rows={4}
                 ></textarea>
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Profile Photo
-                </label>
-                <div
-                  className="w-32 h-32 border-2 border-dashed rounded-full flex items-center justify-center overflow-hidden cursor-pointer"
-                  onClick={() =>
-                    document.getElementsByName("profile_picture")[0]?.click()
-                  }
-                >
-                  {previews.profile_picture ? (
-                    <img
-                      src={previews.profile_picture}
-                      alt="Profile Preview"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-gray-500">Choose Picture</span>
-                  )}
-                </div>
-                <input
-                  type="file"
-                  name="profile_picture"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
               </div>
 
               <div className="mb-4">
@@ -538,32 +503,16 @@ export default function ProfilePage() {
       )}
 
       {isFriendsOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="relative bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md">
-            <button
-              onClick={handleFriendsToggle}
-              className="absolute top-2 right-2 text-white hover:text-gray-300"
-            >
-              <IoClose className="h-6 w-6" />
-            </button>
-            <h3 className="text-lg font-semibold mb-4 text-red-500">{`${user?.full_name}'s friends`}</h3>
-            <FriendsList users={friends} />
-          </div>
-        </div>
+        <FriendsListModel
+          user={user}
+          handleFriendsToggle={handleFriendsToggle}
+        />
       )}
       {isFollowingOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="relative bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md">
-            <button
-              onClick={handleFollowingToggle}
-              className="absolute top-2 right-2 text-white hover:text-gray-300"
-            >
-              <IoClose className="h-6 w-6" />
-            </button>
-            <h3 className="text-lg font-semibold mb-4 text-red-500">{`${user?.full_name}'s followings`}</h3>
-            <FriendsList users={followings} />
-          </div>
-        </div>
+        <FollowingListModel
+          user={user}
+          handleFollowingToggle={handleFollowingToggle}
+        />
       )}
     </div>
   );
