@@ -22,7 +22,10 @@ const UserCardGrid: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   const router = useRouter();
 
   const profileNavigation = () => {
-    router.push(`/dashboard/profile/${userData?.id}`);
+    if (user?.id === userData?.id) {
+      router.push(`/dashboard/profile`);
+    }
+    router.push(`/dashboard/user/${userData?.id}/profile`);
   };
 
   const handleFollow = async () => {

@@ -19,45 +19,41 @@ interface UserData {
 const UsersList: React.FC = () => {
   const { user } = useAuth();
   const [users, setUsers] = useState<UserData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [followings, setFollowings] = useState<UserData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const getAllUsers = async () => {
+  const fetchData = async () => {
+    if (!user?.id) return;
+
     try {
       setLoading(true);
-      const response = await axiosInstance("/get-all-users");
-      if (response?.data?.users) {
-        setUsers(response.data.users);
+
+      const [usersResponse, followingsResponse] = await Promise.all([
+        axiosInstance.get("/get-all-users"),
+        axiosInstance.get(`/get-followings/${user.id}`),
+      ]);
+
+      if (usersResponse?.data?.users) {
+        setUsers(usersResponse.data.users);
       } else {
         console.warn("No users data received from API.");
       }
+
+      if (followingsResponse?.data?.following) {
+        setFollowings(followingsResponse.data.following);
+      } else {
+        console.warn("No followings data received from API.");
+      }
     } catch (error) {
-      console.error("Error in fetching users:", error);
-      toast.error("Failed to fetch users.");
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch users or followings.");
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchFollowings = async () => {
-    try {
-      if (!user?.id) return;
-      const response = await axiosInstance.get(`/get-followings/${user.id}`);
-      if (response?.data?.following) {
-        setFollowings(response.data.following);
-      } else {
-        console.warn("No followings data received from API.");
-      }
-    } catch (error) {
-      console.error("Error fetching followings:", error);
-    }
-  };
-
   useEffect(() => {
-    getAllUsers();
-    if (user) {
-      fetchFollowings();
-    }
+    fetchData();
   }, [user]);
 
   if (loading) {
@@ -68,17 +64,18 @@ const UsersList: React.FC = () => {
     <div className="p-2">
       <div className="m-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 sm:ml-52 lg:grid-cols-3 gap-2">
         {users && users.length > 0 ? (
-          users.map((userData) =>
-            user?.id !== userData.id ? (
+          users.map((userData) => {
+            const isFollowing = followings.some(
+              (data) => data.id === userData.id
+            );
+            return user?.id !== userData.id ? (
               <UserCard
                 key={userData.id}
                 userData={userData}
-                followStatus={followings.some(
-                  (data) => data.id === userData.id
-                )}
+                followStatus={isFollowing}
               />
-            ) : null
-          )
+            ) : null;
+          })
         ) : (
           <p className="text-center text-gray-500">No Users Available</p>
         )}

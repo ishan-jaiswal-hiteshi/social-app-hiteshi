@@ -22,7 +22,10 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   const router = useRouter();
 
   const profileNavigation = () => {
-    router.push(`/dashboard/profile/${userData?.id}`);
+    if (user?.id === userData?.id) {
+      router.push(`/dashboard/profile`);
+    }
+    router.push(`/dashboard/user/${userData?.id}/profile`);
   };
 
   const handleFollow = async () => {
@@ -78,7 +81,9 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
         </div>
 
         <div className="cursor-pointer">
-          {isFollowing ? (
+          {user && user?.id === userData?.id ? (
+            <></>
+          ) : isFollowing ? (
             <button
               className="bg-red-500 text-white px-2 py-1 rounded"
               onClick={handleUnfollow}
