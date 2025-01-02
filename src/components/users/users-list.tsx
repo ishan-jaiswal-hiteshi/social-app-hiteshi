@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import UserCard from "./user-card";
 import { useAuth } from "@/context/authContext";
 import { UserListSkeleton } from "@/utils/skeletons";
-
 interface UserData {
   id: number;
   username: string;

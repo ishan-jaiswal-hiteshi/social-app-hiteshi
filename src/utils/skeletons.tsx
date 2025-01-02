@@ -112,3 +112,47 @@ export const UserListSkeleton = () => {
     </>
   );
 };
+
+export const UserCardSkeleton = () => {
+  return (
+    <div>
+      {/* Mobile Skeleton */}
+      <div className="block md:hidden border border-gray-600 rounded-lg w-full mx-2 my-2 font-sans bg-black animate-pulse">
+        <div className="flex justify-between items-center p-3">
+          <div className="flex items-center">
+            {/* Profile Image Skeleton */}
+            <div className="w-16 h-16 rounded-full bg-gray-500 mr-3"></div>
+
+            <div className="space-y-2">
+              {/* Name Skeleton */}
+              <div className="h-4 bg-gray-500 rounded w-32"></div>
+              {/* Username Skeleton */}
+              <div className="h-3 bg-gray-500 rounded w-24"></div>
+            </div>
+          </div>
+
+          {/* Follow Button Skeleton */}
+          <div className="h-8 w-20 bg-gray-500 rounded"></div>
+        </div>
+      </div>
+
+      {/* Desktop Skeleton */}
+      <div className="hidden md:block w-60 h-64 m-2 max-w-sm bg-black border border-gray-600 rounded-lg shadow-lg animate-pulse">
+        <div className="flex flex-col items-center pt-10">
+          <div className="cursor-pointer justify-center items-center flex-col flex">
+            <div className="mb-4">
+              {/* Profile Image Skeleton */}
+              <div className="w-16 h-16 rounded-full bg-gray-500"></div>
+            </div>
+            <div className="h-4 bg-gray-500 rounded w-32 mb-2"></div>
+            <div className="h-3 bg-gray-500 rounded w-24"></div>
+          </div>
+          <div className="flex mt-4">
+            {/* Follow Button Skeleton */}
+            <div className="h-8 w-24 bg-gray-500 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
