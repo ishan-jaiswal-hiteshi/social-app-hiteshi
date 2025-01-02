@@ -7,7 +7,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
 import { FcLike } from "react-icons/fc";
-import { MdDelete } from "react-icons/md";
+import { MdMoreVert } from "react-icons/md";
 import { toast } from "react-toastify";
 import UserProfilePicture from "@/utils/user-profile-picture";
 
@@ -61,6 +61,13 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const wordLimit = 10;
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showOptions, setShowOptions] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const confirmDelete = () => {
+    handleDeletePost();
+    setShowConfirmation(false);
+  };
 
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [mouseStart, setMouseStart] = useState<number | null>(null);
@@ -100,11 +107,11 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     }
   };
 
-  const navigateToProfile = () => {
-    if (postData?.userId === user?.id) {
+  const navigateToProfile = (userId: number) => {
+    if (userId === user?.id) {
       router.push(`/dashboard/profile`);
     } else {
-      router.push(`/dashboard/user/${postData?.userId}/profile`);
+      router.push(`/dashboard/user/${userId}/profile`);
     }
   };
 
@@ -225,7 +232,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   return (
     <div className="border border-gray-600 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
       <div className="relative flex items-center p-3">
-        <div className="mr-3">
+        <div className="mr-3 border-red-600 rounded-full border-4">
           {postData?.User?.profile_picture ? (
             <img
               src={postData?.User?.profile_picture}
@@ -239,7 +246,10 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
             />
           )}
         </div>
-        <div className="cursor-pointer" onClick={() => navigateToProfile()}>
+        <div
+          className="cursor-pointer"
+          onClick={() => navigateToProfile(postData?.userId)}
+        >
           <strong>@{postData?.User?.username}</strong>
           <p className="m-0 text-gray-500 text-sm">
             {postData?.User?.full_name}
@@ -247,7 +257,26 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
         </div>
         {user?.id === postData?.userId && (
           <div className="absolute top-4 right-2 cursor-pointer">
-            <MdDelete size={20} onClick={handleDeletePost} color="red" />
+            <MdMoreVert
+              size={20}
+              onClick={() => setShowOptions((prev) => !prev)}
+            />
+            {showOptions && (
+              <div
+                className="absolute bg-black  shadow-md border rounded-md p-2 right-0 top-4"
+                style={{ top: "100%", zIndex: 10 }}
+              >
+                <button
+                  className="text-gray-300 hover:text-red-800 text-sm "
+                  onClick={() => {
+                    setShowConfirmation(true);
+                    setShowOptions(false);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -258,7 +287,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
             style={{ maxHeight: "400px", maxWidth: "100%" }}
           >
             <div
-              className="relative h-56 overflow-hidden rounded-lg md:h-72"
+              className="relative h-56 overflow-hidden md:h-72"
               onTouchStart={(e) => handleTouchStart(e)}
               onTouchEnd={(e) => handleTouchEnd(e)}
               onMouseDown={(e) => handleMouseDown(e)}
@@ -301,34 +330,6 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
             )}
           </div>
         )}
-
-        {postData?.content && (
-          <div className="p-3">
-            <span>
-              {getDisplayContent()}
-              {shouldTruncate && !isExpanded && (
-                <button
-                  onClick={() => {
-                    toggleContent();
-                  }}
-                  className="text-red-500 text-opacity-85 focus:outline-none ml-2"
-                >
-                  See More
-                </button>
-              )}
-            </span>
-            {shouldTruncate && isExpanded && (
-              <button
-                onClick={() => {
-                  toggleContent();
-                }}
-                className="text-red-500 text-opacity-85 focus:outline-none ml-2"
-              >
-                See Less
-              </button>
-            )}
-          </div>
-        )}
       </div>
 
       <div className="border-t border-gray-500 p-2 flex justify-start gap-5">
@@ -348,9 +349,36 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
           <p>{commnetsCount} </p>
         </div>
       </div>
+      {postData?.content && (
+        <div className=" px-3">
+          <span className="text-sm text-gray-300">
+            {getDisplayContent()}
+            {shouldTruncate && !isExpanded && (
+              <button
+                onClick={() => {
+                  toggleContent();
+                }}
+                className="text-red-500 text-opacity-85 focus:outline-none ml-2"
+              >
+                See More
+              </button>
+            )}
+          </span>
+          {shouldTruncate && isExpanded && (
+            <button
+              onClick={() => {
+                toggleContent();
+              }}
+              className="text-red-500 text-opacity-85 focus:outline-none ml-2"
+            >
+              See Less
+            </button>
+          )}
+        </div>
+      )}
 
       {showComments && (
-        <div className="p-3 border-t border-gray-300">
+        <div className="p-3 border-t border-gray-600 ">
           {loadingComments ? (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
               <div
@@ -364,18 +392,32 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
           ) : (
             comments?.map((comment) => (
               <div key={comment?.id} className="mb-3">
-                <div className=" flex">
-                  <img
-                    src={comment?.User?.profile_picture}
-                    alt="profile"
-                    className="w-8 h-8 rounded-full mr-3"
-                  />
-                  <strong>{comment.User?.full_name}</strong>
-                  <span className="m-0 ml-2 text-gray-500 text-sm">
+                <div
+                  className=" flex cursor-pointer"
+                  onClick={() => navigateToProfile(comment?.userId)}
+                >
+                  <div className="mr-3 border-red-600 rounded-full border-4">
+                    {comment?.User?.profile_picture ? (
+                      <img
+                        src={comment?.User?.profile_picture}
+                        alt="profile"
+                        className="w-6 h-6 rounded-full "
+                      />
+                    ) : (
+                      <UserProfilePicture
+                        fullName={comment.User?.full_name}
+                        size={28}
+                      />
+                    )}
+                  </div>
+
+                  <span className="m-0 font-bold  text-gray-500 text-sm">
                     @{comment.User?.username}
                   </span>
                 </div>
-                <p className=" ml-10 text-sm">{comment?.comment}</p>
+                <p className="ml-10 text-sm text-gray-300">
+                  {comment?.comment}
+                </p>
               </div>
             ))
           )}
@@ -395,6 +437,29 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
             >
               <IoSend size={20} />
             </button>
+          </div>
+        </div>
+      )}
+      {showConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-black border border-gray-400 p-4 rounded-md shadow-md max-w-sm mx-auto">
+            <p className="text-center text-gray-300 mb-4">
+              Are you sure you want to delete this post?
+            </p>
+            <div className="flex justify-between gap-3">
+              <button
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none transition"
+                onClick={confirmDelete}
+              >
+                Yes, Delete
+              </button>
+              <button
+                className="px-4 py-2 bg-gray-600 text-gray-200 rounded hover:bg-gray-500 focus:outline-none transition"
+                onClick={() => setShowConfirmation(false)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}

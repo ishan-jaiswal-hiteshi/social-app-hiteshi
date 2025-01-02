@@ -13,10 +13,15 @@ import UserProfilePicture from "@/utils/user-profile-picture";
 const SidebarLayout = () => {
   const { user } = useAuth();
   return (
-    <aside className="hidden md:flex bg-[#00070C] text-white p-4 w-52 fixed left-0 top-0 bottom-0">
-      <div className="flex flex-col h-full justify-between items-center">
-        <div>
-          <p className="text-lg font-bold">Socialize@Hiteshi</p>
+    <aside className="hidden md:flex bg-[#00070C] text-white p-4 w-52  fixed left-0 top-0 bottom-0">
+      <div className="flex flex-col h-full justify-between items-start">
+        <div className="mt-2">
+          <Link
+            className="text-lg font-bold  border border-gray-600 px-4 py-2 rounded-lg cursor-pointer"
+            href="/dashboard/home"
+          >
+            Socialize@Hiteshi
+          </Link>
         </div>
 
         <nav className="flex-grow flex flex-col justify-center">
