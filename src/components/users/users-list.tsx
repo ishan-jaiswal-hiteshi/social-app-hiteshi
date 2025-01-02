@@ -62,7 +62,7 @@ const UsersList = () => {
 
   return (
     <div className="p-2">
-      <div className="m-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 sm:ml-52 lg:grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 sm:ml-52 lg:grid-cols-3 gap-2">
         {!loading && users && users?.length > 0
           ? users?.map((user) => {
               const isFollowing = followings?.some(

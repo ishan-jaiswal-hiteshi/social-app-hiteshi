@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { useAuth } from "@/context/authContext";
-import UserCard from "../users/user-card";
+import UserCardList from "../users/user-card-list";
 
 interface UserData {
   id: number;
@@ -74,7 +74,7 @@ const FriendsList: React.FC<FriendsListProps> = ({ users }) => {
                 (data) => data.id === user.id
               );
               return (
-                <UserCard
+                <UserCardList
                   key={user.id}
                   userData={user}
                   followStatus={isFollowing}
