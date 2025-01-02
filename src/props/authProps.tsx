@@ -21,7 +21,7 @@ export interface OtherData {
   university: string | null;
   bio: string | null;
   friends: number | null;
-  following: number | null;
+  followings: number | null;
   posts: number | null;
 }
 

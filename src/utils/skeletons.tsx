@@ -82,18 +82,33 @@ export const PostSkeleton = () => {
 
 export const UserListSkeleton = () => {
   return (
-    <div className="border border-gray-600 rounded-lg w-full mx-2 my-5 font-sans bg-black">
-      <div className="flex justify-between items-center p-3 gap-10">
-        <div className="flex items-center gap-3">
-          <div className="w-16 h-16 rounded-full bg-gray-700 animate-pulse"></div>
-          <div className="space-y-2">
-            <div className="h-4 w-24 bg-gray-700 animate-pulse rounded"></div>
-            <div className="h-3 w-20 bg-gray-700 animate-pulse rounded"></div>
+    <>
+      <div className="border border-gray-600 rounded-lg w-full mx-2 my-5 font-sans bg-black">
+        <div className="flex justify-between items-center p-3 gap-10">
+          <div className="flex items-center gap-3">
+            <div className="w-16 h-16 rounded-full bg-gray-700 animate-pulse"></div>
+            <div className="space-y-2">
+              <div className="h-4 w-24 bg-gray-700 animate-pulse rounded"></div>
+              <div className="h-3 w-20 bg-gray-700 animate-pulse rounded"></div>
+            </div>
           </div>
-        </div>
 
-        <div className="h-8 w-20 bg-gray-700 animate-pulse rounded"></div>
+          <div className="h-8 w-20 bg-gray-700 animate-pulse rounded"></div>
+        </div>
       </div>
-    </div>
+      <div className="border border-gray-600 rounded-lg w-full mx-2 my-5 font-sans bg-black">
+        <div className="flex justify-between items-center p-3 gap-10">
+          <div className="flex items-center gap-3">
+            <div className="w-16 h-16 rounded-full bg-gray-700 animate-pulse"></div>
+            <div className="space-y-2">
+              <div className="h-4 w-24 bg-gray-700 animate-pulse rounded"></div>
+              <div className="h-3 w-20 bg-gray-700 animate-pulse rounded"></div>
+            </div>
+          </div>
+
+          <div className="h-8 w-20 bg-gray-700 animate-pulse rounded"></div>
+        </div>
+      </div>
+    </>
   );
 };

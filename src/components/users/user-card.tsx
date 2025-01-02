@@ -23,7 +23,7 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   const router = useRouter();
 
   const profileNavigation = () => {
-    router.push(`/dashboard/profile/${userData?.id}`);
+    router.push(`/dashboard/user/${userData?.id}/profile`);
   };
 
   const handleFollow = async () => {
@@ -53,50 +53,45 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
 
   return (
     <>
-      {user?.id !== userData?.id && (
-        <div className="border border-gray-600 rounded-lg w-full mx-2  my-5 font-sans bg-black">
-          <div className="flex justify-between items-center p-3 gap-10">
-            <div
-              className="flex items-center gap-3"
-              onClick={profileNavigation}
-            >
-              {userData?.profile_picture ? (
-                <img
-                  alt="Profile"
-                  src={userData?.profile_picture}
-                  className="object-cover w-16 h-16 rounded-full"
-                />
-              ) : (
-                <UserProfilePicture fullName={userData?.full_name} size={64} />
-              )}
-              <div>
-                <strong>{userData?.full_name}</strong>
-                <p className="m-0 text-gray-500 text-sm truncate w-[ch-20]">
-                  @{userData?.username}
-                </p>
-              </div>
-            </div>
-
-            <div className="cursor-pointer">
-              {isFollowing ? (
-                <button
-                  className="bg-red-500 text-white px-2 py-1 rounded"
-                  onClick={handleUnfollow}
-                >
-                  Following
-                </button>
-              ) : (
-                <button
-                  className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-400"
-                  onClick={handleFollow}
-                >
-                  Follow
-                </button>
-              )}
+      <div className="border border-gray-600 rounded-lg w-full mx-2 my-5 font-sans bg-black">
+        <div className="flex justify-between items-center p-3 gap-10">
+          <div className="flex items-center gap-3" onClick={profileNavigation}>
+            {userData?.profile_picture ? (
+              <img
+                alt="Profile"
+                src={userData?.profile_picture}
+                className="object-cover w-16 h-16 rounded-full"
+              />
+            ) : (
+              <UserProfilePicture fullName={userData?.full_name} size={64} />
+            )}
+            <div>
+              <strong>{userData?.full_name}</strong>
+              <p className="m-0 text-gray-500 text-sm truncate w-[ch-20]">
+                @{userData?.username}
+              </p>
             </div>
           </div>
+
+          <div className="cursor-pointer">
+            {isFollowing ? (
+              <button
+                className="bg-red-500 text-white px-2 py-1 rounded"
+                onClick={handleUnfollow}
+              >
+                Following
+              </button>
+            ) : (
+              <button
+                className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-400"
+                onClick={handleFollow}
+              >
+                Follow
+              </button>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </>
   );
 };

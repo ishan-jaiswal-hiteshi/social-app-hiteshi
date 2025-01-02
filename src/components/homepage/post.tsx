@@ -9,6 +9,7 @@ import { IoSend } from "react-icons/io5";
 import { FcLike } from "react-icons/fc";
 import { MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
+import UserProfilePicture from "@/utils/user-profile-picture";
 
 type Comment = {
   id: number;
@@ -87,14 +88,12 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   };
 
   const handleSwipe = (start: number, end: number) => {
-    const swipeThreshold = 50; // Minimum distance to detect a swipe
+    const swipeThreshold = 50;
     if (start - end > swipeThreshold) {
-      // Swipe left
       setCurrentSlide((prev) =>
         prev === postData.mediaUrls.length - 1 ? 0 : prev + 1
       );
     } else if (end - start > swipeThreshold) {
-      // Swipe right
       setCurrentSlide((prev) =>
         prev === 0 ? postData.mediaUrls.length - 1 : prev - 1
       );
@@ -102,7 +101,11 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   };
 
   const navigateToProfile = () => {
-    router.push(`./profile/${postData?.User?.id}`);
+    if (postData?.userId === user?.id) {
+      router.push(`/dashboard/profile`);
+    } else {
+      router.push(`/dashboard/user/${postData?.userId}/profile`);
+    }
   };
 
   const toggleContent = () => {
@@ -222,14 +225,20 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   return (
     <div className="border border-gray-600 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
       <div className="relative flex items-center p-3">
-        <img
-          src={
-            postData?.User?.profile_picture ||
-            "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
-          }
-          alt="profile"
-          className="w-10 h-10 rounded-full mr-3 object-cover"
-        />
+        <div className="mr-3">
+          {postData?.User?.profile_picture ? (
+            <img
+              src={postData?.User?.profile_picture}
+              alt="profile"
+              className="w-10 h-10 rounded-full  object-cover"
+            />
+          ) : (
+            <UserProfilePicture
+              fullName={postData?.User?.full_name}
+              size={40}
+            />
+          )}
+        </div>
         <div className="cursor-pointer" onClick={() => navigateToProfile()}>
           <strong>@{postData?.User?.username}</strong>
           <p className="m-0 text-gray-500 text-sm">
@@ -262,6 +271,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                     currentSlide === index ? "opacity-100" : "opacity-0"
                   }`}
                   data-carousel-item={index}
+                  onDoubleClick={handleLikeClick}
                 >
                   <img
                     src={url}
@@ -273,20 +283,22 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
               ))}
             </div>
 
-            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
-              {postData.mediaUrls.map((_, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  className={`w-2 h-2 rounded-full ${
-                    currentSlide === index
-                      ? "bg-red-600"
-                      : "bg-gray-400 opacity-50"
-                  }`}
-                  onClick={() => setCurrentSlide(index)}
-                ></button>
-              ))}
-            </div>
+            {postData?.mediaUrls?.length >= 2 && (
+              <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+                {postData.mediaUrls.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className={`w-2 h-2 rounded-full ${
+                      currentSlide === index
+                        ? "bg-red-600"
+                        : "bg-gray-400 opacity-50"
+                    }`}
+                    onClick={() => setCurrentSlide(index)}
+                  ></button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
