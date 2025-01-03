@@ -13,7 +13,7 @@ import UserProfilePicture from "@/utils/user-profile-picture";
 const SidebarLayout = () => {
   const { user } = useAuth();
   return (
-    <aside className="hidden md:flex bg-[#00070C] text-white p-4 w-52 fixed left-0 top-0 bottom-0">
+    <aside className=" hidden md:flex bg-[#00070C] text-white p-4 w-52 fixed left-0 top-0 bottom-0">
       <div className="flex flex-col h-full justify-between items-center">
         <div>
           <p className="text-lg font-bold">Socialize@Hiteshi</p>
