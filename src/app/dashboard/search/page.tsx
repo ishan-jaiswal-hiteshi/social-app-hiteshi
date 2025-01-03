@@ -44,6 +44,7 @@ const SearchPage = () => {
   const [loadingPosts, setLoadingPosts] = useState<boolean>(true);
   const [followings, setFollowings] = useState<UserData[] | []>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isSearching, setIsSearching] = useState<boolean>(false);
   const router = useRouter();
 
   const fetchUsers = async () => {
@@ -52,7 +53,6 @@ const SearchPage = () => {
       const response = await axiosInstance(`/latest-users`);
       if (response?.data) {
         setUsers(response.data.users);
-        console.log(users);
       }
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -89,36 +89,64 @@ const SearchPage = () => {
     }
   };
 
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) {
+      fetchUsers();
+      fetchPosts();
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      setLoadingUsers(true);
+      setLoadingPosts(true);
+
+      const response = await axiosInstance.get(
+        `/search/${query.toLowerCase()}`
+      );
+      if (response?.data?.results) {
+        setUsers(response.data.results.users || []);
+        setPosts(response.data.results.posts || []);
+      }
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      toast.error("Error performing search.");
+    } finally {
+      setLoadingUsers(false);
+      setLoadingPosts(false);
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    handleSearch(query);
+  };
+
+  const handlePostDelete = (postId: number) => {
+    setPosts((prev) => prev?.filter((post) => post.id !== postId) || []);
+  };
+
+  const userListNavigation = () => {
+    router.push(`/dashboard/users`);
+  };
+
+  const postListNavigation = () => {
+    router.push(`/dashboard/home`);
+  };
+
   useEffect(() => {
     fetchUsers();
     fetchPosts();
     fetchFollowing();
   }, [user]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Searching for:", searchQuery);
-  };
-
-  const handlePostDelete = (postId: number) => {
-    setPosts((prev) => prev?.filter((post) => post.id !== postId) || []);
-  };
-  const userListNavigation = () => {
-    router.push(`/dashboard/users`);
-  };
-  const postListNavigation = () => {
-    router.push(`/dashboard/home`);
-  };
-
   return (
-    <div className="text-white min-h-screen py-10">
+    <div className="text-white min-h-screen py-10 ">
       {/* Search Bar */}
       <form
-        onSubmit={handleSearchSubmit}
+        onSubmit={(e) => e.preventDefault()}
         className="max-w-xl mx-auto mb-10 px-4 sm:px-6 lg:px-8"
       >
         <div className="relative">
@@ -145,23 +173,16 @@ const SearchPage = () => {
             placeholder="Search Users or Posts..."
             value={searchQuery}
             onChange={handleSearchChange}
-            required
           />
-          <button
-            type="submit"
-            className="absolute right-2.5 bottom-2.5 bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 text-sm px-4 py-2 rounded-lg"
-          >
-            Search
-          </button>
         </div>
       </form>
 
       {/* Users Section */}
-      <div className="px-4 sm:px-6 lg:px-8">
+      <div className=" px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <div className="flex justify-center">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {loadingUsers
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {loadingUsers || isSearching
                 ? Array.from({ length: 6 }).map((_, index) => (
                     <UserCardSkeleton key={index} />
                   ))
@@ -181,53 +202,58 @@ const SearchPage = () => {
                 : !loadingUsers && (
                     <p className="col-span-full text-center">No users found</p>
                   )}
-              {!loadingUsers && (
-                <div className="flex my-2 mx-3 items-center justify-center p-4 border rounded-lg border-gray-700">
-                  <button
-                    className="text-red-600 hover:text-red-700"
-                    onClick={userListNavigation}
-                  >
-                    See More
-                  </button>
-                </div>
-              )}
+              {!isSearching &&
+                !loadingUsers &&
+                users.length > 0 &&
+                searchQuery.trim() === "" && (
+                  <div className="flex my-2 mx-3 items-center justify-center p-4 border rounded-lg border-gray-700">
+                    <button
+                      className="text-red-600 hover:text-red-700"
+                      onClick={userListNavigation}
+                    >
+                      See More
+                    </button>
+                  </div>
+                )}
             </div>
           </div>
         </div>
 
         {/* Posts Section */}
-        <div className="p-2 mx-60">
-          {loadingPosts && (
-            <div className="w-full">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <PostSkeleton key={index} />
-              ))}
-            </div>
-          )}
-          <div className="mb-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
-            {!loadingPosts && posts.length > 0
+        <div className="flex justify-center md:mx-40">
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 max-w-5xl">
+            {loadingPosts || isSearching
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <PostSkeleton key={index} />
+                ))
+              : posts.length > 0
               ? posts.map((post) => (
-                  <Post
-                    key={post.id}
-                    postData={post}
-                    onDeletePost={handlePostDelete}
-                  />
+                  <div>
+                    <Post
+                      key={post.id}
+                      postData={post}
+                      onDeletePost={handlePostDelete}
+                    />
+                  </div>
                 ))
               : !loadingPosts && (
                   <p className="col-span-full text-center text-gray-500">
                     No Posts Available
                   </p>
                 )}
-            {!loadingPosts && posts.length > 0 && (
-              <div className="col-span-full flex items-center justify-center p-4 border rounded-lg border-gray-700">
-                <button
-                  className="text-red-500 hover:text-red-700"
-                  onClick={postListNavigation}
-                >
-                  See More
-                </button>
-              </div>
-            )}
+            {!isSearching &&
+              !loadingPosts &&
+              posts.length > 0 &&
+              searchQuery.trim() === "" && (
+                <div className="col-span-full flex items-center justify-center p-4 border rounded-lg border-gray-700">
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={postListNavigation}
+                  >
+                    See More
+                  </button>
+                </div>
+              )}
           </div>
         </div>
       </div>
