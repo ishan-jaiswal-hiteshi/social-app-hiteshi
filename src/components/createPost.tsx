@@ -40,10 +40,10 @@ const CreatePost = () => {
   const handlePost = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (images.length === 0 || !content) {
-      toast.error("At least one image and content are required.");
-      return;
-    }
+    //if (images.length === 0 || !content) {
+    // toast.error("At least one image and content are required.");
+    // return;
+    //}
 
     const formattedTags = tags
       ? tags
