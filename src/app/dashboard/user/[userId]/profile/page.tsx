@@ -137,7 +137,7 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:ml-52">
+    <div className="min-h-screen flex flex-col ">
       <div className="flex-grow flex flex-col">
         <section className="relative block h-[500px]">
           <div

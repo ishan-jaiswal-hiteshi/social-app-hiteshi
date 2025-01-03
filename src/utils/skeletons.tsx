@@ -1,5 +1,5 @@
 export const ProfileSkeleton = () => (
-  <div className="min-h-screen flex flex-col md:ml-52 p-6">
+  <div className="min-h-screen flex flex-col  p-6">
     <div className="relative block h-[500px] bg-gray-300 animate-pulse">
       <div className="absolute top-0 w-full h-full bg-center bg-cover bg-gray-400 animate-pulse"></div>
     </div>

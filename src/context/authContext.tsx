@@ -17,12 +17,14 @@ type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   setUser: Dispatch<SetStateAction<User | null>>;
+  loginUser: () => Promise<void>;
 };
 
 const authContextDefaultValues: AuthContextType = {
   user: null,
   isAuthenticated: false,
   setUser: () => {},
+  loginUser: async () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(authContextDefaultValues);
@@ -46,6 +48,7 @@ export function AuthProvider({ children }: Props) {
 
       if (response && response?.data?.user) {
         setUser(response?.data?.user);
+        setIsAuthenticated(true);
       }
     } catch (err: any) {
       if ((err && err.status === 401) || (err && err.status === 404)) {
@@ -59,15 +62,20 @@ export function AuthProvider({ children }: Props) {
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
-      setIsAuthenticated(true);
       getCurrentUser();
+      setIsAuthenticated(true);
     }
-  }, [isAuthenticated]);
+  }, []);
+
+  const loginUser = async () => {
+    await getCurrentUser();
+  };
 
   const value = {
     user,
     setUser,
     isAuthenticated,
+    loginUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -232,7 +232,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   return (
     <div className="border border-gray-600 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
       <div className="relative flex items-center p-3">
-        <div className="mr-3 border-red-600 rounded-full border-4">
+        <div className="mr-3">
           {postData?.User?.profile_picture ? (
             <img
               src={postData?.User?.profile_picture}
@@ -396,7 +396,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                   className=" flex cursor-pointer"
                   onClick={() => navigateToProfile(comment?.userId)}
                 >
-                  <div className="mr-3 border-red-600 rounded-full border-4">
+                  <div className="mr-3 ">
                     {comment?.User?.profile_picture ? (
                       <img
                         src={comment?.User?.profile_picture}

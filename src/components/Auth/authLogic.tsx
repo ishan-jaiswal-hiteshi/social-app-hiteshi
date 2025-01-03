@@ -5,9 +5,11 @@ import axiosInstance from "@/utils/axiosInstance";
 import { isValidateEmail, isValidOTP } from "@/utils/input_Validations";
 import AuthForm from "@/components/Auth/loginForm";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/authContext";
 
 export default function Auth() {
   const router = useRouter();
+  const { loginUser } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -107,6 +109,7 @@ export default function Auth() {
       if (response.status === 200) {
         const result = response.data;
         localStorage.setItem("accessToken", result.token);
+        await loginUser();
         router.push("/dashboard/home");
       }
     } catch (err: any) {
