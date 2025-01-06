@@ -20,7 +20,7 @@ export default function RootLayout({
         <link rel="icon" href="./favicon.ico" />
         <title>My App</title>
       </Head>
-      <body className={`antialiased font-spaceGrotesk bg-black`}>
+      <body className={`antialiased font-spaceGrotesk background`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

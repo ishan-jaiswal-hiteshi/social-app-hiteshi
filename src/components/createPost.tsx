@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 const CreatePost = () => {
   const [images, setImages] = useState<File[]>([]);
   const [content, setContent] = useState<string>("");
-  const [tags, setTags] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { user } = useAuth();
   const router = useRouter();
@@ -33,26 +32,14 @@ const CreatePost = () => {
     setContent(event.target.value);
   };
 
-  const handleTagsChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTags(event.target.value);
-  };
-
   const handlePost = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    //if (images.length === 0 || !content) {
-    // toast.error("At least one image and content are required.");
-    // return;
-    //}
+    if (images.length === 0) {
+      toast.error("At least one image is required.");
+      return;
+    }
 
-    const formattedTags = tags
-      ? tags
-          ?.split(/[\s,]+/)
-          ?.map((tag) => `#${tag?.trim()}`)
-          ?.join(" ")
-      : "";
-
-    const updatedContent = `${content} ${formattedTags}`;
     const formData = new FormData();
 
     images.forEach((image) => {
@@ -74,7 +61,7 @@ const CreatePost = () => {
       if (mediaResponse && mediaResponse.data?.mediaUrls) {
         const uploadData = {
           userId: user?.id,
-          content: updatedContent,
+          content: content || "",
           mediaUrls: mediaResponse?.data?.mediaUrls,
         };
 
@@ -187,23 +174,6 @@ const CreatePost = () => {
               onChange={handleContentChange}
               className="mt-1 block w-full p-3 border text-black border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="Write your post content here..."
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="tags"
-              className="block text-sm font-medium text-gray-700"
-            >
-              #Hash Tags
-            </label>
-            <textarea
-              id="tags"
-              name="tags"
-              value={tags}
-              onChange={handleTagsChange}
-              className="mt-1 block w-full p-3 border text-black border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Create hash tags..."
             />
           </div>
 

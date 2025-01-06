@@ -87,17 +87,17 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
               </div>
             </div>
 
-            <div className="cursor-pointer">
+            <div className="cursor-pointer w-[100px]">
               {isFollowing ? (
                 <button
-                  className="bg-red-500 text-white px-2 py-1 rounded"
+                  className=" border border-gray-500 text-white px-2 py-1 w-full rounded"
                   onClick={handleUnfollow}
                 >
                   Following
                 </button>
               ) : (
                 <button
-                  className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-400"
+                  className="bg-primary-dark text-white px-2 py-1 w-full rounded hover:bg-primary-light "
                   onClick={handleFollow}
                 >
                   Follow
@@ -136,17 +136,17 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
                 @{userData?.username}
               </span>
             </div>
-            <div className="flex mt-4">
+            <div className="flex mt-4 w-[100px]">
               {isFollowing ? (
                 <button
-                  className="bg-red-500 text-white px-4 py-2 text-sm rounded hover:bg-red-400"
+                  className="border border-gray-500 text-white px-4 py-2 text-sm rounded w-full bg-black"
                   onClick={handleUnfollow}
                 >
                   Following
                 </button>
               ) : (
                 <button
-                  className="bg-red-600 text-white px-4 py-2 text-sm rounded hover:bg-red-400"
+                  className="bg-primary-dark text-white px-4 py-2 text-sm rounded w-full hover:bg-primary-light"
                   onClick={handleFollow}
                 >
                   Follow

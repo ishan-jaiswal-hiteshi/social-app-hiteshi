@@ -38,7 +38,6 @@ const PostList = () => {
       if (response?.data) {
         setPosts(response?.data?.posts);
         setLoading(false);
-        console.log(response.data);
       }
     } catch (error) {
       console.error(error);
@@ -55,8 +54,8 @@ const PostList = () => {
 
   return (
     <>
-      <div className="mb-6">
-        <header className="md:hidden fixed top-0 left-0 right-0 z-10 flex items-center justify-start bg-black  border-b border-gray-700">
+      <div className="mb-8 md:hidden">
+        <header className="fixed top-0 left-0 right-0 z-10 flex items-center justify-start bg-black  border-b border-gray-700">
           <Link
             className="text-md font-semibold text-white mx-5 my-3"
             href="/dashboard/home"
@@ -68,13 +67,13 @@ const PostList = () => {
 
       <div className="p-2">
         {loading && (
-          <div className="w-full">
+          <div>
             {Array.from({ length: 5 }).map((_, index) => (
               <PostSkeleton key={index} />
             ))}
           </div>
         )}
-        <div className="mb-10">
+        <div className="mb-12">
           {!loading && posts && posts.length > 0
             ? posts.map((post) => (
                 <Post

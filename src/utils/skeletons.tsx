@@ -1,5 +1,5 @@
 export const ProfileSkeleton = () => (
-  <div className="min-h-screen flex flex-col  p-6">
+  <div className="min-h-screen flex flex-col justify-center   p-6">
     <div className="relative block h-[500px] bg-gray-300 animate-pulse">
       <div className="absolute top-0 w-full h-full bg-center bg-cover bg-gray-400 animate-pulse"></div>
     </div>
@@ -59,7 +59,7 @@ export const ProfileSkeleton = () => (
 
 export const PostSkeleton = () => {
   return (
-    <div className="animate-pulse p-4 border w-96 border-gray-400 rounded-lg max-w-md mx-4 my-5 bg-black">
+    <div className="animate-pulse p-4 border w-full border-gray-400 rounded-lg max-w-md my-5 bg-black">
       <div className="flex items-center space-x-4 mb-4">
         <div className="w-12 h-12 rounded-full bg-gray-400"></div>
         <div className="flex-1 space-y-2">
@@ -82,76 +82,82 @@ export const PostSkeleton = () => {
 
 export const UserListSkeleton = () => {
   return (
-    <>
-      <div className="border border-gray-600 rounded-lg w-full mx-2 my-5 font-sans bg-black">
-        <div className="flex justify-between items-center p-3 gap-10">
-          <div className="flex items-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-gray-700 animate-pulse"></div>
+    <div>
+      <div className="block md:hidden border border-gray-600 rounded-lg w-full mx-2 my-2 font-sans bg-black animate-pulse">
+        <div className="flex justify-between items-center p-3">
+          <div className="flex items-center">
+            <div className="w-16 h-16 rounded-full bg-gray-500 mr-3"></div>
             <div className="space-y-2">
-              <div className="h-4 w-24 bg-gray-700 animate-pulse rounded"></div>
-              <div className="h-3 w-20 bg-gray-700 animate-pulse rounded"></div>
+              <div className="h-4 bg-gray-500 rounded w-32"></div>
+              <div className="h-3 bg-gray-500 rounded w-24"></div>
             </div>
           </div>
-
-          <div className="h-8 w-20 bg-gray-700 animate-pulse rounded"></div>
+          <div className="h-8 w-20 bg-gray-500 rounded"></div>
         </div>
       </div>
-      <div className="border border-gray-600 rounded-lg w-full mx-2 my-5 font-sans bg-black">
-        <div className="flex justify-between items-center p-3 gap-10">
-          <div className="flex items-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-gray-700 animate-pulse"></div>
+      <div className="block md:hidden border border-gray-600 rounded-lg w-full mx-2 my-2 font-sans bg-black animate-pulse">
+        <div className="flex justify-between items-center p-3">
+          <div className="flex items-center">
+            <div className="w-16 h-16 rounded-full bg-gray-500 mr-3"></div>
             <div className="space-y-2">
-              <div className="h-4 w-24 bg-gray-700 animate-pulse rounded"></div>
-              <div className="h-3 w-20 bg-gray-700 animate-pulse rounded"></div>
+              <div className="h-4 bg-gray-500 rounded w-32"></div>
+              <div className="h-3 bg-gray-500 rounded w-24"></div>
             </div>
           </div>
-
-          <div className="h-8 w-20 bg-gray-700 animate-pulse rounded"></div>
+          <div className="h-8 w-20 bg-gray-500 rounded"></div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
 export const UserCardSkeleton = () => {
   return (
     <div>
-      {/* Mobile Skeleton */}
       <div className="block md:hidden border border-gray-600 rounded-lg w-full mx-2 my-2 font-sans bg-black animate-pulse">
         <div className="flex justify-between items-center p-3">
           <div className="flex items-center">
-            {/* Profile Image Skeleton */}
             <div className="w-16 h-16 rounded-full bg-gray-500 mr-3"></div>
 
             <div className="space-y-2">
-              {/* Name Skeleton */}
               <div className="h-4 bg-gray-500 rounded w-32"></div>
-              {/* Username Skeleton */}
               <div className="h-3 bg-gray-500 rounded w-24"></div>
             </div>
           </div>
 
-          {/* Follow Button Skeleton */}
           <div className="h-8 w-20 bg-gray-500 rounded"></div>
         </div>
       </div>
 
-      {/* Desktop Skeleton */}
       <div className="hidden md:block w-60 h-64 m-2 max-w-sm bg-black border border-gray-600 rounded-lg shadow-lg animate-pulse">
         <div className="flex flex-col items-center pt-10">
           <div className="cursor-pointer justify-center items-center flex-col flex">
             <div className="mb-4">
-              {/* Profile Image Skeleton */}
               <div className="w-16 h-16 rounded-full bg-gray-500"></div>
             </div>
             <div className="h-4 bg-gray-500 rounded w-32 mb-2"></div>
             <div className="h-3 bg-gray-500 rounded w-24"></div>
           </div>
           <div className="flex mt-4">
-            {/* Follow Button Skeleton */}
             <div className="h-8 w-24 bg-gray-500 rounded"></div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+export const EventCardSkeleton = () => {
+  return (
+    <div className="bg-black p-4 rounded-lg shadow-lg mx-auto flex justify-start gap-4 text-center w-[80%] animate-pulse">
+      <div className="w-[40%]">
+        <div className="w-full h-full bg-gray-700 rounded-lg"></div>
+      </div>
+      <div className="w-[60%] space-y-2">
+        <div className="h-6 bg-gray-700 rounded w-3/4"></div>
+        <div className="h-4 bg-gray-700 rounded w-full"></div>
+        <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+        <div className="h-4 bg-gray-700 rounded w-1/3"></div>
       </div>
     </div>
   );

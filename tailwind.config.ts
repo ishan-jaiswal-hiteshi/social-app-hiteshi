@@ -24,6 +24,9 @@ export default {
       fontFamily: {
         spaceGrotesk: ["Space Grotesk", "sans-serif"],
       },
+      screens: {
+        'above-1148': '1148px', 
+      },
     },
   },
   plugins: [],

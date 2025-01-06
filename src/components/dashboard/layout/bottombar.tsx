@@ -8,53 +8,69 @@ import { IoMdSearch } from "react-icons/io";
 import { MdAddCircleOutline } from "react-icons/md";
 import { LuUsersRound } from "react-icons/lu";
 import UserProfilePicture from "@/utils/user-profile-picture";
+import { usePathname } from "next/navigation";
 
 const BottombarLayout = () => {
   const { user } = useAuth();
+  const pathname = usePathname();
+
+  const navItems = [
+    {
+      path: "/dashboard/home",
+      icon: <AiOutlineHome size={26} />,
+      name: "Home",
+    },
+    {
+      path: "/dashboard/search",
+      icon: <IoMdSearch size={26} />,
+      name: "Search",
+    },
+    {
+      path: "/dashboard/create-post",
+      icon: <MdAddCircleOutline size={26} />,
+      name: "Create Post",
+    },
+    {
+      path: "/dashboard/users",
+      icon: <LuUsersRound size={26} />,
+      name: "Users",
+    },
+    {
+      path: "/dashboard/profile",
+      icon: user?.profile_picture ? (
+        <img
+          src={
+            user?.profile_picture ||
+            "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
+          }
+          alt="profile"
+          className="w-6 h-6 rounded-full"
+        />
+      ) : (
+        <UserProfilePicture fullName={user?.full_name} size={20} />
+      ),
+      name: "Profile",
+    },
+  ];
+
+  const isActive = (path: string) => pathname === path;
+
   return (
-    <footer className="md:hidden bg-[#00070C] text-white py-3 text-center fixed bottom-0 left-0 right-0 ">
+    <footer className="md:hidden bg-[#00070C] text-white py-3 text-center fixed bottom-0 left-0 right-0">
       <div className="flex justify-around">
-        <Link
-          href="/dashboard/home"
-          className="hover:text-gray-300 cursor-pointer"
-        >
-          <AiOutlineHome size={20} />
-        </Link>
-        <Link
-          href="/dashboard/search"
-          className="hover:text-gray-300 cursor-pointer"
-        >
-          <IoMdSearch size={20} />
-        </Link>
-        <Link
-          href="/dashboard/create-post"
-          className="hover:text-gray-300 cursor-pointer"
-        >
-          <MdAddCircleOutline size={20} />
-        </Link>
-        <Link
-          href="/dashboard/users"
-          className="hover:text-gray-300 cursor-pointer flex gap-2 items-center"
-        >
-          <LuUsersRound size={20} />
-        </Link>
-        <Link
-          href="/dashboard/profile"
-          className="hover:text-gray-300 cursor-pointer"
-        >
-          {user?.profile_picture ? (
-            <img
-              src={
-                user?.profile_picture ||
-                "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
-              }
-              alt="profile"
-              className="w-6 h-6 rounded-full"
-            />
-          ) : (
-            <UserProfilePicture fullName={user?.full_name} size={20} />
-          )}
-        </Link>
+        {navItems.map((item, index) => (
+          <Link
+            key={index}
+            href={item.path}
+            className={`cursor-pointer ${
+              isActive(item.path)
+                ? "text-primary-light"
+                : "hover:text-primary-dark"
+            }`}
+          >
+            {item.icon}
+          </Link>
+        ))}
       </div>
     </footer>
   );

@@ -1,5 +1,5 @@
 "use client";
-import { FiEdit } from "react-icons/fi";
+// import { FiEdit } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import Link from "next/link";
@@ -17,7 +17,7 @@ interface FilesState {
 }
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isFriendsOpen, setIsFriendsOpen] = useState(false);
@@ -55,19 +55,17 @@ export default function ProfilePage() {
         username: user.username || "",
         profile_picture: user?.profile_picture,
         other_data: {
-          cover_picture:
-            user?.other_data?.cover_picture ||
-            "https://hiteshi.com/_next/static/media/logo.9b8ca92c.png",
-          location: user?.other_data?.location || "No location added.",
-          job_title: user?.other_data?.job_title || "No work details added.",
-          university:
-            user?.other_data?.university || "No education details added.",
-          bio: user?.other_data?.bio || "No bio added.",
+          cover_picture: user?.other_data?.cover_picture || "",
+          location: user?.other_data?.location || "",
+          job_title: user?.other_data?.job_title || "",
+          university: user?.other_data?.university || "",
+          bio: user?.other_data?.bio || "",
           friends: user?.other_data?.friends || 0,
           followings: user?.other_data?.followings || 0,
           posts: user?.other_data?.posts || 0,
         },
       });
+
       setLoading(false);
     }
   }, [user]);
@@ -123,7 +121,19 @@ export default function ProfilePage() {
       const newState = !prevState;
       if (newState) {
         setEditData(profileData);
+        const initialPreviews: { [key: string]: string } = {};
+
+        if (profileData?.profile_picture) {
+          initialPreviews["profile_picture"] = profileData?.profile_picture;
+        }
+        if (profileData?.other_data?.cover_picture) {
+          initialPreviews["cover_picture"] =
+            profileData?.other_data?.cover_picture;
+        }
+
+        setPreviews(initialPreviews);
       }
+
       return newState;
     });
   };
@@ -153,6 +163,7 @@ export default function ProfilePage() {
 
       const response = await axiosInstance.post("/profile-update", updateData);
       setProfileData(response.data.profile);
+      setUser(response.data.profile);
       toast.success("Profile Updated");
     } catch (error) {
       toast.error("Failed to Update");
@@ -265,7 +276,7 @@ export default function ProfilePage() {
                           />
                         )}
                       </div>
-                      <span className="top-14 left-10 absolute bg-red-600 p-2 rounded-full text-white hover:bg-red-600 cursor-pointer">
+                      {/* <span className="top-14 left-10 absolute bg-red-600 p-2 rounded-full text-white hover:bg-red-600 cursor-pointer">
                         <button
                           type="button"
                           onClick={handleEditToggle}
@@ -273,15 +284,16 @@ export default function ProfilePage() {
                         >
                           <FiEdit size={20} />
                         </button>
-                      </span>
+                      </span> */}
                     </div>
                   </div>
-                  <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-24 lg:justify-end items-center gap-4 mt-24 ">
+                  <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-24 lg:justify-end items-center gap-4 mt-24">
                     <button
                       className="border-2 border-red-500 active:border-red-300 active:text-red-300 uppercase text-red-400 font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       type="button"
+                      onClick={handleEditToggle}
                     >
-                      Message
+                      Edit Profile
                     </button>
                   </div>
                   <div className="w-full lg:w-4/12 px-4 lg:order-1">
@@ -335,15 +347,12 @@ export default function ProfilePage() {
                     {profileData?.other_data?.university}
                   </div>
                 </div>
-                <div className="mt-7 py-10 border-t border-red-500 text-center">
-                  <div className="flex flex-wrap justify-center">
+                <div className="mt-7 border-t border-red-500 text-center">
+                  <div className="pt-4 flex flex-wrap justify-center">
                     <div className="w-full lg:w-9/12 px-4">
-                      <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
+                      <p className=" text-lg leading-relaxed text-blueGray-700">
                         {profileData?.other_data?.bio}
                       </p>
-                      <a href="#pablo" className="font-normal text-red-500">
-                        Show more
-                      </a>
                     </div>
                   </div>
                 </div>
@@ -353,9 +362,9 @@ export default function ProfilePage() {
         </section>
       </div>
       {isEditOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-4">
           <div
-            className="relative bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md max-h-screen overflow-y-auto "
+            className="relative bg-black rounded-lg text-white shadow-lg p-6 w-full max-w-md  h-[90vh] overflow-y-auto  border border-gray-500"
             style={{ scrollbarWidth: "none" }}
           >
             <button
@@ -372,7 +381,7 @@ export default function ProfilePage() {
             <form onSubmit={handleSubmit} className="mt-2">
               <div className="mb-4 flex flex-col items-center ">
                 <label className="block text-sm font-medium mb-2">
-                  Profile Photo
+                  Profile Picture
                 </label>
                 <div
                   className="w-32 h-32 border-2 border-dashed rounded-full flex items-center justify-center overflow-hidden cursor-pointer"
@@ -404,6 +413,7 @@ export default function ProfilePage() {
                   type="text"
                   name="full_name"
                   value={editData.full_name}
+                  placeholder="Jhon Doe."
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                   required
@@ -415,6 +425,7 @@ export default function ProfilePage() {
                   type="text"
                   name="other_data.location"
                   value={editData.other_data.location}
+                  placeholder="Indore."
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                 />
@@ -425,6 +436,7 @@ export default function ProfilePage() {
                   type="text"
                   name="other_data.job_title"
                   value={editData.other_data.job_title}
+                  placeholder="Marketing Manager."
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                 />
@@ -435,6 +447,7 @@ export default function ProfilePage() {
                   type="text"
                   name="other_data.university"
                   value={editData.other_data.university}
+                  placeholder="University of Florida."
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
                 />
@@ -444,9 +457,10 @@ export default function ProfilePage() {
                 <textarea
                   name="other_data.bio"
                   value={editData.other_data.bio}
+                  placeholder="Birth day on 02 Aug."
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded text-gray-500"
-                  rows={4}
+                  rows={2}
                 ></textarea>
               </div>
 

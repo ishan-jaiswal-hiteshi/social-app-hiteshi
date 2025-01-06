@@ -95,7 +95,7 @@ export default function AuthForm({
           </div>
         )}
 
-        {error && <p className="mb-4 text-red-500 flex">{error}</p>}
+        {error && <p className="mb-4 text-primary-light flex">{error}</p>}
 
         <div className="flex justify-end">
           <button

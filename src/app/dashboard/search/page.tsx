@@ -41,8 +41,7 @@ const SearchPage = () => {
   const [users, setUsers] = useState<UserData[] | []>([]);
   const [posts, setPosts] = useState<PostData[] | []>([]);
   const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
-  const [loadingPosts, setLoadingPosts] = useState<boolean>(true);
-  const [followings, setFollowings] = useState<UserData[] | []>([]);
+  const [loadingPosts, setLoadingPosts] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const router = useRouter();
@@ -74,18 +73,6 @@ const SearchPage = () => {
       toast.error("Error fetching posts.");
     } finally {
       setLoadingPosts(false);
-    }
-  };
-
-  const fetchFollowing = async () => {
-    if (!user) return;
-    try {
-      const response = await axiosInstance.get(`/get-followings/${user.id}`);
-      if (response?.data) {
-        setFollowings(response.data.following);
-      }
-    } catch (error) {
-      console.error("Error fetching followings:", error);
     }
   };
 
@@ -139,7 +126,6 @@ const SearchPage = () => {
   useEffect(() => {
     fetchUsers();
     fetchPosts();
-    fetchFollowing();
   }, [user]);
 
   return (
@@ -187,17 +173,10 @@ const SearchPage = () => {
                     <UserCardSkeleton key={index} />
                   ))
                 : users.length > 0
-                ? users.map((user) => {
-                    const isFollowing = followings.some(
-                      (follower) => follower.id === user.id
-                    );
-                    return (
-                      <UserCardGrid
-                        key={user.id}
-                        userData={user}
-                        followStatus={isFollowing}
-                      />
-                    );
+                ? users.map((userData) => {
+                    return user?.id !== userData.id ? (
+                      <UserCardGrid key={userData.id} userData={userData} />
+                    ) : null;
                   })
                 : !loadingUsers && (
                     <p className="col-span-full text-center">No users found</p>
@@ -221,33 +200,27 @@ const SearchPage = () => {
 
         {/* Posts Section */}
         <div className="flex justify-center md:mx-40">
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 max-w-5xl">
+          <div className="">
             {loadingPosts || isSearching
               ? Array.from({ length: 4 }).map((_, index) => (
                   <PostSkeleton key={index} />
                 ))
               : posts.length > 0
               ? posts.map((post) => (
-                  <div>
-                    <Post
-                      key={post.id}
-                      postData={post}
-                      onDeletePost={handlePostDelete}
-                    />
-                  </div>
+                  <Post
+                    key={post.id}
+                    postData={post}
+                    onDeletePost={handlePostDelete}
+                  />
                 ))
-              : !loadingPosts && (
-                  <p className="col-span-full text-center text-gray-500">
-                    No Posts Available
-                  </p>
-                )}
+              : !loadingPosts && <></>}
             {!isSearching &&
               !loadingPosts &&
               posts.length > 0 &&
               searchQuery.trim() === "" && (
                 <div className="col-span-full flex items-center justify-center p-4 border rounded-lg border-gray-700">
                   <button
-                    className="text-red-500 hover:text-red-700"
+                    className="text-primary-light hover:text-red-700"
                     onClick={postListNavigation}
                   >
                     See More
