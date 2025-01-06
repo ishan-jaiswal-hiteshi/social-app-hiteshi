@@ -27,9 +27,3 @@
     -moz-appearance: textfield;
   }
 }
-.background {
-  background-image: url("https://media.istockphoto.com/id/670353238/video/4k-abstract-loop-futuristic-technology-background-with-lines-and-dots.jpg?s=640x640&k=20&c=kmxLhX7IZ5aa0KyphoUnEvFuawL-Un7G3-hfeokZFZo=");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
