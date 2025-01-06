@@ -496,13 +496,13 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   onClick={handleEditToggle}
-                  className="px-4 py-2 bg-gray-300 active:bg-gray-400 text-gray-800 rounded"
+                  className="px-4 py-2 border border-gray-500 text-white rounded"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-red-500 active:bg-red-600 text-white rounded"
+                  className="px-4 py-2 bg-primary-light active:bg-primary-dark text-white rounded"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (

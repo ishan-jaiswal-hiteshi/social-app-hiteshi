@@ -14,9 +14,9 @@ const Page = () => {
 
   return (
     <div className="relative">
-      <div className="min-h-screen text-white  flex flex-row justify-between">
+      <div className="min-h-screen text-white flex flex-row justify-between">
         <div
-          className="above-1148:w-3/5 h-screen overflow-y-auto"
+          className="above-1148:w-3/5 h-screen overflow-y-auto above-1148:my-0 my-14 px-10"
           style={{ scrollbarWidth: "none" }}
         >
           <AllEventsList />
@@ -31,17 +31,21 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="block above-1148:hidden fixed top-8 right-10">
+      <div
+        className="above-1148:hidden bg-black fixed top-10 right-10 flex items-center"
+        style={{ zIndex: 1000 }}
+      >
         <button
           onClick={handleModalToggle}
-          className="border flex justify-center border-gray-600  hover:bg-gray-800 text-primary-light px-2 py-2 rounded"
+          className="flex items-center justify-center space-x-2 border border-gray-600 hover:bg-gray-800 text-primary-light px-4 py-2 rounded-lg shadow-md"
           type="button"
         >
           <MdAddCircleOutline size={24} />
-          <p>Create Event</p>
+          <p className="text-sm font-medium">Create Event</p>
         </button>
       </div>
 
+      {/* Modal for Create Event */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="relative bg-gray-800 text-white p-6 rounded-lg shadow-lg max-w-sm w-full">
