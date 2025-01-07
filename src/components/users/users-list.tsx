@@ -5,8 +5,7 @@ import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "react-toastify";
 import UserCard from "./user-card";
 import { useAuth } from "@/context/authContext";
-import { UserListSkeleton } from "@/utils/skeletons";
-
+import { UserDynamicListSkeleton } from "@/utils/skeletons";
 interface UserData {
   id: number;
   username: string;
@@ -57,12 +56,12 @@ const UsersList: React.FC = () => {
   }, [user]);
 
   if (loading) {
-    return <UserListSkeleton />;
+    return <UserDynamicListSkeleton />;
   }
 
   return (
     <div className="p-2">
-      <div className="m-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 sm:ml-52 lg:grid-cols-3 gap-2">
+      <div className="m-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-2">
         {users && users.length > 0 ? (
           users.map((userData) => {
             const isFollowing = followings.some(

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Post from "./post";
 import axiosInstance from "@/utils/axiosInstance";
 import { PostSkeleton } from "@/utils/skeletons";
@@ -27,20 +27,37 @@ interface PostData {
 const PostList = () => {
   const [posts, setPosts] = useState<PostData[] | []>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const getAllPosts = async () => {
+  const getAllPosts = async (pageNumber: number) => {
     try {
-      setLoading(true);
+      if (pageNumber === 1) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
 
-      const response = await axiosInstance("/get-posts");
+      const response = await axiosInstance("/get-posts", {
+        params: { limit: 4, offset: (pageNumber - 1) * 4 },
+      });
 
-      if (response?.data) {
-        setPosts(response?.data?.posts);
-        setLoading(false);
-        console.log(response.data);
+      const fetchedPosts = response?.data?.posts || [];
+
+      if (fetchedPosts.length > 0) {
+        setPosts((prev) =>
+          pageNumber === 1 ? fetchedPosts : [...prev, ...fetchedPosts]
+        );
+        setHasMore(fetchedPosts.length >= 4);
+      } else {
+        setHasMore(false);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch posts:", error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -48,33 +65,66 @@ const PostList = () => {
     setPosts((prev) => prev?.filter((post) => post.id !== postId) || null);
   };
 
+  const handleScroll = useCallback(() => {
+    const container = document.querySelector(".above-1148\\:w-4\\/5");
+    if (
+      container &&
+      container.scrollTop + container.clientHeight >=
+        container.scrollHeight - 100 &&
+      hasMore &&
+      !loadingMore
+    ) {
+      setPage((prev) => prev + 1);
+    }
+  }, [hasMore, loadingMore]);
+
   useEffect(() => {
-    getAllPosts();
-  }, []);
+    getAllPosts(page);
+  }, [page]);
+
+  useEffect(() => {
+    const container = document.querySelector(".above-1148\\:w-4\\/5");
+    container?.addEventListener("scroll", handleScroll);
+
+    return () => container?.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   return (
-    <div className="p-2">
-      {loading && (
-        <div className="w-full">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <PostSkeleton key={index} />
-          ))}
+    <>
+      <div className="p-2">
+        {loading && (
+          <div>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <PostSkeleton key={index} />
+            ))}
+          </div>
+        )}
+        <div className="mb-12">
+          {!loading && posts && posts.length > 0
+            ? posts.map((post) => (
+                <Post
+                  key={post.id}
+                  postData={post}
+                  onDeletePost={handlePostDelete}
+                />
+              ))
+            : !loading && (
+                <p className="text-center text-gray-500">No Posts Available</p>
+              )}
         </div>
-      )}
-      <div className="mb-10">
-        {!loading && posts && posts.length > 0
-          ? posts.map((post) => (
-              <Post
-                key={post.id}
-                postData={post}
-                onDeletePost={handlePostDelete}
-              />
-            ))
-          : !loading && (
-              <p className="text-center text-gray-500">No Posts Available</p>
-            )}
+        {loadingMore && (
+          <div>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <PostSkeleton key={`loading-more-${index}`} />
+            ))}
+          </div>
+        )}
+
+        {!loading && !loadingMore && !hasMore && (
+          <p className="text-center text-gray-500">No more posts available.</p>
+        )}
       </div>
-    </div>
+    </>
   );
 };
 

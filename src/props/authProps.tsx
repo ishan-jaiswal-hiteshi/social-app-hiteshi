@@ -15,14 +15,14 @@ export interface AuthFormProps {
 }
 
 export interface OtherData {
-  cover_picture: string | null;
-  location: string | null;
-  job_title: string | null;
-  university: string | null;
-  bio: string | null;
-  friends: number | null;
-  followings: number | null;
-  posts: number | null;
+  cover_picture?: string | null;
+  location?: string | null;
+  job_title?: string | null;
+  university?: string | null;
+  bio?: string | null;
+  friends?: number | null;
+  followings?: number | null;
+  posts?: number | null;
 }
 
 export interface User {
@@ -30,7 +30,7 @@ export interface User {
   username: string;
   email: string;
   full_name: string;
-  profile_picture:
+  profile_picture?:
     | string
     | "https://i.pinimg.com/736x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg";
   otp: string | null;

@@ -23,7 +23,8 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen">
       <SidebarLayout />
-      <main className="flex-auto overflow-auto p-4">
+      <main className="flex-1 overflow-auto px-4 ml-0 md:ml-52">
+        {" "}
         {children}
         <ToastContainer />
       </main>

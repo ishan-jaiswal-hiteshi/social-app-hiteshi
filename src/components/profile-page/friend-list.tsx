@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { useAuth } from "@/context/authContext";
 import UserCardList from "../users/user-card-list";
+import { UserListSkeleton } from "@/utils/skeletons";
 
 interface UserData {
   id: number;
@@ -52,20 +53,14 @@ const FriendsList: React.FC<FriendsListProps> = ({ users }) => {
   return (
     <div className="p-2">
       {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div
-            className="animate-spin inline-block text-center w-12 h-12 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
-            role="status"
-            aria-label="loading"
-          >
-            <span className="sr-only">Loading...</span>
-          </div>
+        <div>
+          <UserListSkeleton />
         </div>
       )}
 
       <div className="mb-10">
         {error && !loading && (
-          <p className="text-center text-red-500">{error}</p>
+          <p className="text-center text-primary-light">{error}</p>
         )}
 
         {!loading && users && users.length > 0

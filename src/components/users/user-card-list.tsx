@@ -80,19 +80,19 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
           </div>
         </div>
 
-        <div className="cursor-pointer">
+        <div className="cursor-pointer w-[100px]">
           {user && user?.id === userData?.id ? (
             <></>
           ) : isFollowing ? (
             <button
-              className="bg-red-500 text-white px-2 py-1 rounded"
+              className="border border-gray-500 text-white px-2 py-1  w-full  rounded"
               onClick={handleUnfollow}
             >
               Following
             </button>
           ) : (
             <button
-              className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-400"
+              className="bg-primary-dark text-white px-2 py-1 w-full rounded hover:bg-primary-light "
               onClick={handleFollow}
             >
               Follow
