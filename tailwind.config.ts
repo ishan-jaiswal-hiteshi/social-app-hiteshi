@@ -26,6 +26,7 @@ export default {
       },
       screens: {
         'above-1148': '1148px', 
+        'above-1450': '1450px', 
       },
     },
   },

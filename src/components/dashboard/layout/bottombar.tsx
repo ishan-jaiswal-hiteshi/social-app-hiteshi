@@ -59,17 +59,14 @@ const BottombarLayout = () => {
     <footer className="md:hidden bg-[#00070C] text-white py-3 text-center fixed bottom-0 left-0 right-0">
       <div className="flex justify-around">
         {navItems.map((item, index) => (
-          <Link
+          <div
             key={index}
-            href={item.path}
-            className={`cursor-pointer ${
-              isActive(item.path)
-                ? "text-primary-light"
-                : "hover:text-primary-dark"
+            className={`cursor-pointer rounded-xl p-2 ${
+              isActive(item.path) ? "bg-gray-700" : "hover:bg-gray-800"
             }`}
           >
-            {item.icon}
-          </Link>
+            <Link href={item.path}>{item.icon}</Link>
+          </div>
         ))}
       </div>
     </footer>

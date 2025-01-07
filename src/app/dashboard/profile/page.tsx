@@ -395,7 +395,7 @@ export default function ProfilePage() {
                   name="profile_picture"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="hidden"
+                  className="hidden "
                 />
               </div>
               <div className="mb-4">
@@ -406,7 +406,7 @@ export default function ProfilePage() {
                   value={editData.full_name}
                   placeholder="Jhon Doe."
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded text-gray-500"
+                  className="w-full p-2  rounded bg-gray-700 text-white"
                   required
                 />
               </div>
@@ -418,7 +418,7 @@ export default function ProfilePage() {
                   value={editData.other_data.location}
                   placeholder="Indore."
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded text-gray-500"
+                  className="w-full p-2  rounded bg-gray-700 text-white"
                 />
               </div>
               <div className="mb-4">
@@ -429,7 +429,7 @@ export default function ProfilePage() {
                   value={editData.other_data.job_title}
                   placeholder="Marketing Manager."
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded text-gray-500"
+                  className="w-full p-2  rounded bg-gray-700 text-white"
                 />
               </div>
               <div className="mb-4">
@@ -440,7 +440,7 @@ export default function ProfilePage() {
                   value={editData.other_data.university}
                   placeholder="University of Florida."
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded text-gray-500"
+                  className="w-full p-2  rounded bg-gray-700 text-white"
                 />
               </div>
               <div className="mb-4">
@@ -450,7 +450,7 @@ export default function ProfilePage() {
                   value={editData.other_data.bio}
                   placeholder="Birth day on 02 Aug."
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded text-gray-500"
+                  className="w-full p-2  rounded bg-gray-700 text-white"
                   rows={2}
                 ></textarea>
               </div>

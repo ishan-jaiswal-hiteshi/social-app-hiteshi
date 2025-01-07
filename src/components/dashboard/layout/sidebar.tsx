@@ -70,7 +70,7 @@ const SidebarLayout = () => {
           </Link>
         </div>
 
-        <nav className="flex-grow flex flex-col justify-center w-full">
+        <nav className="flex-grow flex flex-col justify-start mt-8 w-full">
           <ul className="space-y-3">
             {navItems.map((item, index) => (
               <li key={index}>
@@ -88,7 +88,7 @@ const SidebarLayout = () => {
           </ul>
         </nav>
 
-        <div className="bocursor-pointer hover:bg-gray-800 border border-gray-600 px-3 py-2 rounded-lg">
+        <div className="bocursor-pointer hover:bg-gray-800 border border-gray-600 px-3 py-2 rounded-lg w-full">
           <Link
             href="/"
             onClick={() => {
@@ -97,7 +97,7 @@ const SidebarLayout = () => {
             className=" flex gap-2 items-center "
           >
             <FiLogOut size={20} color="#E41B17" />
-            <p className="text-primary-dark">Log out</p>
+            <p className="text-primary-light">Log out</p>
           </Link>
         </div>
       </div>

@@ -11,6 +11,7 @@ const EventList: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchAllEvents = async () => {
+  
     try {
       const response = await axiosInstance.get("get-events", {
         params: { limit: 5 },
@@ -45,7 +46,7 @@ const EventList: React.FC = () => {
 
   return (
     <div className="mt-8 mb-6">
-      <div className="w-[80%] mx-auto px-2 border-l border-gray-600">
+      <div className="w-full px-2 border-l border-gray-600">
         <h2 className="text-2xlfont-semibold text-white mb-2">Top Events</h2>
         <div className="space-y-4">
           {events.map((event) => (

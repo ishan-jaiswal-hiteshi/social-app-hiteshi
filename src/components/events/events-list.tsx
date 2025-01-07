@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { Event } from "@/props/eventProps";
-import { EventCardSkeleton } from "@/utils/skeletons";
+import { EventsSkeleton } from "@/utils/skeletons";
 import Events from "./events";
 
 const sortEvents = (events: Event[]) => {
@@ -41,24 +41,26 @@ const AllEventsList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <EventCardSkeleton key={index} />
+      <div className="my-8 md:mx-20">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <EventsSkeleton key={index} />
         ))}
       </div>
     );
   }
 
   if (!events || events.length === 0) {
-    return <p className="text-gray-500 text-center">No events available.</p>;
+    return (
+      <p className="text-gray-500 text-center my-8">No events available.</p>
+    );
   }
   const { todayEvents, upcomingEvents } = sortEvents(events);
 
   return (
-    <div className="my-8">
+    <div className="my-8 md:mx-20 mx-auto">
       {todayEvents && todayEvents.length > 0 && (
         <div>
-          <div className="space-y-4">
+          <div>
             {todayEvents.map((event) => (
               <Events key={event.id} event={event} />
             ))}
@@ -67,7 +69,7 @@ const AllEventsList: React.FC = () => {
       )}
       {upcomingEvents && upcomingEvents.length > 0 && (
         <div>
-          <div className="space-y-4">
+          <div>
             {upcomingEvents.map((event) => (
               <Events key={event.id} event={event} />
             ))}
