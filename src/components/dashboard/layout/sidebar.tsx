@@ -9,6 +9,7 @@ import { MdAddCircleOutline } from "react-icons/md";
 import { LuUsersRound } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
 import { MdOutlineEvent } from "react-icons/md";
+import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import { usePathname } from "next/navigation";
 
@@ -41,6 +42,11 @@ const SidebarLayout = () => {
       name: "Users",
       path: "/dashboard/users",
       icon: <LuUsersRound size={24} />,
+    },
+    {
+      name: "Messsages",
+      path: "/dashboard/messages",
+      icon: <IoChatboxEllipsesOutline size={24} />,
     },
     {
       name: "Profile",
