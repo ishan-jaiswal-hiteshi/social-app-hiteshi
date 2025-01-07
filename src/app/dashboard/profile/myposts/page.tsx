@@ -68,7 +68,7 @@ const MyPosts: React.FC = () => {
           ))}
         </div>
       )}
-      <div className="mb-12 text-white">
+      <div className="mb-12 text-white w-full">
         {!loading && posts && posts.length > 0
           ? posts.map((post) => (
               <Post

@@ -276,20 +276,11 @@ export default function ProfilePage() {
                           />
                         )}
                       </div>
-                      {/* <span className="top-14 left-10 absolute bg-red-600 p-2 rounded-full text-white hover:bg-red-600 cursor-pointer">
-                        <button
-                          type="button"
-                          onClick={handleEditToggle}
-                          className="p-0 m-0 flex items-center justify-center rounded-full bg-red-600 hover:bg-red-700 focus:outline-none"
-                        >
-                          <FiEdit size={20} />
-                        </button>
-                      </span> */}
                     </div>
                   </div>
-                  <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-24 lg:justify-end items-center gap-4 mt-24">
+                  <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-28 lg:justify-end items-center gap-4 lg:mt-0 mt-28">
                     <button
-                      className="border-2 border-red-500 active:border-red-300 active:text-red-300 uppercase text-red-400 font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                      className="border-2 border-red-500 active:border-red-300 active:text-red-300 uppercase text-red-400 font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear"
                       type="button"
                       onClick={handleEditToggle}
                     >

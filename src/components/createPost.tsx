@@ -8,7 +8,7 @@ const CreatePost = () => {
   const [images, setImages] = useState<File[]>([]);
   const [content, setContent] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const router = useRouter();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +71,16 @@ const CreatePost = () => {
         );
 
         if (postResponse) {
+          setUser((prevUser) => {
+            if (!prevUser) return null;
+            return {
+              ...prevUser,
+              other_data: {
+                ...prevUser.other_data,
+                posts: (prevUser.other_data?.posts || 0) + 1,
+              },
+            };
+          });
           toast.success("Post Created Successfully!");
           router.push("/dashboard/home");
         }

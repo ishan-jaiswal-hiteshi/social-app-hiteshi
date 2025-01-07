@@ -70,14 +70,14 @@ export default function Home() {
         <div className="hidden lg:block h-[600px] w-[2px] bg-gray-600 mx-8"></div>
 
         <div className=" flex items-center justify-center back bg-white opacity-85 rounded-lg">
-          <div className="w-fit max-w-md  text-black p-6 rounded-lg shadow-lg">
+          <div className="w-fit max-w-md text-black p-6 rounded-lg shadow-lg">
             <Auth />
           </div>
         </div>
       </main>
 
       <footer className="fixed bottom-0 w-full p-4 text-center text-gray-500">
-        <p>&copy; 2024 Socialize@Hiteshi. All rights reserved.</p>
+        <p>&copy; 2025 Socialize@Hiteshi. All rights reserved.</p>
       </footer>
     </div>
   );

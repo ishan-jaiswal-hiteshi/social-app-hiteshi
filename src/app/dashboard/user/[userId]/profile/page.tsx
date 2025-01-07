@@ -13,7 +13,7 @@ import { useAuth } from "@/context/authContext";
 const UserProfile = () => {
   const pathname = usePathname();
   const userId = pathname?.split("/")[3];
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [isFriendsOpen, setIsFriendsOpen] = useState(false);
   const [isFollowingOpen, setIsFollowingOpen] = useState(false);
   const [isfollowing, setIsFollowing] = useState(false);
@@ -92,6 +92,18 @@ const UserProfile = () => {
       await axiosInstance.post(`/add-following/${user?.id}`, {
         followingId: userData?.id,
       });
+
+      setUser((prevUser) => {
+        if (!prevUser) return null;
+        return {
+          ...prevUser,
+          other_data: {
+            ...prevUser.other_data,
+            followings: (prevUser.other_data?.followings || 0) + 1,
+          },
+        };
+      });
+
       setIsFollowing(true);
     } catch (err) {
       console.error("Error in following user: ", err);
@@ -102,6 +114,16 @@ const UserProfile = () => {
     try {
       await axiosInstance.post(`/remove-following/${user?.id}`, {
         followingId: userData?.id,
+      });
+      setUser((prevUser) => {
+        if (!prevUser) return null;
+        return {
+          ...prevUser,
+          other_data: {
+            ...prevUser.other_data,
+            followings: (prevUser.other_data?.followings || 0) - 1,
+          },
+        };
       });
       setIsFollowing(false);
     } catch (err) {
@@ -163,7 +185,7 @@ const UserProfile = () => {
                 <div className="flex flex-wrap justify-center">
                   <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
                     <div className="relative">
-                      <div className="shadow-xl overflow-hidden h-[150px] w-[150px] absolute -m-16 -ml-20 lg:-ml-16">
+                      <div className="rounded-full shadow-xl overflow-hidden h-[150px] w-[150px] absolute -m-16 -ml-20 lg:-ml-16">
                         {userData?.profile_picture ? (
                           <img
                             alt="Profile"
@@ -180,7 +202,7 @@ const UserProfile = () => {
                     </div>
                   </div>
 
-                  <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-24 lg:justify-end items-center gap-4 mt-24">
+                  <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-28 lg:justify-end items-center gap-4 lg:mt-0 mt-28">
                     {isfollowing ? (
                       <button
                         onClick={handleRemoveFollowing}

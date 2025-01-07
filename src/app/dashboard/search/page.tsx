@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "react-toastify";
 import { PostSkeleton, UserCardSkeleton } from "@/utils/skeletons";
@@ -38,10 +38,10 @@ interface PostData {
 
 const SearchPage = () => {
   const { user } = useAuth();
-  const [users, setUsers] = useState<UserData[] | []>([]);
-  const [posts, setPosts] = useState<PostData[] | []>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [posts, setPosts] = useState<PostData[]>([]);
   const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
-  const [loadingPosts, setLoadingPosts] = useState<boolean>(false);
+  const [loadingPosts, setLoadingPosts] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const router = useRouter();
@@ -105,10 +105,23 @@ const SearchPage = () => {
     }
   };
 
+  const debouncedSearch = useCallback(
+    (() => {
+      let timer: NodeJS.Timeout;
+      return (query: string) => {
+        clearTimeout(timer);
+        setLoadingUsers(true);
+        setLoadingPosts(true);
+        timer = setTimeout(() => handleSearch(query), 500);
+      };
+    })(),
+    []
+  );
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-    handleSearch(query);
+    debouncedSearch(query);
   };
 
   const handlePostDelete = (postId: number) => {
@@ -129,19 +142,20 @@ const SearchPage = () => {
   }, [user]);
 
   return (
-    <div className="text-white min-h-screen py-10 ">
+    <div className="text-white min-h-screen py-10">
       {/* Search Bar */}
       <form
         onSubmit={(e) => e.preventDefault()}
         className="max-w-xl mx-auto mb-10 px-4 sm:px-6 lg:px-8"
       >
         <div className="relative">
+          {/* Search Icon */}
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <svg
-              className="w-5 h-5 text-gray-500"
+              className="w-5 h-5 text-gray-400"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
-              viewBox="0 0 25 25"
+              viewBox="0 0 24 24"
             >
               <path
                 stroke="currentColor"
@@ -152,19 +166,49 @@ const SearchPage = () => {
               />
             </svg>
           </div>
+
+          {/* Input Field */}
           <input
-            type="search"
+            type="text"
             id="search"
-            className="block w-full p-4 pl-10 text-sm text-gray-400 bg-black border border-red-500 rounded-lg focus:ring-red-600 focus:border-red-500"
+            className="appearance-none block w-full py-2 pl-10 pr-10 text-sm text-gray-400 bg-black border border-red-500 rounded-lg focus:ring-red-600 focus:border-red-500"
             placeholder="Search Users or Posts..."
             value={searchQuery}
             onChange={handleSearchChange}
           />
+
+          {/* Custom Clear Button */}
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery(""); // Clear the query
+                fetchUsers(); // Fetch default users
+                fetchPosts(); // Fetch default posts
+              }}
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-red-500 hover:text-red-600"
+            >
+              <svg
+                className="w-5 h-5"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 6l12 12M6 18L18 6"
+                />
+              </svg>
+            </button>
+          )}
         </div>
       </form>
 
       {/* Users Section */}
-      <div className=" px-4 sm:px-6 lg:px-8">
+      <div className="px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <div className="flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">

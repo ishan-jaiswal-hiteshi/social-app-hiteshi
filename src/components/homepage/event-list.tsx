@@ -32,7 +32,7 @@ const EventList: React.FC = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        {Array.from({ length: 3 }).map((_, index) => (
+        {Array.from({ length: 5 }).map((_, index) => (
           <EventCardSkeleton key={index} />
         ))}
       </div>

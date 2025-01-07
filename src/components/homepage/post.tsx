@@ -55,7 +55,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loadingComments, setLoadingComments] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
   const wordLimit = 10;
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -194,6 +194,16 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
       );
 
       if (response) {
+        setUser((prevUser) => {
+          if (!prevUser) return null;
+          return {
+            ...prevUser,
+            other_data: {
+              ...prevUser.other_data,
+              posts: (prevUser.other_data?.posts || 0) - 1,
+            },
+          };
+        });
         toast.success(response?.data?.message);
         onDeletePost(postData?.id);
       }
@@ -387,7 +397,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
               }}
               className="text-primary-light text-opacity-85 focus:outline-none ml-2 text-sm"
             >
-              See Less
+              ...
             </button>
           )}
         </div>

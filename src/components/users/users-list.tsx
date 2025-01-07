@@ -5,7 +5,7 @@ import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "react-toastify";
 import UserCard from "./user-card";
 import { useAuth } from "@/context/authContext";
-import { UserListSkeleton } from "@/utils/skeletons";
+import { UserDynamicListSkeleton } from "@/utils/skeletons";
 interface UserData {
   id: number;
   username: string;
@@ -56,7 +56,7 @@ const UsersList: React.FC = () => {
   }, [user]);
 
   if (loading) {
-    return <UserListSkeleton />;
+    return <UserDynamicListSkeleton />;
   }
 
   return (
