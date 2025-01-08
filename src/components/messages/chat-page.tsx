@@ -4,40 +4,48 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "./sidebar";
 import ChatBox from "./chatbox";
 import { useAuth } from "@/context/authContext";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { initializeSocket, userJoin } from "@/utils/socket";
+import { User } from "@/props/authProps";
 
 const ChatPage: React.FC = () => {
   const { user } = useAuth();
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const [selectedUser, setSelectedUser] = useState<User>();
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
-  // Ensure currentUserId is never undefined, fallback to -1 if undefined
   const currentUserId = user?.id ?? -1;
 
   useEffect(() => {
-    // Get `userid` from the query parameters on initial page load or refresh
     const userIdParam = searchParams.get("userid");
     if (userIdParam) {
       setSelectedUserId(parseInt(userIdParam, 10));
     }
-  }, [searchParams]); // Runs every time the searchParams change (e.g., after page refresh or user selection)
+  }, [searchParams]);
 
-  const handleUserSelect = (id: number) => {
-    setSelectedUserId(id);
+  useEffect(() => {
+    if (currentUserId !== -1) {
+      initializeSocket();
+      userJoin(currentUserId);
+    }
+  }, [currentUserId]);
 
-    // Update the URL with the selected user's ID without causing rerender or redirection
-    //const url = `/messages?userid=${id}`;
-    //window.history.pushState({}, "", url);
+  const handleUserSelect = (user: User) => {
+    setSelectedUser(user);
+    setSelectedUserId(user?.id);
+
+    router.push(`?userid=${user?.id}`, undefined);
   };
 
   return (
-    <div className="flex h-screen">
-      <div className="flex-grow">
+    <div className="flex h-screen ">
+      <div className="flex-grow mb-14 md:mb-1">
         {selectedUserId ? (
           <div className="h-full flex flex-col">
-            <div className="p-4 bg-gray-800 text-white flex items-center">
+            <div className="p-4 bg-black text-white flex items-center mt-4">
               <h2 className="text-lg font-semibold">
-                Chat with User ID: {selectedUserId}
+                Chat with: {selectedUser?.full_name}
               </h2>
             </div>
             <ChatBox
