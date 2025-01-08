@@ -7,6 +7,8 @@ import { useAuth } from "@/context/authContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { initializeSocket, userJoin } from "@/utils/socket";
 import { User } from "@/props/authProps";
+import UserProfilePicture from "@/utils/user-profile-picture";
+import axiosInstance from "@/utils/axiosInstance";
 
 const ChatPage: React.FC = () => {
   const { user } = useAuth();
@@ -17,10 +19,23 @@ const ChatPage: React.FC = () => {
 
   const currentUserId = user?.id ?? -1;
 
+  const fetchUserDetails = async (userId: number) => {
+    try {
+      const response = await axiosInstance.get(`/get-user-by-id/${userId}`);
+      if (response && response.data) {
+        setSelectedUser(response?.data?.user);
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
   useEffect(() => {
     const userIdParam = searchParams.get("userid");
     if (userIdParam) {
-      setSelectedUserId(parseInt(userIdParam, 10));
+      const userId = parseInt(userIdParam, 10);
+      setSelectedUserId(userId);
+      fetchUserDetails(userId);
     }
   }, [searchParams]);
 
@@ -39,14 +54,33 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen ">
-      <div className="flex-grow mb-14 md:mb-1">
+    <div className="flex h-screen">
+      <div className="flex-grow mb-14 md:mb-0 h-full">
         {selectedUserId ? (
           <div className="h-full flex flex-col">
             <div className="p-4 bg-black text-white flex items-center mt-4">
-              <h2 className="text-lg font-semibold">
-                Chat with: {selectedUser?.full_name}
-              </h2>
+              <div className="flex justify-start">
+                <div className="mr-3">
+                  {selectedUser?.profile_picture ? (
+                    <img
+                      src={selectedUser.profile_picture}
+                      alt="profile"
+                      className="w-10 h-10 rounded-full  object-cover"
+                    />
+                  ) : (
+                    <UserProfilePicture
+                      fullName={selectedUser?.full_name}
+                      size={40}
+                    />
+                  )}
+                </div>
+                <div>
+                  <strong>@{selectedUser?.username}</strong>
+                  <p className="m-0 text-gray-500 text-sm">
+                    {selectedUser?.full_name}
+                  </p>
+                </div>
+              </div>
             </div>
             <ChatBox
               currentUserId={currentUserId}
@@ -59,7 +93,10 @@ const ChatPage: React.FC = () => {
           </div>
         )}
       </div>
-      <Sidebar onUserSelect={handleUserSelect} />
+      <Sidebar
+        onUserSelect={handleUserSelect}
+        selectedUserId={selectedUserId}
+      />
     </div>
   );
 };

@@ -3,12 +3,14 @@ import { User } from "@/props/authProps";
 import axiosInstance from "@/utils/axiosInstance";
 import { useAuth } from "@/context/authContext";
 import { toast } from "react-toastify";
+import { IoMdMenu } from "react-icons/io";
 
 interface SidebarProps {
   onUserSelect: (user: User) => void;
+  selectedUserId: number;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onUserSelect }) => {
+const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
   const { user } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -33,15 +35,31 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect }) => {
     }
   }, [user]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div>
       <button
         onClick={() => setIsOpen(true)}
-        className={`md:hidden p-2 text-white bg-blue-500 rounded fixed top-4 right-4 z-50 ${
+        className={`md:hidden p-2 text-white  rounded fixed top-6 right-6 z-50 ${
           isOpen && "hidden"
         }`}
       >
-        Menu
+        <IoMdMenu size={24} />
       </button>
 
       <div
@@ -57,8 +75,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect }) => {
           ✕
         </button>
 
-        <h2 className="text-lg font-bold p-4 border-b border-gray-700">
-          Connected Users
+        <h2 className="text-lg font-bold p-4 mt-4 pt-4 border-b border-gray-700 ">
+          Friends
         </h2>
         <ul className="p-4 space-y-2">
           {users.map((userData) => (
@@ -68,7 +86,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect }) => {
                 onUserSelect(userData);
                 setIsOpen(false);
               }}
-              className="cursor-pointer hover:bg-gray-700 p-2 rounded"
+              className={`cursor-pointer p-2 rounded ${
+                selectedUserId === userData.id
+                  ? "bg-gray-700 text-white font-bold"
+                  : "hover:bg-gray-700"
+              }`}
             >
               {userData?.full_name}
             </li>
@@ -76,7 +98,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect }) => {
         </ul>
       </div>
 
-      <div className="hidden md:block w-64 bg-black text-white h-full mt-4">
+      <div className="hidden md:block w-64 md:w-52 bg-black text-white h-full mt-4 pt-4">
         <h2 className="text-lg font-bold p-4 border-b border-gray-700 ">
           Friends
         </h2>

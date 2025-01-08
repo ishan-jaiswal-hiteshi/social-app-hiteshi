@@ -33,7 +33,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   };
 
   useEffect(() => {
-    if (chatUserId && currentUserId) {
+    if (chatUserId && currentUserId !== -1) {
       fetchMessages();
     }
     const handleNewMessage = (newMessage: Message) => {
@@ -50,8 +50,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
       socket.off("receiveMessage", handleNewMessage);
     };
   }, [chatUserId, currentUserId]);
-
-  console.log(messages);
 
   useEffect(() => {
     latestMessageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -72,7 +70,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-grow overflow-y-auto p-4 bg-gray-500">
+      <div
+        className="flex-grow overflow-y-auto p-4 bg-gray-500"
+        style={{
+          scrollbarWidth: "none",
+          maxHeight: "calc(100vh - 160px)",
+        }}
+      >
         {messages.map((msg, index) => {
           if (
             (msg.sender_id === currentUserId &&
@@ -105,7 +109,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
 
         <div ref={latestMessageRef}></div>
       </div>
-      <div className="p-4 bg-gray-700 flex">
+
+      <div className="p-4  bg-gray-700 flex">
         <input
           type="text"
           value={message}
