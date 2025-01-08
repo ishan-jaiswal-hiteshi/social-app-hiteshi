@@ -11,7 +11,6 @@ const EventList: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchAllEvents = async () => {
-  
     try {
       const response = await axiosInstance.get("get-events", {
         params: { limit: 5 },

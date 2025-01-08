@@ -17,7 +17,7 @@ type UserDataProps = {
 };
 
 const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [isFollowing, setIsFollowing] = useState<boolean>(followStatus);
   const router = useRouter();
 
@@ -36,6 +36,16 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
       await axiosInstance.post(`/add-following/${user?.id}`, {
         followingId: userData?.id,
       });
+      setUser((prevUser) => {
+        if (!prevUser) return null;
+        return {
+          ...prevUser,
+          other_data: {
+            ...prevUser.other_data,
+            followings: (prevUser.other_data?.followings || 0) + 1,
+          },
+        };
+      });
       setIsFollowing(true);
     } catch (err) {
       console.error("Error in following user: ", err);
@@ -46,6 +56,16 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
     try {
       await axiosInstance.post(`/remove-following/${user?.id}`, {
         followingId: userData?.id,
+      });
+      setUser((prevUser) => {
+        if (!prevUser) return null;
+        return {
+          ...prevUser,
+          other_data: {
+            ...prevUser.other_data,
+            followings: (prevUser.other_data?.followings || 0) - 1,
+          },
+        };
       });
       setIsFollowing(false);
     } catch (err) {

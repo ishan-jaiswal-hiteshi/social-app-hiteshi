@@ -48,7 +48,7 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="above-1148:hidden bg-black fixed top-10 right-10 flex items-center z-10">
+      <div className="above-1148:hidden bg-black fixed top-2 right-2 flex items-center z-10">
         <button
           onClick={handleModalToggle}
           className="flex items-center justify-center space-x-2 border border-gray-600 hover:bg-gray-800 text-primary-light px-4 py-2 rounded-lg shadow-md"

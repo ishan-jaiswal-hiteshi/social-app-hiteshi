@@ -11,14 +11,12 @@ const Events: React.FC<EventCardProps> = ({ event }) => {
   return (
     <div className="bg-black p-4 rounded-lg shadow-lg mx-auto flex md:flex-row flex-col gap-4 text-left my-2 border border-gray-600">
       {mediaUrls && mediaUrls.length > 0 && (
-        <div>
-          <div onDragStart={(e) => e.preventDefault()}>
-            <img
-              src={mediaUrls[0]}
-              alt={name}
-              className="md:w-48 w-full h-48  rounded-lg"
-            />
-          </div>
+        <div onDragStart={(e) => e.preventDefault()}>
+          <img
+            src={mediaUrls[0]}
+            alt={name}
+            className="md:w-48 w-full h-48  rounded-lg"
+          />
         </div>
       )}
       <div>
