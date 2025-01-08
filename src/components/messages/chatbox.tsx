@@ -18,6 +18,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const latestMessageRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const fetchMessages = async () => {
     try {
@@ -65,13 +66,20 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
       sendMessage(content);
       setMessages((prev) => [...prev, content]);
       setMessage("");
+      inputRef.current?.focus(); // Focus input field after sending
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSend();
     }
   };
 
   return (
     <div className="flex flex-col h-full">
       <div
-        className="flex-grow overflow-y-auto p-4 bg-gray-500"
+        className="flex-grow overflow-y-auto p-4 bg-opacity-0"
         style={{
           scrollbarWidth: "none",
           maxHeight: "calc(100vh - 160px)",
@@ -93,10 +101,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
                 }`}
               >
                 <div
-                  className={`max-w-xs p-2 rounded-lg text-white ${
+                  className={`max-w-xs p-3 rounded-lg text-white ${
                     msg.sender_id === currentUserId
-                      ? "bg-blue-500 text-right"
-                      : "bg-green-500 text-left"
+                      ? "bg-red-800 text-right"
+                      : "bg-gray-600 text-left"
                   }`}
                 >
                   {msg.message}
@@ -110,19 +118,26 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
         <div ref={latestMessageRef}></div>
       </div>
 
-      <div className="p-4  bg-gray-700 flex">
+      <div className="p-2 bg-gray-700 flex rounded-full mx-7">
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={handleKeyPress} // Send message on Enter key press
           placeholder="Type a message"
-          className="flex-grow p-2 border bg-black border-none text-white rounded"
+          className="flex-grow p-2 border bg-black border-none text-white rounded-full focus:outline-none"
+          ref={inputRef} // Reference for focusing
         />
         <button
           onClick={handleSend}
-          className="ml-2 p-2 bg-red-600 text-white rounded"
+          className={`ml-2 p-2 rounded-full ${
+            message.trim()
+              ? "bg-red-600 text-white"
+              : "bg-gray-500 text-gray-300 cursor-not-allowed"
+          }`}
+          disabled={!message.trim()} // Disable button if message is empty
         >
-          <IoMdSend color="white" size={25} />
+          <IoMdSend size={25} />
         </button>
       </div>
     </div>

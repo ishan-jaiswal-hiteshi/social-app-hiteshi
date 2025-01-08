@@ -3,7 +3,7 @@ import { User } from "@/props/authProps";
 import axiosInstance from "@/utils/axiosInstance";
 import { useAuth } from "@/context/authContext";
 import { toast } from "react-toastify";
-import { IoMdMenu } from "react-icons/io";
+import { IoIosMenu } from "react-icons/io";
 
 interface SidebarProps {
   onUserSelect: (user: User) => void;
@@ -14,6 +14,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
   const { user } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [activeUserId, setActiveUserId] = useState<number | null>(null);
 
   const fetchConnectedUsers = async () => {
     try {
@@ -50,27 +51,34 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  const handleUserClick = (userData: User) => {
+    setActiveUserId(userData.id);
+    onUserSelect(userData);
+    setIsOpen(false);
+  };
 
   return (
     <div>
+      {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`md:hidden p-2 text-white  rounded fixed top-6 right-6 z-50 ${
+        className={`md:hidden p-2 text-white  rounded fixed top-6 right-4 z-50 ${
           isOpen && "hidden"
         }`}
       >
-        <IoMdMenu size={24} />
+        <IoIosMenu size={30} color="" />
       </button>
 
+      {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 bottom-0 h-full bg-black text-white shadow-lg transform transition-transform duration-300 z-40 ${
+        className={`pt-4 fixed top-0 right-0 bottom-0 h-full bg-black text-white shadow-lg transform transition-transform duration-300 z-40 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
         style={{ width: "250px" }}
       >
         <button
           onClick={() => setIsOpen(false)}
-          className="p-2 text-gray-400 hover:text-white absolute top-4 right-4"
+          className="p-2 text-gray-400 hover:text-white absolute top-6 right-4"
         >
           ✕
         </button>
@@ -82,14 +90,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
           {users.map((userData) => (
             <li
               key={userData.id}
-              onClick={() => {
-                onUserSelect(userData);
-                setIsOpen(false);
-              }}
+              onClick={() => handleUserClick(userData)}
               className={`cursor-pointer p-2 rounded ${
-                selectedUserId === userData.id
-                  ? "bg-gray-700 text-white font-bold"
-                  : "hover:bg-gray-700"
+                activeUserId === userData.id
+                  ? "bg-gray-700 text-white"
+                  : "hover:bg-gray-800"
               }`}
             >
               {userData?.full_name}
@@ -106,8 +111,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
           {users.map((userData) => (
             <li
               key={userData.id}
-              onClick={() => onUserSelect(userData)}
-              className="cursor-pointer hover:bg-gray-700 p-2 rounded"
+              onClick={() => handleUserClick(userData)}
+              className={`cursor-pointer p-2 rounded ${
+                activeUserId === userData.id
+                  ? "bg-gray-700 text-white"
+                  : "hover:bg-gray-800"
+              }`}
             >
               {userData?.full_name}
             </li>
