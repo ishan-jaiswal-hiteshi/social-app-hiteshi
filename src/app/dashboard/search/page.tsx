@@ -262,7 +262,7 @@ const SearchPage = () => {
               !loadingPosts &&
               posts.length > 0 &&
               searchQuery.trim() === "" && (
-                <div className="col-span-full flex items-center justify-center p-4 border rounded-lg border-gray-700">
+                <div className="col-span-full flex items-center justify-center p-4 border rounded-lg border-gray-700 mb-4">
                   <button
                     className="text-primary-light hover:text-red-700"
                     onClick={postListNavigation}

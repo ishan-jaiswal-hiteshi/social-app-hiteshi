@@ -1,28 +1,13 @@
 import React from "react";
 import PostList from "../../../components/homepage/post-list";
 import EventList from "@/components/homepage/event-list";
-import Link from "next/link";
-import { MdOutlineEvent } from "react-icons/md";
+import TopbarLayout from "@/components/dashboard/layout/topbar";
 
 const Page = () => {
   return (
     <>
       <div className="mb-8 md:hidden">
-        <header className="fixed top-0 left-0 right-0 z-10 flex items-center justify-between bg-black  border-b border-gray-700">
-          <Link
-            className="text-md font-semibold text-white mx-5 my-3"
-            href="/dashboard/home"
-          >
-            Socialize@Hiteshi
-          </Link>
-
-          <Link
-            className="text-md font-semibold text-white mx-5 my-3"
-            href="/dashboard/events"
-          >
-            <MdOutlineEvent size={24} />
-          </Link>
-        </header>
+        <TopbarLayout />
       </div>
       <div className="min-h-screen text-white flex flex-row items-start justify-center  ">
         <div
