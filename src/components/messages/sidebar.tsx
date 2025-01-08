@@ -5,7 +5,7 @@ import { useAuth } from "@/context/authContext";
 import { toast } from "react-toastify";
 
 interface SidebarProps {
-  onUserSelect: (userId: number) => void;
+  onUserSelect: (id: number, name: string) => void; // Updated to accept user name
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onUserSelect }) => {
@@ -56,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect }) => {
             <li
               key={userData.id}
               onClick={() => {
-                onUserSelect(userData.id);
+                onUserSelect(userData.id, userData.full_name); // Pass ID and name
                 setIsOpen(false);
               }}
               className="cursor-pointer hover:bg-gray-700 p-2 rounded"
