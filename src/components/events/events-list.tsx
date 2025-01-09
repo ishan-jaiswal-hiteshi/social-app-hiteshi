@@ -6,27 +6,25 @@ import { Event } from "@/props/eventProps";
 import { EventsSkeleton } from "@/utils/skeletons";
 import Events from "./events";
 
-const sortEvents = (events: Event[]) => {
-  const today = new Date();
-  const todayEvents = events.filter(
-    (event) => new Date(event.eventDate).toDateString() === today.toDateString()
-  );
-  const upcomingEvents = events.filter(
-    (event) => new Date(event.eventDate) > today
-  );
+interface AllEventsListProps {
+  onEventSelect: (event: Event) => void;
+  selectedEventId: number | null; // Highlight the selected event
+}
 
-  return { todayEvents, upcomingEvents };
-};
-
-const AllEventsList: React.FC = () => {
-  const [events, setEvents] = useState([]);
+const AllEventsList: React.FC<AllEventsListProps> = ({
+  onEventSelect,
+  selectedEventId,
+}) => {
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchAllEvents = async () => {
     try {
-      const response = await axiosInstance.get("get-events");
-      if (response && response?.data) {
-        setEvents(response?.data?.events);
+      const response = await axiosInstance.get<{ events: Event[] }>(
+        "get-events"
+      );
+      if (response && response.data) {
+        setEvents(response.data.events); // Ensure the response matches the type
       }
     } catch (err) {
       console.error("Error in Fetching Events", err);
@@ -41,7 +39,7 @@ const AllEventsList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="my-8 md:mx-20">
+      <div className="my-8">
         {Array.from({ length: 5 }).map((_, index) => (
           <EventsSkeleton key={index} />
         ))}
@@ -54,28 +52,25 @@ const AllEventsList: React.FC = () => {
       <p className="text-gray-500 text-center my-8">No events available.</p>
     );
   }
-  const { todayEvents, upcomingEvents } = sortEvents(events);
 
   return (
-    <div className="my-8 md:mx-20 mx-auto">
-      {todayEvents && todayEvents.length > 0 && (
-        <div>
-          <div>
-            {todayEvents.map((event) => (
-              <Events key={event.id} event={event} />
-            ))}
-          </div>
+    <div className="bg-black">
+      {events.map((event) => (
+        <div
+          key={event.id}
+          onClick={() => onEventSelect(event)}
+          className={`p-4 mb-3 rounded-lg cursor-pointer ${
+            selectedEventId === event.id
+              ? "bg-gray-700"
+              : "bg-gray-800 hover:bg-gray-900"
+          }`}
+        >
+          <h3 className="font-bold ">{event.name}</h3>
+          <p className="text-sm text-gray-400">
+            {new Date(event.eventDate).toLocaleDateString()} - {event.location}
+          </p>
         </div>
-      )}
-      {upcomingEvents && upcomingEvents.length > 0 && (
-        <div>
-          <div>
-            {upcomingEvents.map((event) => (
-              <Events key={event.id} event={event} />
-            ))}
-          </div>
-        </div>
-      )}
+      ))}
     </div>
   );
 };
