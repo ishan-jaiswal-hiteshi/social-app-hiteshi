@@ -243,21 +243,22 @@ const SearchPage = () => {
         </div>
 
         {/* Posts Section */}
-        <div className="flex justify-center md:mx-40">
-          <div className="">
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 gap-7 md:grid-cols-1 lg:grid-cols-2  mx-auto">
             {loadingPosts || isSearching
               ? Array.from({ length: 4 }).map((_, index) => (
-                  <PostSkeleton key={index} />
+                  <div key={index} className="col-span-1">
+                    <PostSkeleton />
+                  </div>
                 ))
               : posts.length > 0
               ? posts.map((post) => (
-                  <Post
-                    key={post.id}
-                    postData={post}
-                    onDeletePost={handlePostDelete}
-                  />
+                  <div key={post.id} className="col-span-1">
+                    <Post postData={post} onDeletePost={handlePostDelete} />
+                  </div>
                 ))
               : !loadingPosts && <></>}
+
             {!isSearching &&
               !loadingPosts &&
               posts.length > 0 &&
