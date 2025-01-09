@@ -4,6 +4,7 @@ import axiosInstance from "@/utils/axiosInstance";
 import { useAuth } from "@/context/authContext";
 import { toast } from "react-toastify";
 import { IoIosMenu } from "react-icons/io";
+import UserProfilePicture from "@/utils/user-profile-picture";
 
 interface SidebarProps {
   onUserSelect: (user: User) => void;
@@ -71,10 +72,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
 
       {/* Sidebar */}
       <div
-        className={`pt-4 fixed top-0 right-0 bottom-0 h-full bg-black text-white shadow-lg transform transition-transform duration-300 z-40 ${
+        className={`pt-4 fixed top-0 w-72 right-0 bottom-0 h-full bg-black text-white shadow-lg transform transition-transform duration-300 z-40 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
-        style={{ width: "250px" }}
       >
         <button
           onClick={() => setIsOpen(false)}
@@ -97,13 +97,34 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
                   : "hover:bg-gray-800"
               }`}
             >
-              {userData?.full_name}
+              <div className="flex justify-start">
+                <div className="mr-3">
+                  {userData?.profile_picture ? (
+                    <img
+                      src={userData.profile_picture}
+                      alt="profile"
+                      className="w-10 h-10 rounded-full  object-cover"
+                    />
+                  ) : (
+                    <UserProfilePicture
+                      fullName={userData?.full_name}
+                      size={40}
+                    />
+                  )}
+                </div>
+                <div>
+                  <strong>@{userData?.username}</strong>
+                  <p className="m-0 text-gray-500 text-sm">
+                    {userData?.full_name}
+                  </p>
+                </div>
+              </div>{" "}
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="hidden md:block w-64 md:w-52 bg-black text-white h-full mt-4 pt-4">
+      <div className="hidden md:block w-52 md:w-72 bg-black text-white h-full mt-4 pt-4">
         <h2 className="text-lg font-bold p-4 border-b border-gray-700 ">
           Friends
         </h2>
@@ -118,7 +139,28 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
                   : "hover:bg-gray-800"
               }`}
             >
-              {userData?.full_name}
+              <div className="flex justify-start">
+                <div className="mr-3">
+                  {userData?.profile_picture ? (
+                    <img
+                      src={userData.profile_picture}
+                      alt="profile"
+                      className="w-10 h-10 rounded-full  object-cover"
+                    />
+                  ) : (
+                    <UserProfilePicture
+                      fullName={userData?.full_name}
+                      size={40}
+                    />
+                  )}
+                </div>
+                <div>
+                  <strong>@{userData?.username}</strong>
+                  <p className="m-0 text-gray-500 text-sm">
+                    {userData?.full_name}
+                  </p>
+                </div>
+              </div>{" "}
             </li>
           ))}
         </ul>

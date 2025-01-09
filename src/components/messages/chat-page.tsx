@@ -5,7 +5,6 @@ import Sidebar from "./sidebar";
 import ChatBox from "./chatbox";
 import { useAuth } from "@/context/authContext";
 import { useRouter, useSearchParams } from "next/navigation";
-import { initializeSocket, userJoin } from "@/utils/socket";
 import { User } from "@/props/authProps";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import axiosInstance from "@/utils/axiosInstance";
@@ -39,12 +38,12 @@ const ChatPage: React.FC = () => {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    if (currentUserId !== -1) {
-      initializeSocket();
-      userJoin(currentUserId);
-    }
-  }, [currentUserId]);
+  // useEffect(() => {
+  //   if (currentUserId !== -1) {
+  //     initializeSocket();
+  //     userJoin(currentUserId);
+  //   }
+  // }, [currentUserId]);
 
   const handleUserSelect = (user: User) => {
     setSelectedUser(user);

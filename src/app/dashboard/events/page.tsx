@@ -46,14 +46,14 @@ const Page = () => {
   return (
     <div className="">
       {/* Header Create Button */}
-      <div className="bg-black fixed top-2 right-10 items-center">
+      <div className="bg-black fixed top-4 right-12 items-center">
         <button
           onClick={handleModalToggle}
           className="flex items-center justify-center space-x-2 border border-gray-600 hover:bg-gray-800 text-primary-light px-4 py-2 rounded-lg shadow-md"
           type="button"
         >
           <MdAddCircleOutline size={24} />
-          <p className="text-sm font-medium">Create Event</p>
+          <p className="text-sm font-medium">Create</p>
         </button>
       </div>
 
@@ -63,7 +63,7 @@ const Page = () => {
           <EventDetails selectedEvent={selectedEvent} />
         </div>
         {/* Events List */}
-        <div className="lg:w-1/3 h-full overflow-y-auto px-4 mt-7 lg:px-6">
+        <div className="lg:w-1/3 border-l-2 border-gray-700 h-full overflow-y-auto px-4 mt-8 lg:px-2">
           <AllEventsList
             onEventSelect={handleEventSelect}
             selectedEventId={selectedEvent?.id || null}

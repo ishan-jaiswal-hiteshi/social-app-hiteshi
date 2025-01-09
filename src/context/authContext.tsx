@@ -2,6 +2,7 @@
 
 import { User } from "@/props/authProps";
 import axiosInstance from "@/utils/axiosInstance";
+import { initializeSocket, userJoin } from "@/utils/socket";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -49,6 +50,15 @@ export function AuthProvider({ children }: Props) {
       if (response && response?.data?.user) {
         setUser(response?.data?.user);
         setIsAuthenticated(true);
+        const currentUserId = response?.data?.user?.id ?? -1;
+
+        console.log("trying socket", currentUserId, loginUser);
+
+        if (currentUserId !== -1) {
+          console.log("inside socket if");
+          initializeSocket();
+          userJoin(currentUserId);
+        }
       }
     } catch (err: any) {
       if ((err && err.status === 401) || (err && err.status === 404)) {

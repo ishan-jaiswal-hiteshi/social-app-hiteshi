@@ -18,7 +18,7 @@ const Page = () => {
         </div>
 
         <div
-          className="w-1/5 h-screen overflow-y-auto hidden above-1148:block"
+          className="w-2/5 h-screen overflow-y-auto hidden above-1148:block"
           style={{ scrollbarWidth: "none" }}
         >
           <EventList />

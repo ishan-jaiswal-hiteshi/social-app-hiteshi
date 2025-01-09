@@ -94,7 +94,7 @@ const SidebarLayout = () => {
           </ul>
         </nav>
 
-        <div className="bocursor-pointer hover:bg-gray-800 border border-gray-600 px-3 py-2 rounded-lg w-full">
+        <div className="bocursor-pointer bg-primary-light border border-gray-600 px-3 py-2 rounded-lg w-full">
           <Link
             href="/"
             onClick={() => {
@@ -102,8 +102,8 @@ const SidebarLayout = () => {
             }}
             className=" flex gap-2 items-center "
           >
-            <FiLogOut size={20} color="#E41B17" />
-            <p className="text-primary-light">Log out</p>
+            <FiLogOut size={20} color="white" />
+            <p className="text-white bg-primary-light">Log out</p>
           </Link>
         </div>
       </div>

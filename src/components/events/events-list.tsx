@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { Event } from "@/props/eventProps";
 import { EventsSkeleton } from "@/utils/skeletons";
-import Events from "./events";
+import { IoIosMenu } from "react-icons/io"; // Import the menu icon
 
 interface AllEventsListProps {
   onEventSelect: (event: Event) => void;
@@ -17,6 +17,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
 }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false); // State to manage menu visibility
 
   const fetchAllEvents = async () => {
     try {
@@ -37,6 +38,15 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
     fetchAllEvents();
   }, []);
 
+  const handleEventSelect = (event: Event) => {
+    onEventSelect(event);
+    setMenuOpen(false); // Close the menu when an event is selected
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev); // Toggle the menu visibility
+  };
+
   if (loading) {
     return (
       <div className="my-8">
@@ -54,23 +64,85 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
   }
 
   return (
-    <div className="bg-black">
-      {events.map((event) => (
-        <div
-          key={event.id}
-          onClick={() => onEventSelect(event)}
-          className={`p-4 mb-3 rounded-lg cursor-pointer ${
-            selectedEventId === event.id
-              ? "bg-gray-700"
-              : "bg-gray-800 hover:bg-gray-900"
-          }`}
-        >
-          <h3 className="font-bold ">{event.name}</h3>
-          <p className="text-sm text-gray-400">
-            {new Date(event.eventDate).toLocaleDateString()} - {event.location}
-          </p>
+    <div>
+      {/* Menu Button for Mobile */}
+      <div className="fixed top-2 right-2 lg:hidden">
+        <button onClick={toggleMenu} className="text-white p-2 rounded-full">
+          <IoIosMenu size={30} />
+        </button>
+      </div>
+
+      {/* Menu - Event List with Blur and Transition from Right to Left */}
+      <div
+        className={` fixed inset-0 bg-black bg-opacity-70 z-10 backdrop-blur-md transition-transform ${
+          menuOpen ? "transform-none" : "transform translate-x-full"
+        } lg:hidden`}
+      >
+        <div className="flex flex-col p-3 space-y-2">
+          {events.map((event) => (
+            <div
+              key={event.id}
+              onClick={() => handleEventSelect(event)}
+              className={`p-4 py-6 mb-3 rounded-lg cursor-pointer flex items-center space-x-4 ${
+                selectedEventId === event.id
+                  ? "bg-gray-800"
+                  : "bg-black border-gray-700 border-2 hover:bg-gray-900"
+              }`}
+            >
+              {/* Event Image */}
+              {event.mediaUrls && event.mediaUrls.length > 0 && (
+                <img
+                  src={event.mediaUrls[0]}
+                  alt={event.name}
+                  className="w-14 h-14 object-cover rounded-lg"
+                />
+              )}
+
+              {/* Event Details */}
+              <div className="flex-1">
+                <h3 className="font-bold text-white">{event.name}</h3>
+                <p className="text-sm text-gray-400">
+                  {new Date(event.eventDate).toLocaleDateString()} -{" "}
+                  {event.location}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
+
+      {/* Event List for Desktop (Unchanged) */}
+      <div className="lg:block hidden">
+        {events.map((event) => (
+          <div
+            key={event.id}
+            onClick={() => handleEventSelect(event)}
+            className={`p-4 py-6 mb-3 rounded-lg cursor-pointer flex items-center space-x-4 ${
+              selectedEventId === event.id
+                ? "bg-gray-800"
+                : "bg-black border-gray-700 border-2 hover:bg-gray-900"
+            }`}
+          >
+            {/* Event Image */}
+            {event.mediaUrls && event.mediaUrls.length > 0 && (
+              <img
+                src={event.mediaUrls[0]}
+                alt={event.name}
+                className="w-14 h-14 object-cover rounded-lg"
+              />
+            )}
+
+            {/* Event Details */}
+            <div className="flex-1">
+              <h3 className="font-bold text-white">{event.name}</h3>
+              <p className="text-sm text-gray-400">
+                {new Date(event.eventDate).toLocaleDateString()} -{" "}
+                {event.location}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -17,7 +17,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedEvent }) => {
   }
 
   return (
-    <div className="my-8 p-4 lg:p-6 bg-gray-800 rounded-lg shadow-md">
+    <div className="my-8 p-4 lg:p-6 bg-black rounded-xl border-2 border-gray-800 shadow-md">
       {/* Event Title */}
       <h2 className="text-2xl font-bold mb-4 text-primary">
         {selectedEvent.name}

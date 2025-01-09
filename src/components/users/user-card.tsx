@@ -102,9 +102,9 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
                 </div>
               )}
               <div>
-                <strong>{userData?.full_name}</strong>
+                <strong> @{userData?.username}</strong>
                 <p className="m-0 text-gray-500 text-sm truncate w-[ch-20]">
-                  @{userData?.username}
+                  {userData?.full_name}
                 </p>
               </div>
             </div>
@@ -152,10 +152,10 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
                 )}
               </div>
               <h5 className="mb-1 text-lg font-medium text-white">
-                {userData?.full_name}
+                @{userData?.username}
               </h5>
               <span className="text-sm text-gray-500">
-                @{userData?.username}
+                {userData?.full_name}
               </span>
             </div>
             <div className="flex mt-4 w-[100px]">

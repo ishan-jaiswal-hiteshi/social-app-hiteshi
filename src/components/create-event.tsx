@@ -49,7 +49,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
       const mediaUrls = [];
       if (image) {
         const formData = new FormData();
-        formData.append("files", image);
+        formData.append("file", image);
         const mediaResponse = await axiosInstance.post(
           "/single-upload",
           formData,
@@ -59,8 +59,8 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             },
           }
         );
-        if (mediaResponse && mediaResponse.data?.mediaUrls) {
-          mediaUrls.push(mediaResponse.data?.mediaUrls);
+        if (mediaResponse && mediaResponse.data?.mediaUrl) {
+          mediaUrls.push(mediaResponse.data?.mediaUrl);
         }
       }
 
