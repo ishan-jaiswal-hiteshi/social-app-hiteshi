@@ -44,7 +44,7 @@ const SidebarLayout = () => {
       icon: <LuUsersRound size={24} />,
     },
     {
-      name: "Messsages",
+      name: "Chats",
       path: "/dashboard/messages",
       icon: <IoChatboxEllipsesOutline size={24} />,
     },

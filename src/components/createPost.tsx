@@ -97,7 +97,7 @@ const CreatePost = () => {
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
-      <div className="max-w-lg w-full space-y-8 bg-white shadow-lg rounded-lg p-8">
+      <div className="max-w-lg w-full space-y-8 bg-white opacity-90 shadow-lg rounded-lg p-8">
         <h2 className="text-2xl font-bold text-center text-gray-900">
           Create a New Post
         </h2>

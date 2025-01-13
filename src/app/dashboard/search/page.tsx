@@ -52,12 +52,10 @@ const SearchPage = () => {
       const response = await axiosInstance(`/latest-users`);
       if (response?.data) {
         setUsers(response.data.users);
+        setLoadingUsers(false);
       }
     } catch (error) {
       console.error("Error fetching users:", error);
-      toast.error("Error fetching users.");
-    } finally {
-      setLoadingUsers(false);
     }
   };
 
@@ -67,12 +65,10 @@ const SearchPage = () => {
       const response = await axiosInstance(`/latest-posts`);
       if (response?.data) {
         setPosts(response.data.posts);
+        setLoadingPosts(false);
       }
     } catch (error) {
       console.error("Error fetching posts:", error);
-      toast.error("Error fetching posts.");
-    } finally {
-      setLoadingPosts(false);
     }
   };
 
@@ -253,7 +249,10 @@ const SearchPage = () => {
                 ))
               : posts.length > 0
               ? posts.map((post) => (
-                  <div key={post.id} className="col-span-1">
+                  <div
+                    key={post.id}
+                    className="lg:w-96 md:w-80 sm:w-72 col-span-1"
+                  >
                     <Post postData={post} onDeletePost={handlePostDelete} />
                   </div>
                 ))
