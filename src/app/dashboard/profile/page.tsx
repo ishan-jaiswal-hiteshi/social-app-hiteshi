@@ -53,7 +53,7 @@ export default function ProfilePage() {
       setProfileData({
         full_name: user.full_name || "",
         username: user.username || "",
-        profile_picture: user?.profile_picture,
+        profile_picture: user?.profile_picture || "",
         other_data: {
           cover_picture: user?.other_data?.cover_picture || "",
           location: user?.other_data?.location || "",

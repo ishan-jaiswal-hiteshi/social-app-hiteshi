@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-const socket: Socket = io("http://192.168.100.166:5000");
+const socket: Socket = io("http://192.168.100.121:5000");
 
 export const initializeSocket = () => {
   console.log(socket);
@@ -41,6 +41,21 @@ export const receiveMessages = (
 ) => {
   socket.off("receiveMessage");
   socket.on("receiveMessage", callback);
+};
+
+export const receiveNotifications = (
+  callback: (notification: {
+    sender_id: number;
+    receiver_id: number;
+    unreadMessagesCount: number;
+  }) => void
+) => {
+  socket.off('newNotification');
+  socket.on('newNotification', callback);
+};
+
+export const markMessagesAsRead = (userId: number, senderId: number) => {
+  socket.emit('markMessagesAsRead', JSON.stringify({ userId, senderId }));
 };
 
 export const disconnectSocket = () => {

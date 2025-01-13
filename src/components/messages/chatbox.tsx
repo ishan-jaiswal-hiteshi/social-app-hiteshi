@@ -1,5 +1,5 @@
 import axiosInstance from "@/utils/axiosInstance";
-import socket, { receiveMessages, sendMessage } from "@/utils/socket";
+import socket, { markMessagesAsRead, receiveMessages, sendMessage } from "@/utils/socket";
 import React, { useEffect, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 
@@ -39,10 +39,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
     }
     const handleNewMessage = (newMessage: Message) => {
       if (
-        newMessage.sender_id === chatUserId &&
-        newMessage.receiver_id === currentUserId
+        (newMessage.sender_id === chatUserId &&
+        newMessage.receiver_id === currentUserId) || (newMessage.sender_id === currentUserId &&
+        newMessage.receiver_id === chatUserId)
       ) {
         setMessages((prev) => [...prev, newMessage]);
+        markMessagesAsRead(currentUserId, chatUserId);
+
       }
     };
     receiveMessages(handleNewMessage);
@@ -52,8 +55,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
     };
   }, [chatUserId, currentUserId]);
 
+
+  
   useEffect(() => {
     latestMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    markMessagesAsRead(currentUserId, chatUserId);
   }, [messages]);
 
   const handleSend = () => {

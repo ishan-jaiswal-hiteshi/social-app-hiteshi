@@ -5,6 +5,7 @@ import { useAuth } from "@/context/authContext";
 import { toast } from "react-toastify";
 import { IoIosMenu } from "react-icons/io";
 import UserProfilePicture from "@/utils/user-profile-picture";
+import socket, { markMessagesAsRead, receiveNotifications, userJoin } from "@/utils/socket";
 
 interface SidebarProps {
   onUserSelect: (user: User) => void;
@@ -16,12 +17,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [activeUserId, setActiveUserId] = useState<number | null>(null);
-
+  const [notifications, setNotifications] = useState<Record<number, number>>({});
+  
   const fetchConnectedUsers = async () => {
     try {
-      const response = await axiosInstance.get(
-        `/get-connected-user/${user?.id}`
-      );
+      const response = await axiosInstance.get(`/get-connected-user/${user?.id}`);
       if (response && response?.data) {
         setUsers(response?.data?.users);
       }
@@ -32,10 +32,41 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
   };
 
   useEffect(() => {
+    if (selectedUserId && user) {
+      markMessagesAsRead(user.id, selectedUserId);
+      setNotifications((prev) => ({ ...prev, [selectedUserId]: 0 }));
+    }
+  }, [selectedUserId, user]);
+
+  useEffect(() => {
     if (user) {
       fetchConnectedUsers();
+      userJoin(user.id);
     }
   }, [user]);
+
+  useEffect(() => {
+    const handleNotification = (notification: {
+      sender_id: number;
+      unreadMessagesCount: number;
+      receiver_id: number;
+    }) => {
+      if (notification.receiver_id === user?.id) {
+        setNotifications((prev) => ({
+          ...prev,
+          [notification.sender_id]:
+            (prev[notification.sender_id] || 0) + 1,
+        }));
+      }
+    };
+  
+    receiveNotifications(handleNotification);
+  
+    return () => {
+      socket.off("receiveNotifications", handleNotification); // Clean up the listener
+    };
+  }, [user]);
+  
 
   useEffect(() => {
     const handleResize = () => {
@@ -52,29 +83,29 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
   const handleUserClick = (userData: User) => {
     setActiveUserId(userData.id);
+    setNotifications((prev) => ({ ...prev, [userData.id]: 0 }));
     onUserSelect(userData);
     setIsOpen(false);
+
+    if (user && user.id) {
+      markMessagesAsRead(user.id, userData.id); 
+    }
   };
 
   return (
     <div>
-      {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`md:hidden p-2 text-white  rounded fixed top-6 right-4 z-50 ${
-          isOpen && "hidden"
-        }`}
+        className={`md:hidden p-2 text-white rounded fixed top-6 right-4 z-50 ${isOpen && "hidden"}`}
       >
-        <IoIosMenu size={30} color="" />
+        <IoIosMenu size={30} />
       </button>
 
-      {/* Sidebar */}
       <div
-        className={`pt-4 fixed top-0 w-72 right-0 bottom-0 h-full bg-black text-white shadow-lg transform transition-transform duration-300 z-40 ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`pt-4 fixed top-0 w-72 right-0 bottom-0 h-full bg-black text-white shadow-lg transform transition-transform duration-300 z-40 ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <button
           onClick={() => setIsOpen(false)}
@@ -83,19 +114,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
           ✕
         </button>
 
-        <h2 className="text-lg font-bold p-4 mt-4 pt-4 border-b border-gray-700 ">
-          Friends
-        </h2>
+        <h2 className="text-lg font-bold p-4 mt-4 pt-4 border-b border-gray-700">Friends</h2>
         <ul className="p-4 space-y-2">
           {users.map((userData) => (
             <li
               key={userData.id}
               onClick={() => handleUserClick(userData)}
-              className={`cursor-pointer p-2 rounded ${
-                activeUserId === userData.id
-                  ? "bg-gray-700 text-white"
-                  : "hover:bg-gray-800"
-              }`}
+              className={`cursor-pointer p-2 rounded ${activeUserId === userData.id ? "bg-gray-700 text-white" : "hover:bg-gray-800"}`}
             >
               <div className="flex justify-start">
                 <div className="mr-3">
@@ -103,41 +128,37 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
                     <img
                       src={userData.profile_picture}
                       alt="profile"
-                      className="w-10 h-10 rounded-full  object-cover"
+                      className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
-                    <UserProfilePicture
-                      fullName={userData?.full_name}
-                      size={40}
-                    />
+                    <UserProfilePicture fullName={userData?.full_name} size={40} />
                   )}
                 </div>
                 <div>
-                  <strong>@{userData?.username}</strong>
-                  <p className="m-0 text-gray-500 text-sm">
-                    {userData?.full_name}
-                  </p>
+                <div className="inline-flex">
+                    <div><strong>@{userData?.username}</strong></div>
+                    <div> {notifications[userData.id] > 0 && (
+                    <span className="bg-red-600 text-white text-xs px-2 py-1 rounded-full ml-2">
+                      {notifications[userData.id]}
+                    </span>
+                  )}</div>
+                </div><p className="m-0 text-gray-500 text-sm">{userData?.full_name}</p>
+                  
                 </div>
-              </div>{" "}
+              </div>
             </li>
           ))}
         </ul>
       </div>
 
       <div className="hidden md:block w-52 md:w-72 bg-black text-white h-full mt-4 pt-4">
-        <h2 className="text-lg font-bold p-4 border-b border-gray-700 ">
-          Friends
-        </h2>
+        <h2 className="text-lg font-bold p-4 border-b border-gray-700">Friends</h2>
         <ul className="p-4 space-y-2">
           {users.map((userData) => (
             <li
               key={userData.id}
               onClick={() => handleUserClick(userData)}
-              className={`cursor-pointer p-2 rounded ${
-                activeUserId === userData.id
-                  ? "bg-gray-700 text-white"
-                  : "hover:bg-gray-800"
-              }`}
+              className={`cursor-pointer p-2 rounded ${activeUserId === userData.id ? "bg-gray-700 text-white" : "hover:bg-gray-800"}`}
             >
               <div className="flex justify-start">
                 <div className="mr-3">
@@ -145,22 +166,24 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
                     <img
                       src={userData.profile_picture}
                       alt="profile"
-                      className="w-10 h-10 rounded-full  object-cover"
+                      className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
-                    <UserProfilePicture
-                      fullName={userData?.full_name}
-                      size={40}
-                    />
+                    <UserProfilePicture fullName={userData?.full_name} size={40} />
                   )}
                 </div>
                 <div>
-                  <strong>@{userData?.username}</strong>
-                  <p className="m-0 text-gray-500 text-sm">
-                    {userData?.full_name}
-                  </p>
+                  <div className="inline-flex">
+                    <div><strong>@{userData?.username}</strong></div>
+                    <div> {notifications[userData.id] > 0 && (
+                    <span className="bg-red-600 text-white text-xs px-2 py-1 rounded-full ml-2">
+                      {notifications[userData.id]}
+                    </span>
+                  )}</div>
                 </div>
-              </div>{" "}
+                  <p className="m-0 text-gray-500 text-sm">{userData?.full_name}</p>
+                </div>
+              </div>
             </li>
           ))}
         </ul>
