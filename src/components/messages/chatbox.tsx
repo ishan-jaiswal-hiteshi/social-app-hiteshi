@@ -1,5 +1,10 @@
+import { useNotification } from "@/context/notificationContext";
 import axiosInstance from "@/utils/axiosInstance";
-import socket, { markMessagesAsRead, receiveMessages, sendMessage } from "@/utils/socket";
+import socket, {
+  markMessagesAsRead,
+  receiveMessages,
+  sendMessage,
+} from "@/utils/socket";
 import React, { useEffect, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 
@@ -16,6 +21,7 @@ interface ChatBoxProps {
 
 const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const { resetMessageNotification } = useNotification();
   const [message, setMessage] = useState("");
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -36,16 +42,20 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   useEffect(() => {
     if (chatUserId && currentUserId !== -1) {
       fetchMessages();
+      resetMessageNotification(chatUserId);
     }
     const handleNewMessage = (newMessage: Message) => {
       if (
         (newMessage.sender_id === chatUserId &&
-        newMessage.receiver_id === currentUserId) || (newMessage.sender_id === currentUserId &&
-        newMessage.receiver_id === chatUserId)
+          newMessage.receiver_id === currentUserId) ||
+        (newMessage.sender_id === currentUserId &&
+          newMessage.receiver_id === chatUserId)
       ) {
         setMessages((prev) => [...prev, newMessage]);
-        markMessagesAsRead(currentUserId, chatUserId);
-
+        if (newMessage.sender_id === chatUserId) {
+          markMessagesAsRead(currentUserId, chatUserId);
+          resetMessageNotification(chatUserId);
+        }
       }
     };
     receiveMessages(handleNewMessage);
@@ -53,11 +63,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
     return () => {
       socket.off("receiveMessage", handleNewMessage);
     };
-  }, [chatUserId, currentUserId]);
+  }, [chatUserId, currentUserId, resetMessageNotification]);
 
-
-  
   useEffect(() => {
+    resetMessageNotification(chatUserId);
     latestMessageRef.current?.scrollIntoView({ behavior: "smooth" });
     markMessagesAsRead(currentUserId, chatUserId);
   }, [messages]);
@@ -72,7 +81,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
       sendMessage(content);
       setMessages((prev) => [...prev, content]);
       setMessage("");
-      inputRef.current?.focus(); // Focus input field after sending
+      inputRef.current?.focus();
     }
   };
 
@@ -83,7 +92,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-[calc(100vh-160px)] md:h-full">
       <div
         className="flex-grow overflow-y-auto p-4 bg-opacity-0"
         style={{
@@ -129,10 +138,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={handleKeyPress} // Send message on Enter key press
+          onKeyPress={handleKeyPress}
           placeholder="Type a message"
           className="flex-grow p-2 border bg-black border-none text-white rounded-full focus:outline-none"
-          ref={inputRef} // Reference for focusing
+          ref={inputRef}
         />
         <button
           onClick={handleSend}
@@ -141,7 +150,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
               ? "bg-red-600 text-white"
               : "bg-gray-500 text-gray-300 cursor-not-allowed"
           }`}
-          disabled={!message.trim()} // Disable button if message is empty
+          disabled={!message.trim()}
         >
           <IoMdSend size={25} />
         </button>

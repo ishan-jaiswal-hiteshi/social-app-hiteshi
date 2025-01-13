@@ -6,7 +6,7 @@ interface UserProfileProps {
 }
 
 const UserProfilePicture: React.FC<UserProfileProps> = ({
-  fullName = "Hiteshi",
+  fullName = "Hiteshi User",
   size,
 }) => {
   const generateHash = (str: string) => {
@@ -24,7 +24,9 @@ const UserProfilePicture: React.FC<UserProfileProps> = ({
   const lastName =
     nameParts.length > 1 ? nameParts.slice(1).join(" ") : "Hiteshi";
 
-  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`;
+  const initials = `${firstName.charAt(0).toUpperCase()}${lastName
+    .charAt(0)
+    .toUpperCase()}`;
 
   const colors = [
     "bg-red-500",

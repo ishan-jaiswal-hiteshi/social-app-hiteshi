@@ -12,16 +12,32 @@ import { MdOutlineEvent } from "react-icons/md";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import { usePathname } from "next/navigation";
+import { useNotification } from "@/context/notificationContext";
 
 const SidebarLayout = () => {
   const { user } = useAuth();
   const pathname = usePathname();
+  const {
+    messageNotifications,
+    postNotifications,
+    eventNotifications,
+    resetPostNotification,
+    resetEventNotification,
+  } = useNotification();
 
   const navItems = [
     {
       name: "Home",
       path: "/dashboard/home",
-      icon: <AiOutlineHome size={24} />,
+      icon: (
+        <div className="relative">
+          <AiOutlineHome size={24} />
+          {postNotifications > 0 && (
+            <span className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full"></span>
+          )}
+        </div>
+      ),
+      onClick: () => resetPostNotification(),
     },
     {
       name: "Search",
@@ -36,7 +52,15 @@ const SidebarLayout = () => {
     {
       name: "Events",
       path: "/dashboard/events",
-      icon: <MdOutlineEvent size={24} />,
+      icon: (
+        <div className="relative">
+          <MdOutlineEvent size={24} />
+          {eventNotifications > 0 && (
+            <span className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full"></span>
+          )}
+        </div>
+      ),
+      onClick: () => resetEventNotification(),
     },
     {
       name: "Users",
@@ -44,9 +68,16 @@ const SidebarLayout = () => {
       icon: <LuUsersRound size={24} />,
     },
     {
-      name: "Messsages",
+      name: "Messages",
       path: "/dashboard/messages",
-      icon: <IoChatboxEllipsesOutline size={24} />,
+      icon: (
+        <div className="relative">
+          <IoChatboxEllipsesOutline size={24} />
+          {Object.values(messageNotifications).some((count) => count > 0) && (
+            <span className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full"></span>
+          )}
+        </div>
+      ),
     },
     {
       name: "Profile",
@@ -67,8 +98,9 @@ const SidebarLayout = () => {
   ];
 
   const isActive = (path: string) => pathname === path;
+
   return (
-    <aside className="hidden md:flex bg-[#00070C] text-white p-4 w-52  fixed left-0 top-0 bottom-0  border-r border-gray-500">
+    <aside className="hidden md:flex bg-[#00070C] text-white p-4 w-52 fixed left-0 top-0 bottom-0 border-r border-gray-500">
       <div className="flex flex-col h-full justify-between items-start">
         <div className="mt-2 cursor-pointer hover:bg-gray-800 border border-gray-600 px-3 py-2 rounded-lg">
           <Link className="text-lg font-bold" href="/dashboard/home">
@@ -81,26 +113,27 @@ const SidebarLayout = () => {
             {navItems.map((item, index) => (
               <li key={index}>
                 <Link
-                  href={item.path}
+                  href={item?.path}
+                  onClick={item?.onClick}
                   className={`cursor-pointer flex gap-2 items-center px-2 py-2 rounded-lg ${
-                    isActive(item.path) ? "bg-gray-700" : "hover:bg-gray-800"
+                    isActive(item?.path) ? "bg-gray-700" : "hover:bg-gray-800"
                   }`}
                 >
-                  {item.icon}
-                  <p>{item.name}</p>
+                  {item?.icon}
+                  <p>{item?.name}</p>
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        <div className="bocursor-pointer bg-primary-light border border-gray-600 px-3 py-2 rounded-lg w-full">
+        <div className="cursor-pointer bg-primary-light border border-gray-600 px-3 py-2 rounded-lg w-full">
           <Link
             href="/"
             onClick={() => {
               localStorage.removeItem("accessToken");
             }}
-            className=" flex gap-2 items-center "
+            className="flex gap-2 items-center"
           >
             <FiLogOut size={20} color="white" />
             <p className="text-white bg-primary-light">Log out</p>

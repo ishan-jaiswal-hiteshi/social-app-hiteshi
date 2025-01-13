@@ -324,13 +324,19 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="text-center mt-5">
+                  <h3 className="text-2xl  leading-normal mb-2 text-blueGray-700">
+                    @{profileData?.username}
+                  </h3>
                   <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
                     {profileData?.full_name}
                   </h3>
                   <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                     {profileData?.other_data?.location}
                   </div>
-                  <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                  {(profileData?.other_data?.job_title ||
+                    profileData?.other_data?.university) && (
+                    <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                  )}
                   <div className="mb-2 text-blueGray-600 mt-2">
                     {profileData?.other_data?.job_title}
                   </div>
@@ -338,12 +344,21 @@ export default function ProfilePage() {
                     {profileData?.other_data?.university}
                   </div>
                 </div>
-                <div className="mt-7 border-t border-red-500 text-center">
-                  <div className="pt-4 flex flex-wrap justify-center">
+                {profileData?.other_data?.bio && (
+                  <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                )}
+                <div className="text-center mb-4">
+                  <div className="pt-2 flex flex-wrap justify-center">
                     <div className="w-full lg:w-9/12 px-4">
-                      <p className=" text-lg leading-relaxed text-blueGray-700">
-                        {profileData?.other_data?.bio}
-                      </p>
+                      <p
+                        className="text-lg leading-relaxed text-blueGray-700"
+                        dangerouslySetInnerHTML={{
+                          __html: profileData?.other_data?.bio?.replace(
+                            /\n/g,
+                            "<br/>"
+                          ),
+                        }}
+                      ></p>
                     </div>
                   </div>
                 </div>

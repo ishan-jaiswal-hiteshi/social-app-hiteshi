@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { ProfileSkeleton } from "@/utils/skeletons";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import FriendsListModel from "@/components/profile-page/friendlist-model";
 import FollowingListModel from "@/components/profile-page/followinglist-model";
 import Link from "next/link";
@@ -14,9 +14,13 @@ const UserProfile = () => {
   const pathname = usePathname();
   const userId = pathname?.split("/")[3];
   const { user, setUser } = useAuth();
+  const router = useRouter();
   const [isFriendsOpen, setIsFriendsOpen] = useState(false);
   const [isFollowingOpen, setIsFollowingOpen] = useState(false);
   const [isfollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isFriend, setIsFriend] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [userData, setUserData] = useState({
     full_name: "",
     username: "",
@@ -37,7 +41,6 @@ const UserProfile = () => {
       posts: 0,
     },
   });
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -84,8 +87,13 @@ const UserProfile = () => {
     };
   }, [isFollowingOpen, isFriendsOpen]);
 
+  const handleRedirectToMessage = () => {
+    router.push(`/dashboard/messages?userid=${userData.id}`);
+  };
+
   const handleConnect = async () => {
     try {
+      setButtonLoading(true);
       await axiosInstance.post(`/add-follower/${userData?.id}`, {
         followerId: user?.id,
       });
@@ -107,11 +115,14 @@ const UserProfile = () => {
       setIsFollowing(true);
     } catch (err) {
       console.error("Error in following user: ", err);
+    } finally {
+      setButtonLoading(false);
     }
   };
 
   const handleRemoveFollowing = async () => {
     try {
+      setButtonLoading(true);
       await axiosInstance.post(`/remove-following/${user?.id}`, {
         followingId: userData?.id,
       });
@@ -128,6 +139,8 @@ const UserProfile = () => {
       setIsFollowing(false);
     } catch (err) {
       console.error("Error in unfollowing user: ", err);
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -144,9 +157,23 @@ const UserProfile = () => {
     }
   };
 
+  const checkFriends = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `is-user-connected/${user?.id}/${userId}`
+      );
+      if (response && response.data) {
+        setIsFriend(response?.data?.isConnected);
+      }
+    } catch (err) {
+      console.log("Error While Checking Friends Status", err);
+    }
+  };
+
   useEffect(() => {
     if (user && userId) {
       checkFollowingStatus();
+      checkFriends();
     }
   }, [user, userId]);
 
@@ -208,19 +235,45 @@ const UserProfile = () => {
                         onClick={handleRemoveFollowing}
                         className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
-                        Following
+                        {buttonLoading ? (
+                          <div
+                            className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
+                            role="status"
+                            aria-label="loading"
+                          >
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        ) : (
+                          "Following"
+                        )}
                       </button>
                     ) : (
                       <button
                         onClick={handleConnect}
                         className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
-                        Follow
+                        {buttonLoading ? (
+                          <div
+                            className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
+                            role="status"
+                            aria-label="loading"
+                          >
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        ) : (
+                          "Follow"
+                        )}
                       </button>
                     )}
-                    <button className="border-2 border-red-500 active:border-red-300 active:text-red-300 uppercase text-red-400 font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150">
-                      Message
-                    </button>
+
+                    {isFriend && (
+                      <button
+                        className="border-2 border-red-500 active:border-red-300 active:text-red-300 uppercase text-red-400 font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                        onClick={handleRedirectToMessage}
+                      >
+                        Message
+                      </button>
+                    )}
                   </div>
 
                   <div className="w-full lg:w-4/12 px-4 lg:order-1">
@@ -260,28 +313,41 @@ const UserProfile = () => {
                 </div>
 
                 <div className="text-center mt-5">
+                  <h3 className="text-2xl  leading-normal mb-2 text-blueGray-700">
+                    @{userData?.username}
+                  </h3>
                   <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
                     {userData?.full_name}
                   </h3>
                   <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
-                    {userData?.other_data?.location || "No location added"}
+                    {userData?.other_data?.location}
                   </div>
-                  <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                  {(userData?.other_data?.job_title ||
+                    userData?.other_data?.university) && (
+                    <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                  )}
                   <div className="mb-2 text-blueGray-600 mt-2">
-                    {userData?.other_data?.job_title || "No work details added"}
+                    {userData?.other_data?.job_title}
                   </div>
                   <div className="mb-2 text-blueGray-600">
-                    {userData?.other_data?.university ||
-                      "No education details added"}
+                    {userData?.other_data?.university}
                   </div>
                 </div>
-
-                <div className="mt-7 py-10 border-t border-red-500 text-center">
-                  <div className="flex flex-wrap justify-center">
+                {userData?.other_data?.bio && (
+                  <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                )}
+                <div className="text-center mb-4">
+                  <div className="pt-2 flex flex-wrap justify-center">
                     <div className="w-full lg:w-9/12 px-4">
-                      <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                        {userData?.other_data?.bio || "No bio added"}
-                      </p>
+                      <p
+                        className="text-lg leading-relaxed text-blueGray-700"
+                        dangerouslySetInnerHTML={{
+                          __html: userData?.other_data?.bio?.replace(
+                            /\n/g,
+                            "<br/>"
+                          ),
+                        }}
+                      ></p>
                     </div>
                   </div>
                 </div>

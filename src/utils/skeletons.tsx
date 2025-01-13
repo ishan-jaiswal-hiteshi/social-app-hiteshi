@@ -41,8 +41,8 @@ export const ProfileSkeleton = () => (
               <div className="w-48 h-6 bg-gray-600 animate-pulse mx-auto rounded-md mb-2"></div>
               <div className="w-48 h-6 bg-gray-600 animate-pulse mx-auto rounded-md mb-2"></div>
             </div>
-
-            <div className="mt-10 py-10 border-t border-red-500 text-center">
+            <div className="w-72 h-0.5 mx-auto my-4 bg-red-500 border-0 rounded md:my-10"></div>
+            <div className=" text-center">
               <div className="flex flex-wrap justify-center">
                 <div className="w-full lg:w-9/12 px-4">
                   <div className="w-72 h-6 bg-gray-600 animate-pulse mx-auto rounded-md mb-6"></div>

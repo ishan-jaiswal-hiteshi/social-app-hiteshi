@@ -395,7 +395,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
               onClick={() => {
                 toggleContent();
               }}
-              className="text-primary-light text-opacity-85 focus:outline-none ml-2 text-sm"
+              className="text-opacity-85 focus:outline-none ml-1 tracking-[0.1rem]"
             >
               ...
             </button>
@@ -427,7 +427,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                       <img
                         src={comment?.User?.profile_picture}
                         alt="profile"
-                        className="w-6 h-6 rounded-full "
+                        className="w-6 h-6 rounded-full"
                       />
                     ) : (
                       <UserProfilePicture

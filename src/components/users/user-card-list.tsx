@@ -19,6 +19,7 @@ type UserDataProps = {
 const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   const { user, setUser } = useAuth();
   const [isFollowing, setIsFollowing] = useState<boolean>(followStatus);
+  const [buttonLoading, setButtonLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const profileNavigation = () => {
@@ -30,6 +31,7 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
 
   const handleFollow = async () => {
     try {
+      setButtonLoading(true);
       await axiosInstance.post(`/add-follower/${userData?.id}`, {
         followerId: user?.id,
       });
@@ -49,11 +51,14 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
       setIsFollowing(true);
     } catch (err) {
       console.error("Error in following user: ", err);
+    } finally {
+      setButtonLoading(false);
     }
   };
 
   const handleUnfollow = async () => {
     try {
+      setButtonLoading(true);
       await axiosInstance.post(`/remove-following/${user?.id}`, {
         followingId: userData?.id,
       });
@@ -70,6 +75,8 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
       setIsFollowing(false);
     } catch (err) {
       console.error("Error in unfollowing user: ", err);
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -105,17 +112,37 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
             <></>
           ) : isFollowing ? (
             <button
-              className="border border-gray-500 text-white px-2 py-1  w-full  rounded"
               onClick={handleUnfollow}
+              className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
             >
-              Following
+              {buttonLoading ? (
+                <div
+                  className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
+                  role="status"
+                  aria-label="loading"
+                >
+                  <span className="sr-only">Loading...</span>
+                </div>
+              ) : (
+                "Following"
+              )}
             </button>
           ) : (
             <button
-              className="bg-primary-dark text-white px-2 py-1 w-full rounded hover:bg-primary-light "
               onClick={handleFollow}
+              className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
             >
-              Follow
+              {buttonLoading ? (
+                <div
+                  className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
+                  role="status"
+                  aria-label="loading"
+                >
+                  <span className="sr-only">Loading...</span>
+                </div>
+              ) : (
+                "Follow"
+              )}
             </button>
           )}
         </div>
