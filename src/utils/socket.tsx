@@ -1,20 +1,15 @@
 import { io, Socket } from "socket.io-client";
 
-const socket: Socket = io("http://192.168.101.67:5000");
+const socket: Socket = io("http://192.168.100.121:5000");
 
 export const initializeSocket = () => {
-  console.log(socket);
-  console.log("Socket connecting");
   socket.on("connect", () => {
-    console.log("Socket connected:", socket.id);
+    console.log("Socket connected:");
   });
-  console.log("Socket connected");
 };
 
 export const userJoin = (userId: number) => {
-  console.log("User Joining ");
   socket.emit("userJoined", JSON.stringify({ userId }));
-  console.log("User Joined ");
 };
 
 export const sendMessage = (message: {
@@ -43,11 +38,45 @@ export const receiveMessages = (
   socket.on("receiveMessage", callback);
 };
 
+export const receiveNotifications = (
+  callback: (notification: {
+    sender_id: number;
+    receiver_id: number;
+    unreadMessagesCount: number;
+  }) => void
+) => {
+  socket.off("newNotification");
+  socket.on("newNotification", callback);
+};
+
+export const markMessagesAsRead = (userId: number, senderId: number) => {
+  socket.emit("markMessagesAsRead", JSON.stringify({ userId, senderId }));
+};
+
 export const disconnectSocket = () => {
   if (socket.connected) {
     socket.disconnect();
     console.log("Socket disconnected manually");
   }
+};
+export const newPost = (callback: (hasNewPost: boolean) => void) => {
+  socket.on("newPost", (data) => {
+    if (data === true) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
+};
+
+export const newEvent = (callback: (hasNewEvent: boolean) => void) => {
+  socket.on("newEvent", (data) => {
+    if (data === true) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
 };
 
 export default socket;

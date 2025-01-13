@@ -52,12 +52,10 @@ const SearchPage = () => {
       const response = await axiosInstance(`/latest-users`);
       if (response?.data) {
         setUsers(response.data.users);
+        setLoadingUsers(false);
       }
     } catch (error) {
       console.error("Error fetching users:", error);
-      toast.error("Error fetching users.");
-    } finally {
-      setLoadingUsers(false);
     }
   };
 
@@ -67,12 +65,10 @@ const SearchPage = () => {
       const response = await axiosInstance(`/latest-posts`);
       if (response?.data) {
         setPosts(response.data.posts);
+        setLoadingPosts(false);
       }
     } catch (error) {
       console.error("Error fetching posts:", error);
-      toast.error("Error fetching posts.");
-    } finally {
-      setLoadingPosts(false);
     }
   };
 
@@ -243,21 +239,25 @@ const SearchPage = () => {
         </div>
 
         {/* Posts Section */}
-        <div className="flex justify-center md:mx-40">
-          <div className="">
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 gap-7 md:grid-cols-1 lg:grid-cols-2  mx-auto">
             {loadingPosts || isSearching
               ? Array.from({ length: 4 }).map((_, index) => (
-                  <PostSkeleton key={index} />
+                  <div key={index} className="col-span-1">
+                    <PostSkeleton />
+                  </div>
                 ))
               : posts.length > 0
               ? posts.map((post) => (
-                  <Post
+                  <div
                     key={post.id}
-                    postData={post}
-                    onDeletePost={handlePostDelete}
-                  />
+                    className="lg:w-96 md:w-80 sm:w-72 col-span-1"
+                  >
+                    <Post postData={post} onDeletePost={handlePostDelete} />
+                  </div>
                 ))
               : !loadingPosts && <></>}
+
             {!isSearching &&
               !loadingPosts &&
               posts.length > 0 &&

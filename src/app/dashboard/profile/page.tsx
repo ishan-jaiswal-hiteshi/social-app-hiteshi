@@ -46,6 +46,16 @@ export default function ProfilePage() {
   });
 
   const [editData, setEditData] = useState(profileData);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const confirmLogout = () => {
+    handleLogout();
+    setShowConfirmation(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+  };
 
   useEffect(() => {
     if (user) {
@@ -53,7 +63,7 @@ export default function ProfilePage() {
       setProfileData({
         full_name: user.full_name || "",
         username: user.username || "",
-        profile_picture: user?.profile_picture,
+        profile_picture: user?.profile_picture || "",
         other_data: {
           cover_picture: user?.other_data?.cover_picture || "",
           location: user?.other_data?.location || "",
@@ -216,10 +226,9 @@ export default function ProfilePage() {
           </div>
 
           <div className="fixed top-5 right-5 sm:hidden">
-            <Link
-              href="/"
+            <button
               onClick={() => {
-                localStorage.removeItem("accessToken");
+                setShowConfirmation(true);
               }}
               className="hover:text-gray-300 cursor-pointer flex gap-2 items-center"
             >
@@ -232,7 +241,7 @@ export default function ProfilePage() {
               >
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
               </svg>
-            </Link>
+            </button>
           </div>
 
           <div
@@ -324,13 +333,19 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="text-center mt-5">
+                  <h3 className="text-2xl  leading-normal mb-2 text-blueGray-700">
+                    @{profileData?.username}
+                  </h3>
                   <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
                     {profileData?.full_name}
                   </h3>
                   <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                     {profileData?.other_data?.location}
                   </div>
-                  <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                  {(profileData?.other_data?.job_title ||
+                    profileData?.other_data?.university) && (
+                    <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                  )}
                   <div className="mb-2 text-blueGray-600 mt-2">
                     {profileData?.other_data?.job_title}
                   </div>
@@ -338,12 +353,21 @@ export default function ProfilePage() {
                     {profileData?.other_data?.university}
                   </div>
                 </div>
-                <div className="mt-7 border-t border-red-500 text-center">
-                  <div className="pt-4 flex flex-wrap justify-center">
+                {profileData?.other_data?.bio && (
+                  <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
+                )}
+                <div className="text-center mb-4">
+                  <div className="pt-2 flex flex-wrap justify-center">
                     <div className="w-full lg:w-9/12 px-4">
-                      <p className=" text-lg leading-relaxed text-blueGray-700">
-                        {profileData?.other_data?.bio}
-                      </p>
+                      <p
+                        className="text-lg leading-relaxed text-blueGray-700"
+                        dangerouslySetInnerHTML={{
+                          __html: profileData?.other_data?.bio?.replace(
+                            /\n/g,
+                            "<br/>"
+                          ),
+                        }}
+                      ></p>
                     </div>
                   </div>
                 </div>
@@ -352,6 +376,33 @@ export default function ProfilePage() {
           </div>
         </section>
       </div>
+
+      {showConfirmation && (
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-black border border-gray-400 p-5 rounded-md shadow-md max-w-sm mx-auto">
+            <p className="text-center text-gray-300 mb-4 pb-3">
+              <strong>
+                Are you sure you want Logout from Socialize@Hiteshi?
+              </strong>
+            </p>
+            <div className="flex justify-center gap-5 ">
+              <button
+                className="px-3 py-2 bg-gray-600 text-gray-200 rounded hover:bg-gray-500 focus:outline-none transition"
+                onClick={() => setShowConfirmation(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none transition"
+                onClick={confirmLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {isEditOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-4">
           <div

@@ -110,13 +110,13 @@ export default function Auth() {
         const result = response.data;
         localStorage.setItem("accessToken", result.token);
         await loginUser();
+
         router.push("/dashboard/home");
       }
     } catch (err: any) {
       setError(
         err.response?.data?.message || "Failed to verify OTP. Please try again."
       );
-    } finally {
       setLoading(false);
     }
   };

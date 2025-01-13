@@ -41,8 +41,8 @@ export const ProfileSkeleton = () => (
               <div className="w-48 h-6 bg-gray-600 animate-pulse mx-auto rounded-md mb-2"></div>
               <div className="w-48 h-6 bg-gray-600 animate-pulse mx-auto rounded-md mb-2"></div>
             </div>
-
-            <div className="mt-10 py-10 border-t border-red-500 text-center">
+            <div className="w-72 h-0.5 mx-auto my-4 bg-red-500 border-0 rounded md:my-10"></div>
+            <div className=" text-center">
               <div className="flex flex-wrap justify-center">
                 <div className="w-full lg:w-9/12 px-4">
                   <div className="w-72 h-6 bg-gray-600 animate-pulse mx-auto rounded-md mb-6"></div>
@@ -238,6 +238,49 @@ export const EventsSkeleton = () => {
 
         {/* Date Placeholder */}
         <div className="h-4 bg-gray-700 rounded w-1/3"></div>
+      </div>
+    </div>
+  );
+};
+
+export const ChatSidebarSkeleton: React.FC = () => {
+  const skeletonItems = Array.from({ length: 5 });
+
+  return (
+    <div className="hidden md:block w-52 md:w-72 bg-black text-white h-full mt-4 pt-4">
+      <h2 className="text-lg font-bold p-4 border-b border-gray-700">
+        Friends
+      </h2>
+      <ul className="p-4 space-y-2">
+        {skeletonItems.map((_, index) => (
+          <li key={index} className="cursor-pointer p-3 rounded animate-pulse">
+            <div className="flex justify-start items-center">
+              {/* Circular skeleton for profile picture */}
+              <div className="w-10 h-10 bg-gray-700 rounded-full mr-3"></div>
+
+              {/* Rectangular skeletons for text */}
+              <div className="flex-1 space-y-2">
+                <div className="w-1/2 h-4 bg-gray-700 rounded"></div>
+                <div className="w-1/3 h-4 bg-gray-700 rounded"></div>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export const EventListSkeleton: React.FC = () => {
+  return (
+    <div className="p-5 py-7 mb-4 rounded-lg flex items-center space-x-4 animate-pulse bg-black">
+      {/* Skeleton for event image */}
+      <div className="w-16 h-16 bg-gray-700 rounded-lg"></div>
+      {/* Skeleton for event details */}
+      <div className="flex-1 space-y-2">
+        <div className="w-3/4 h-4 bg-gray-700 rounded"></div>
+        <div className="w-1/2 h-4 bg-gray-700 rounded"></div>
+        <div className="w-1/3 h-4 bg-gray-700 rounded"></div>
       </div>
     </div>
   );

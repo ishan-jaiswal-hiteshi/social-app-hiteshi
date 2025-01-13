@@ -45,9 +45,9 @@ const UserCardGrid: React.FC<UserDataProps> = ({ userData }) => {
             )}
           </div>
           <h5 className="mb-1 text-lg font-medium text-white">
-            {userData?.full_name}
+            @{userData?.username}
           </h5>
-          <span className="text-sm text-gray-500">@{userData?.username}</span>
+          <span className="text-sm text-gray-500">{userData?.full_name}</span>
         </div>
       </div>
     </div>

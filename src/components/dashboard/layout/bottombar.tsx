@@ -9,15 +9,25 @@ import { MdAddCircleOutline } from "react-icons/md";
 import { LuUsersRound } from "react-icons/lu";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import { usePathname } from "next/navigation";
+import { useNotification } from "@/context/notificationContext";
 
 const BottombarLayout = () => {
   const { user } = useAuth();
   const pathname = usePathname();
+  const { postNotifications, resetPostNotification } = useNotification();
 
   const navItems = [
     {
       path: "/dashboard/home",
-      icon: <AiOutlineHome size={26} />,
+      icon: (
+        <div className="relative">
+          <AiOutlineHome size={24} />
+          {postNotifications > 0 && (
+            <span className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full"></span>
+          )}
+        </div>
+      ),
+      onClick: () => resetPostNotification(),
       name: "Home",
     },
     {
@@ -61,6 +71,7 @@ const BottombarLayout = () => {
         {navItems.map((item, index) => (
           <div
             key={index}
+            onClick={item?.onClick}
             className={`cursor-pointer rounded-xl p-2 ${
               isActive(item.path) ? "bg-gray-700" : "hover:bg-gray-800"
             }`}

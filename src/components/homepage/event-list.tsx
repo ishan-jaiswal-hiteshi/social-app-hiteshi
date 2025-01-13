@@ -17,11 +17,10 @@ const EventList: React.FC = () => {
       });
       if (response && response?.data) {
         setEvents(response?.data?.events);
+        setLoading(false);
       }
     } catch (err) {
       console.error("Error in Fetching Events", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -45,9 +44,9 @@ const EventList: React.FC = () => {
 
   return (
     <div className="mt-8 mb-6">
-      <div className="w-full px-2 border-l border-gray-600">
+      <div className="w-full px-3 border-l border-gray-600">
         <h2 className="text-2xlfont-semibold text-white mb-2">Top Events</h2>
-        <div className="space-y-4">
+        <div className="space-y-2">
           {events.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}

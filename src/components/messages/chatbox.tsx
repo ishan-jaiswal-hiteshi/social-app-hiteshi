@@ -1,12 +1,30 @@
+import { useNotification } from "@/context/notificationContext";
 import axiosInstance from "@/utils/axiosInstance";
-import socket, { receiveMessages, sendMessage } from "@/utils/socket";
+import socket, {
+  markMessagesAsRead,
+  receiveMessages,
+  sendMessage,
+} from "@/utils/socket";
 import React, { useEffect, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
+
+interface SenderInfo {
+  id: number;
+  username: string;
+  full_name: string;
+  profile_picture: string;
+}
 
 interface Message {
+  id: number;
   sender_id: number;
   receiver_id: number;
   message: string;
+  timestamp: string; // Unified timestamp for both API and socket messages
 }
 
 interface ChatBoxProps {
@@ -16,57 +34,94 @@ interface ChatBoxProps {
 
 const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const { resetMessageNotification } = useNotification();
   const [message, setMessage] = useState("");
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Fetch messages from the API
   const fetchMessages = async () => {
     try {
       const response = await axiosInstance.get(
         `/get-messages/${currentUserId}/${chatUserId}`
       );
-      if (response && response?.data) {
-        setMessages(response?.data?.messages);
+      if (response?.data?.messages) {
+        const normalizedMessages = response.data.messages.map((msg: any) => ({
+          id: msg.id,
+          sender_id: msg.sender_id,
+          receiver_id: msg.receiver_id,
+          message: msg.message,
+
+          timestamp: msg.createdAt, // Normalize `createdAt` as `timestamp`
+        }));
+        setMessages(normalizedMessages);
       }
     } catch (err) {
-      console.error("Error Fetching Messages", err);
+      console.error("Error fetching messages:", err);
     }
   };
 
   useEffect(() => {
     if (chatUserId && currentUserId !== -1) {
       fetchMessages();
+      resetMessageNotification(chatUserId);
     }
-    const handleNewMessage = (newMessage: Message) => {
+
+    const handleNewMessage = (newMessage: {
+      sender_id: number;
+      receiver_id: number;
+      message: string;
+      senderInfo: SenderInfo;
+      timestamp: string;
+    }) => {
+      // Add new messages directly to the normalized state
+      const normalizedMessage: Message = {
+        id: Date.now(), // Temporary ID
+        sender_id: newMessage.sender_id,
+        receiver_id: newMessage.receiver_id,
+        message: newMessage.message,
+        timestamp: newMessage.timestamp,
+      };
+
       if (
-        newMessage.sender_id === chatUserId &&
-        newMessage.receiver_id === currentUserId
+        (normalizedMessage.sender_id === chatUserId &&
+          normalizedMessage.receiver_id === currentUserId) ||
+        (normalizedMessage.sender_id === currentUserId &&
+          normalizedMessage.receiver_id === chatUserId)
       ) {
-        setMessages((prev) => [...prev, newMessage]);
+        setMessages((prev) => [...prev, normalizedMessage]);
+        markMessagesAsRead(currentUserId, chatUserId);
       }
     };
+
     receiveMessages(handleNewMessage);
 
     return () => {
       socket.off("receiveMessage", handleNewMessage);
     };
-  }, [chatUserId, currentUserId]);
+  }, [chatUserId, currentUserId, resetMessageNotification]);
 
   useEffect(() => {
+    resetMessageNotification(chatUserId);
     latestMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    markMessagesAsRead(currentUserId, chatUserId);
   }, [messages]);
 
+  // Handle sending a message
   const handleSend = () => {
     if (message.trim()) {
-      const content = {
+      const newMessage: Message = {
+        id: Date.now(), // Temporary ID
         sender_id: currentUserId,
         receiver_id: chatUserId,
         message,
+
+        timestamp: new Date().toISOString(), // Use current time as timestamp
       };
-      sendMessage(content);
-      setMessages((prev) => [...prev, content]);
+      sendMessage(newMessage);
+      setMessages((prev) => [...prev, newMessage]);
       setMessage("");
-      inputRef.current?.focus(); // Focus input field after sending
+      inputRef.current?.focus();
     }
   };
 
@@ -76,8 +131,33 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
     }
   };
 
+  // Group messages by date
+  const categorizeMessagesByDate = () => {
+    const groupedMessages: { [key: string]: Message[] } = {};
+    messages.forEach((msg) => {
+      const date = dayjs(msg.timestamp).format("YYYY-MM-DD");
+      if (!groupedMessages[date]) {
+        groupedMessages[date] = [];
+      }
+      groupedMessages[date].push(msg);
+    });
+    return groupedMessages;
+  };
+
+  // Render date header
+  const renderDateHeader = (date: string) => {
+    const today = dayjs().format("YYYY-MM-DD");
+    const yesterday = dayjs().subtract(1, "day").format("YYYY-MM-DD");
+
+    if (date === today) return "Today";
+    if (date === yesterday) return "Yesterday";
+    return dayjs(date).format("MMMM D, YYYY");
+  };
+
+  const groupedMessages = categorizeMessagesByDate();
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-[calc(100vh-160px)] md:h-full">
       <div
         className="flex-grow overflow-y-auto p-4 bg-opacity-0"
         style={{
@@ -85,15 +165,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
           maxHeight: "calc(100vh - 160px)",
         }}
       >
-        {messages.map((msg, index) => {
-          if (
-            (msg.sender_id === currentUserId &&
-              msg.receiver_id === chatUserId) ||
-            (msg.sender_id === chatUserId && msg.receiver_id === currentUserId)
-          ) {
-            return (
+        {Object.keys(groupedMessages).map((date) => (
+          <div key={date}>
+            <div className="text-center text-red-500 border-gray-700 border-b-2 text-sm font-bold my-2">
+              {renderDateHeader(date)}
+            </div>
+            {groupedMessages[date].map((msg) => (
               <div
-                key={index}
+                key={msg.id}
                 className={`mb-2 flex ${
                   msg.sender_id === currentUserId
                     ? "justify-end"
@@ -107,26 +186,28 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
                       : "bg-gray-600 text-left"
                   }`}
                 >
-                  {msg.message}
+                  <p className="">{msg.message}</p>
+                  <div className="text-[10px] text-gray-300 mt-1 text-right">
+                    {dayjs(msg.timestamp).format("h:mm A")}
+                  </div>
                 </div>
               </div>
-            );
-          }
-          return null;
-        })}
-
+            ))}
+          </div>
+        ))}
         <div ref={latestMessageRef}></div>
       </div>
 
-      <div className="p-2 bg-gray-700 flex rounded-full mx-7">
+      {/* Input Bar */}
+      <div className="p-2 bg-gray-700 flex rounded-full mx-7 ">
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={handleKeyPress} // Send message on Enter key press
+          onKeyPress={handleKeyPress}
           placeholder="Type a message"
           className="flex-grow p-2 border bg-black border-none text-white rounded-full focus:outline-none"
-          ref={inputRef} // Reference for focusing
+          ref={inputRef}
         />
         <button
           onClick={handleSend}
@@ -135,7 +216,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
               ? "bg-red-600 text-white"
               : "bg-gray-500 text-gray-300 cursor-not-allowed"
           }`}
-          disabled={!message.trim()} // Disable button if message is empty
+          disabled={!message.trim()}
         >
           <IoMdSend size={25} />
         </button>
