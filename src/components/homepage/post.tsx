@@ -275,7 +275,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                 style={{ top: "100%", zIndex: 10 }}
               >
                 <button
-                  className="text-gray-300 hover:text-red-800 text-sm "
+                  className="text-gray-300 hover:text-red-500 text-sm "
                   onClick={() => {
                     setShowConfirmation(true);
                     setShowOptions(false);
@@ -321,7 +321,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
             </div>
 
             {postData?.mediaUrls?.length >= 2 && (
-              <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+              <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2 ">
                 {postData.mediaUrls.map((_, index) => (
                   <button
                     key={index}
@@ -406,7 +406,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
       {showComments && (
         <div className="p-3 border-t border-gray-600 ">
           {loadingComments ? (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
               <div
                 className="animate-spin inline-block text-center w-12 h-12 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
                 role="status"
@@ -468,22 +468,22 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
       )}
       {showConfirmation && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-black border border-gray-400 p-4 rounded-md shadow-md max-w-sm mx-auto">
-            <p className="text-center text-gray-300 mb-4">
-              Are you sure you want to delete this post?
+          <div className="bg-black border border-gray-400 p-5 rounded-md shadow-md max-w-sm mx-auto">
+            <p className="text-center text-gray-300 mb-4 pb-3">
+              <strong>Are you sure you want to delete this post?</strong>
             </p>
-            <div className="flex justify-between gap-3">
+            <div className="flex justify-center gap-5 ">
               <button
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none transition"
-                onClick={confirmDelete}
-              >
-                Yes, Delete
-              </button>
-              <button
-                className="px-4 py-2 bg-gray-600 text-gray-200 rounded hover:bg-gray-500 focus:outline-none transition"
+                className="px-3 py-2 bg-gray-600 text-gray-200 rounded hover:bg-gray-500 focus:outline-none transition"
                 onClick={() => setShowConfirmation(false)}
               >
                 Cancel
+              </button>
+              <button
+                className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none transition"
+                onClick={confirmDelete}
+              >
+                Delete
               </button>
             </div>
           </div>

@@ -50,13 +50,13 @@ const PostList = () => {
           pageNumber === 1 ? fetchedPosts : [...prev, ...fetchedPosts]
         );
         setHasMore(fetchedPosts.length >= 4);
+        setLoading(false);
       } else {
         setHasMore(false);
       }
     } catch (error) {
       console.error("Failed to fetch posts:", error);
     } finally {
-      setLoading(false);
       setLoadingMore(false);
     }
   };

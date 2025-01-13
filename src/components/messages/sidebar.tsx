@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { User } from "@/props/authProps";
 import axiosInstance from "@/utils/axiosInstance";
 import { useAuth } from "@/context/authContext";
-import { toast } from "react-toastify";
 import { IoIosMenu } from "react-icons/io";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import { markMessagesAsRead, userJoin } from "@/utils/socket";
 import { useNotification } from "@/context/notificationContext";
+
+import { ChatSidebarSkeleton } from "@/utils/skeletons";
 
 interface SidebarProps {
   onUserSelect: (user: User) => void;
@@ -20,17 +21,21 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeUserId, setActiveUserId] = useState<number | null>(null);
 
+  const [loading, setLoading] = useState(true);
   const fetchConnectedUsers = async () => {
+    setLoading(true);
     try {
       const response = await axiosInstance.get(
         `/get-connected-user/${user?.id}`
       );
       if (response && response?.data) {
         setUsers(response?.data?.users);
+        setLoading(false);
       }
     } catch (err) {
       console.error("Error Fetching connected users", err);
-      toast.error("Couldn't fetch connected users!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,7 +79,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
       markMessagesAsRead(user.id, userData.id);
     }
   };
-
+  if (loading) {
+    return <ChatSidebarSkeleton />;
+  }
   return (
     <div>
       <button

@@ -68,7 +68,7 @@ const SidebarLayout = () => {
       icon: <LuUsersRound size={24} />,
     },
     {
-      name: "Messages",
+      name: "Chats",
       path: "/dashboard/messages",
       icon: (
         <div className="relative">

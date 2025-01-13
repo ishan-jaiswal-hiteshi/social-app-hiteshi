@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { Event } from "@/props/eventProps";
-import { EventsSkeleton } from "@/utils/skeletons";
+import { EventListSkeleton, EventsSkeleton } from "@/utils/skeletons";
 import { IoIosMenu } from "react-icons/io"; // Import the menu icon
 
 interface AllEventsListProps {
@@ -20,17 +20,17 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
   const [menuOpen, setMenuOpen] = useState(false); // State to manage menu visibility
 
   const fetchAllEvents = async () => {
+    setLoading(true);
     try {
       const response = await axiosInstance.get<{ events: Event[] }>(
         "get-events"
       );
       if (response && response.data) {
         setEvents(response.data.events); // Ensure the response matches the type
+        setLoading(false);
       }
     } catch (err) {
       console.error("Error in Fetching Events", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -51,7 +51,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
     return (
       <div className="my-8">
         {Array.from({ length: 5 }).map((_, index) => (
-          <EventsSkeleton key={index} />
+          <EventListSkeleton key={index} />
         ))}
       </div>
     );
@@ -78,7 +78,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
           menuOpen ? "transform-none" : "transform translate-x-full"
         } lg:hidden`}
       >
-        <div className="flex flex-col p-3 space-y-2">
+        <div className="fixed top-0 right-0 h-full w-[70%] bg-black p-3 space-y-2 overflow-y-auto">
           {events.map((event) => (
             <div
               key={event.id}
@@ -117,7 +117,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
           <div
             key={event.id}
             onClick={() => handleEventSelect(event)}
-            className={`p-4 py-6 mb-3 rounded-lg cursor-pointer flex items-center space-x-4 ${
+            className={`p-4 py-6 mb-2 rounded-lg cursor-pointer flex items-center space-x-4 ${
               selectedEventId === event.id
                 ? "bg-gray-800"
                 : "bg-black border-gray-700 border-2 hover:bg-gray-900"
@@ -128,16 +128,23 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
               <img
                 src={event.mediaUrls[0]}
                 alt={event.name}
-                className="w-14 h-14 object-cover rounded-lg"
+                className="w-16 h-16 object-cover rounded-lg"
               />
             )}
 
             {/* Event Details */}
             <div className="flex-1">
-              <h3 className="font-bold text-white">{event.name}</h3>
+              <h3 className="font-bold text-white mb-1">{event.name}</h3>
+              <p className="text-gray-400 text-sm">
+                <strong>Location:</strong> {event.location}
+              </p>
               <p className="text-sm text-gray-400">
-                {new Date(event.eventDate).toLocaleDateString()} -{" "}
-                {event.location}
+                <strong>Date:</strong>{" "}
+                {new Date(event.eventDate).toLocaleDateString("en-US", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
               </p>
             </div>
           </div>
