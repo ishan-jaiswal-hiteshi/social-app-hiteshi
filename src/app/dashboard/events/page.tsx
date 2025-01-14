@@ -29,7 +29,6 @@ const Page = () => {
       if (response && response.data) {
         setEvents(response.data.events);
 
-        // Automatically select the latest event on first load
         if (response.data.events.length > 0 && !selectedEvent) {
           setSelectedEvent(response.data.events[0]);
         }
@@ -43,10 +42,23 @@ const Page = () => {
     fetchAllEvents();
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && showModal) {
+        setShowModal(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showModal]);
+
   return (
-    <div className="">
-      {/* Header Create Button */}
-      <div className="bg-black fixed top-4 right-12 items-center">
+    <div className="min-h-screen flex flex-col  text-white">
+      {/* Create Button */}
+      <div className="bg-black fixed top-7 right-14 lg:right-10 items-center">
         <button
           onClick={handleModalToggle}
           className="flex items-center justify-center space-x-2 border border-gray-600 hover:bg-gray-800 text-primary-light px-4 py-2 rounded-lg shadow-md"
@@ -57,13 +69,18 @@ const Page = () => {
         </button>
       </div>
 
-      <div className="flex flex-col lg:flex-row min-h-screen mt-7 text-white">
-        {/* Event Details */}
-        <div className="lg:w-2/3 h-full px-4 lg:px-6 border-l border-gray-600">
+      {/* Main Content */}
+      <div className="flex flex-col lg:flex-row flex-grow mt-12 lg:mt-7 ">
+        {/* Event Details (Non-Scrollable) */}
+        <div className="lg:w-2/3 h-auto px-4 lg:px-6 ">
           <EventDetails selectedEvent={selectedEvent} />
         </div>
-        {/* Events List */}
-        <div className="lg:w-1/3 border-l-2 border-gray-700 h-full overflow-y-auto px-4 mt-8 lg:px-2">
+
+        {/* Event List (Scrollable) */}
+        <div
+          className="lg:w-1/3 border-l-2 border-gray-700 overflow-y-auto h-[calc(100vh-80px)] px-4 mt-12 lg:px-2"
+          style={{ scrollbarWidth: "none" }}
+        >
           <AllEventsList
             onEventSelect={handleEventSelect}
             selectedEventId={selectedEvent?.id || null}
@@ -71,7 +88,7 @@ const Page = () => {
         </div>
       </div>
 
-      {/* Create Event Modal */}
+      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="relative bg-black text-white p-4 rounded-lg shadow-lg max-w-md w-full mx-4 border border-gray-500">

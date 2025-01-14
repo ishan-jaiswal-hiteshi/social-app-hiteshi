@@ -167,9 +167,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
       >
         {Object.keys(groupedMessages).map((date) => (
           <div key={date}>
-            <div className="text-center text-red-500 border-gray-700 border-b-2 text-sm font-bold my-2">
-              {renderDateHeader(date)}
+            <div className="relative flex items-center justify-center my-7">
+              <span className="relative z-10 px-16 text-red-500 text-sm font-bold">
+                {renderDateHeader(date)}
+              </span>
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-700"></div>
+              </div>
             </div>
+
             {groupedMessages[date].map((msg) => (
               <div
                 key={msg.id}
@@ -180,13 +186,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
                 }`}
               >
                 <div
-                  className={`max-w-xs p-3 rounded-lg text-white ${
+                  className={`max-w-xs px-3 pt-3 pb-1 rounded-lg text-white ${
                     msg.sender_id === currentUserId
                       ? "bg-red-800 text-right"
                       : "bg-gray-600 text-left"
                   }`}
                 >
-                  <p className="">{msg.message}</p>
+                  <p className="text-left">{msg.message}</p>
                   <div className="text-[10px] text-gray-300 mt-1 text-right">
                     {dayjs(msg.timestamp).format("h:mm A")}
                   </div>

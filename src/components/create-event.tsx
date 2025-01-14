@@ -40,7 +40,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
     event.preventDefault();
 
     if (!eventName || !eventDate) {
-      toast.error("Event name and date are required.");
+      //toast.error("Event name and date are required.");
       return;
     }
 
@@ -111,7 +111,18 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
           </div>
         </div>
       )}
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        onKeyDown={(e) => {
+          if (
+            e.key === "Enter" &&
+            (e.target as HTMLElement).nodeName !== "TEXTAREA"
+          ) {
+            e.preventDefault(); // Prevent accidental submission
+            handleSubmit(e as React.FormEvent);
+          }
+        }}
+      >
         <div className="mb-4">
           <label className="block mb-2">Event Name</label>
           <input
@@ -120,6 +131,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             placeholder="Enter event name"
             value={eventName}
             onChange={(e) => setEventName(e.target.value)}
+            required={true}
           />
         </div>
         <div className="mb-4">

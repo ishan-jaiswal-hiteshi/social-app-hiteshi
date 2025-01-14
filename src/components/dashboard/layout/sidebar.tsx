@@ -90,6 +90,7 @@ const SidebarLayout = () => {
           }
           alt="profile"
           className="w-6 h-6 rounded-full"
+          onDragStart={(e) => e.preventDefault()}
         />
       ) : (
         <UserProfilePicture fullName={user?.full_name} size={24} />
