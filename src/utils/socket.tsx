@@ -79,4 +79,21 @@ export const newEvent = (callback: (hasNewEvent: boolean) => void) => {
   });
 };
 
+export const isMessageDelete = (
+  callback: (message: {
+    id: number;
+    sender_id: number;
+    receiver_id: number;
+    message: string;
+    timestamp: string;
+  }) => void
+) => {
+  socket.off("messageDeleted");
+  socket.on("messageDeleted", callback);
+};
+
+export const deleteMessage = (messageId: number) => {
+  socket.emit("deleteMessage", JSON.stringify({ messageId }));
+};
+
 export default socket;

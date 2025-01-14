@@ -11,21 +11,21 @@ const UserProfilePicture: React.FC<UserProfileProps> = ({
 }) => {
   const generateHash = (str: string) => {
     let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
+    for (let i = 0; i < str?.length; i++) {
+      const char = str?.charCodeAt(i);
       hash = (hash << 5) - hash + char;
       hash &= hash;
     }
     return hash;
   };
 
-  const nameParts = fullName?.trim().split(" ");
-  const firstName = nameParts[0];
+  const nameParts = fullName?.trim().split(" ") || [];
+  const firstName = nameParts[0] || "Hiteshi";
   const lastName =
-    nameParts.length > 1 ? nameParts.slice(1).join(" ") : "Hiteshi";
+    nameParts?.length > 1 ? nameParts?.slice(1).join(" ") : "User";
 
-  const initials = `${firstName.charAt(0).toUpperCase()}${lastName
-    .charAt(0)
+  const initials = `${firstName?.charAt(0).toUpperCase()}${lastName
+    ?.charAt(0)
     .toUpperCase()}`;
 
   const colors = [
