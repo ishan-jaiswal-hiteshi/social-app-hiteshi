@@ -139,13 +139,11 @@ const SearchPage = () => {
 
   return (
     <div className="text-white min-h-screen py-10">
-      {/* Search Bar */}
       <form
         onSubmit={(e) => e.preventDefault()}
         className="max-w-xl mx-auto mb-10 px-4 sm:px-6 lg:px-8"
       >
         <div className="relative">
-          {/* Search Icon */}
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <svg
               className="w-5 h-5 text-gray-400"
@@ -163,7 +161,6 @@ const SearchPage = () => {
             </svg>
           </div>
 
-          {/* Input Field */}
           <input
             type="text"
             id="search"
@@ -173,14 +170,13 @@ const SearchPage = () => {
             onChange={handleSearchChange}
           />
 
-          {/* Custom Clear Button */}
           {searchQuery && (
             <button
               type="button"
               onClick={() => {
-                setSearchQuery(""); // Clear the query
-                fetchUsers(); // Fetch default users
-                fetchPosts(); // Fetch default posts
+                setSearchQuery("");
+                fetchUsers();
+                fetchPosts();
               }}
               className="absolute inset-y-0 right-0 flex items-center pr-3 text-red-500 hover:text-red-600"
             >
@@ -203,7 +199,6 @@ const SearchPage = () => {
         </div>
       </form>
 
-      {/* Users Section */}
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <div className="flex justify-center">
@@ -238,7 +233,6 @@ const SearchPage = () => {
           </div>
         </div>
 
-        {/* Posts Section */}
         <div className="flex justify-center">
           <div className="grid grid-cols-1 gap-7 md:grid-cols-1 lg:grid-cols-2  mx-auto">
             {loadingPosts || isSearching

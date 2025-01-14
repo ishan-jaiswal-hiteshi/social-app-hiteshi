@@ -302,7 +302,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
         <div ref={latestMessageRef}></div>
       </div>
 
-      {/* Input Bar */}
       <div className="p-1 bg-gray-700 flex rounded-full mx-5 ">
         <textarea
           value={message}

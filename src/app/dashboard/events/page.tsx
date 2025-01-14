@@ -57,8 +57,7 @@ const Page = () => {
 
   return (
     <div className="min-h-screen flex flex-col  text-white">
-      {/* Create Button */}
-      <div className="bg-black fixed top-7 right-14 lg:right-7 items-center">
+      <div className="bg-black fixed top-7 right-14 md:right-7 items-center">
         <button
           onClick={handleModalToggle}
           className="flex items-center justify-center space-x-2 border border-gray-600 hover:bg-gray-800 text-primary-light px-4 py-2 rounded-lg shadow-md"
@@ -69,16 +68,12 @@ const Page = () => {
         </button>
       </div>
 
-      {/* Main Content */}
-      <div className="flex flex-col lg:flex-row flex-grow mt-12 lg:mt-7">
-        {/* Event Details (Non-Scrollable) */}
-        <div className="lg:w-2/3 h-auto px-4 lg:px-6 ">
+      <div className="flex flex-grow mt-12 md:mt-7">
+        <div className="md:w-2/3 w-full h-auto px-4 md:px-6 mt-4">
           <EventDetails selectedEvent={selectedEvent} />
         </div>
-
-        {/* Event List (Scrollable) */}
         <div
-          className=" lg:w-1/3 border-l-2 border-gray-700 overflow-y-auto h-[calc(100vh-80px)] px-4 mt-12 lg:px-2"
+          className="md:w-1/3 md:border-l-2 border-gray-700 overflow-y-auto h-[calc(100vh-80px)] px-4 mt-12 md:px-2"
           style={{ scrollbarWidth: "none" }}
         >
           <AllEventsList
@@ -88,7 +83,6 @@ const Page = () => {
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="relative bg-black text-white p-4 rounded-lg shadow-lg max-w-md w-full mx-4 border border-gray-500">
