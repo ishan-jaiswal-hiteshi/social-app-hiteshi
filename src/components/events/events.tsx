@@ -16,6 +16,7 @@ const Events: React.FC<EventCardProps> = ({ event }) => {
             src={mediaUrls[0]}
             alt={name}
             className="md:w-48 w-full h-48  rounded-lg"
+            onDragStart={(e) => e.preventDefault()}
           />
         </div>
       )}

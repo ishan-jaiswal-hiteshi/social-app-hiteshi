@@ -66,7 +66,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
   return (
     <div>
       {/* Menu Button for Mobile */}
-      <div className="fixed top-2 right-2 lg:hidden">
+      <div className="fixed top-7 right-2 lg:hidden">
         <button onClick={toggleMenu} className="text-white p-2 rounded-full">
           <IoIosMenu size={30} />
         </button>
@@ -95,13 +95,16 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
                   src={event.mediaUrls[0]}
                   alt={event.name}
                   className="w-14 h-14 object-cover rounded-lg"
+                  onDragStart={(e) => e.preventDefault()}
                 />
               )}
 
               {/* Event Details */}
-              <div className="flex-1">
-                <h3 className="font-bold text-white">{event.name}</h3>
-                <p className="text-sm text-gray-400">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-white line-clamp-1 ">
+                  {event.name}
+                </h3>
+                <p className="text-sm text-gray-400 line-clamp-1">
                   {new Date(event.eventDate).toLocaleDateString()} -{" "}
                   {event.location}
                 </p>
@@ -112,7 +115,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
       </div>
 
       {/* Event List for Desktop (Unchanged) */}
-      <div className="lg:block hidden">
+      <div className="lg:block  hidden">
         {events.map((event) => (
           <div
             key={event.id}
@@ -133,12 +136,14 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
             )}
 
             {/* Event Details */}
-            <div className="flex-1">
-              <h3 className="font-bold text-white mb-1">{event.name}</h3>
-              <p className="text-gray-400 text-sm">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-white mb-1 line-clamp-1 ">
+                {event.name}
+              </h3>
+              <p className="text-gray-400 text-sm line-clamp-1">
                 <strong>Location:</strong> {event.location}
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-400 line-clamp-1">
                 <strong>Date:</strong>{" "}
                 {new Date(event.eventDate).toLocaleDateString("en-US", {
                   day: "numeric",

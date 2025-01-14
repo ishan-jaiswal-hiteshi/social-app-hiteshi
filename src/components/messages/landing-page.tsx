@@ -56,6 +56,7 @@ const LandingPage = () => {
                 alt="Profile"
                 src={user?.profile_picture}
                 className="object-cover w-full h-full rounded-full"
+                onDragStart={(e) => e.preventDefault()}
               />
             ) : (
               <UserProfilePicture fullName={user?.full_name} size={150} />
@@ -78,6 +79,7 @@ const LandingPage = () => {
             src="/gifs/connect.gif" // Replace with actual SVG/image path
             alt="Easy meetings"
             className="h-24 mb-4"
+            onDragStart={(e) => e.preventDefault()}
           />
           <h3 className="text-lg font-semibold mb-2">
             Easy meetings with anyone
@@ -98,6 +100,7 @@ const LandingPage = () => {
             src="/gifs/chats.gif" // Replace with actual SVG/image path
             alt="Dial pad"
             className="h-24 mb-4"
+            onDragStart={(e) => e.preventDefault()}
           />
           <h3 className="text-lg font-semibold mb-2">Chat with anyone</h3>
           <p className="text-gray-600 text-sm text-center mb-4">
