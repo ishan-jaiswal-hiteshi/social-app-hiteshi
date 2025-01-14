@@ -50,7 +50,7 @@ export default function Auth() {
 
     try {
       const response = await axiosInstance.post("/send-otp", {
-        email: formData.email,
+        email: formData.email.trim().toLowerCase(),
       });
 
       if (response.status === 200) {
@@ -94,12 +94,12 @@ export default function Auth() {
     const endpoint = "/verify-otp";
     const payload = isNewUser
       ? {
-          email: formData.email,
+          email: formData.email.trim().toLowerCase(),
           otp: formData.otp,
           username: formData.userName,
           full_name: formData.fullName,
         }
-      : { email: formData.email, otp: formData.otp };
+      : { email: formData.email.trim().toLowerCase(), otp: formData.otp };
 
     try {
       const response = await axiosInstance.post(endpoint, payload, {

@@ -7,9 +7,7 @@ export const isValidUserName = (userId: string): boolean => {
 };
 
 export const isValidateEmail = (email: string): boolean => {
-  return !!String(email)
-    .toLowerCase()
-    .match(/^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)?@hiteshi\.com$/);
+  return !!String(email).match(/^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)?@hiteshi\.com$/);
 };
 
 export const isValidOTP = (otp: string): boolean => {

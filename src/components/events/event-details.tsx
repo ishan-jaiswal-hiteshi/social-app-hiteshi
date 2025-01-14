@@ -30,6 +30,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedEvent }) => {
             src={selectedEvent.mediaUrls[0]} // Display the first image
             alt={selectedEvent.name}
             className="w-full h-64 object-cover rounded-lg shadow-md"
+            onDragStart={(e) => e.preventDefault()}
           />
         </div>
       )}
