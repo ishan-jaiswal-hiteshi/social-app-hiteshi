@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
     return <ChatSidebarSkeleton />;
   }
   return (
-    <div>
+    <div className="border-l-2 border-gray-700">
       <button
         onClick={() => setIsOpen(true)}
         className={`md:hidden p-2 text-white rounded fixed top-6 right-4 z-50 ${
@@ -180,6 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
                       src={userData.profile_picture}
                       alt="profile"
                       className="w-10 h-10 rounded-full object-cover"
+                      onDragStart={(e) => e.preventDefault()}
                     />
                   ) : (
                     <UserProfilePicture
