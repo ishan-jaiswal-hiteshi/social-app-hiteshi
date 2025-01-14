@@ -32,9 +32,7 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   const handleFollow = async () => {
     try {
       setButtonLoading(true);
-      await axiosInstance.post(`/add-follower/${userData?.id}`, {
-        followerId: user?.id,
-      });
+
       await axiosInstance.post(`/add-following/${user?.id}`, {
         followingId: userData?.id,
       });
@@ -113,7 +111,7 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
           ) : isFollowing ? (
             <button
               onClick={handleUnfollow}
-              className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+              className="border-gray-500 border active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs w-[100px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
             >
               {buttonLoading ? (
                 <div
@@ -130,7 +128,7 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
           ) : (
             <button
               onClick={handleFollow}
-              className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+              className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs w-[100px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
             >
               {buttonLoading ? (
                 <div

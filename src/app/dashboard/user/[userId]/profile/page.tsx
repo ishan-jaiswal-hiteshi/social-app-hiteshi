@@ -94,9 +94,7 @@ const UserProfile = () => {
   const handleConnect = async () => {
     try {
       setButtonLoading(true);
-      await axiosInstance.post(`/add-follower/${userData?.id}`, {
-        followerId: user?.id,
-      });
+
       await axiosInstance.post(`/add-following/${user?.id}`, {
         followingId: userData?.id,
       });
@@ -131,8 +129,8 @@ const UserProfile = () => {
         return {
           ...prevUser,
           other_data: {
-            ...prevUser.other_data,
-            followings: (prevUser.other_data?.followings || 0) - 1,
+            ...prevUser?.other_data,
+            followings: (prevUser?.other_data?.followings || 0) - 1,
           },
         };
       });
@@ -153,7 +151,7 @@ const UserProfile = () => {
         setIsFollowing(response?.data?.isFollowing);
       }
     } catch (err) {
-      console.log("Error While Checking following Status", err);
+      console.error("Error While Checking following Status", err);
     }
   };
 
@@ -166,7 +164,7 @@ const UserProfile = () => {
         setIsFriend(response?.data?.isConnected);
       }
     } catch (err) {
-      console.log("Error While Checking Friends Status", err);
+      console.error("Error While Checking Friends Status", err);
     }
   };
 

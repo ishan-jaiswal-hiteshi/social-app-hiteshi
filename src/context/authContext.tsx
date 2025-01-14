@@ -52,10 +52,7 @@ export function AuthProvider({ children }: Props) {
         setIsAuthenticated(true);
         const currentUserId = response?.data?.user?.id ?? -1;
 
-        console.log("trying socket", currentUserId, loginUser);
-
         if (currentUserId !== -1) {
-          console.log("inside socket if");
           initializeSocket();
           userJoin(currentUserId);
         }
