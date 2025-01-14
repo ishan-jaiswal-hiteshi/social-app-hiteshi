@@ -58,7 +58,7 @@ const Page = () => {
   return (
     <div className="min-h-screen flex flex-col  text-white">
       {/* Create Button */}
-      <div className="bg-black fixed top-7 right-14 lg:right-10 items-center">
+      <div className="bg-black fixed top-7 right-14 lg:right-7 items-center">
         <button
           onClick={handleModalToggle}
           className="flex items-center justify-center space-x-2 border border-gray-600 hover:bg-gray-800 text-primary-light px-4 py-2 rounded-lg shadow-md"
@@ -70,7 +70,7 @@ const Page = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col lg:flex-row flex-grow mt-12 lg:mt-7 ">
+      <div className="flex flex-col lg:flex-row flex-grow mt-12 lg:mt-7">
         {/* Event Details (Non-Scrollable) */}
         <div className="lg:w-2/3 h-auto px-4 lg:px-6 ">
           <EventDetails selectedEvent={selectedEvent} />
@@ -78,7 +78,7 @@ const Page = () => {
 
         {/* Event List (Scrollable) */}
         <div
-          className="lg:w-1/3 border-l-2 border-gray-700 overflow-y-auto h-[calc(100vh-80px)] px-4 mt-12 lg:px-2"
+          className=" lg:w-1/3 border-l-2 border-gray-700 overflow-y-auto h-[calc(100vh-80px)] px-4 mt-12 lg:px-2"
           style={{ scrollbarWidth: "none" }}
         >
           <AllEventsList

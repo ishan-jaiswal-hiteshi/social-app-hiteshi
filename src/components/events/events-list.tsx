@@ -132,6 +132,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
                 src={event.mediaUrls[0]}
                 alt={event.name}
                 className="w-16 h-16 object-cover rounded-lg"
+                onDragStart={(e) => e.preventDefault()}
               />
             )}
 
