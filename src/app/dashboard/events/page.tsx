@@ -63,8 +63,8 @@ const Page = () => {
           className="flex items-center justify-center space-x-2 border border-gray-600 hover:bg-gray-800 text-primary-light px-4 py-2 rounded-lg shadow-md"
           type="button"
         >
-          <MdAddCircleOutline size={24} />
-          <p className="text-sm font-medium">Create</p>
+          <MdAddCircleOutline size={24} className="text-red-600" />
+          <p className="text-sm font-medium text-red-500">Create</p>
         </button>
       </div>
 

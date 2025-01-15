@@ -63,7 +63,7 @@ const LandingPage = () => {
             )}
           </div>
           <h1 className="text-2xl font-bold mt-4">{getGreeting()}</h1>
-          <h2 className="text-xl text-gray-600">@{user?.username}</h2>
+          <h2 className="text-xl text-gray-400">@{user?.username}</h2>
           <button
             onClick={handleShareProfile}
             className="mt-4 px-4 py-2 bg-red-700 text-white rounded-full hover:bg-red-800"

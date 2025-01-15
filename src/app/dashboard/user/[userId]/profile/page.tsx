@@ -109,7 +109,13 @@ const UserProfile = () => {
           },
         };
       });
-
+      setUserData((prevUserData) => ({
+        ...prevUserData,
+        other_data: {
+          ...prevUserData.other_data,
+          friends: (prevUserData?.other_data?.friends || 0) + 1,
+        },
+      }));
       setIsFollowing(true);
     } catch (err) {
       console.error("Error in following user: ", err);
@@ -134,6 +140,13 @@ const UserProfile = () => {
           },
         };
       });
+      setUserData((prevUserData) => ({
+        ...prevUserData,
+        other_data: {
+          ...prevUserData.other_data,
+          friends: (prevUserData?.other_data?.friends || 0) - 1,
+        },
+      }));
       setIsFollowing(false);
     } catch (err) {
       console.error("Error in unfollowing user: ", err);

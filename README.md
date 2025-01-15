@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Socialize@Hiteshi
 
-## Getting Started
+Socialize@Hiteshi is a social media platform exclusively designed for employees of Hiteshi Infotech. It provides an engaging and interactive environment where users can share posts, create events, connect with colleagues, and stay updated on company happenings.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Home Page
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Displays the latest **5 posts** (with infinite schrolling) and **Latest 5 events**.
+- Provides option to Create, like, comment and update posts.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Events Page
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Displays all events with detailed information about each event.
+- Provides option to create event with name, date, location and image.
 
-## Learn More
+### Search
 
-To learn more about Next.js, take a look at the following resources:
+- **User Search**: Find users by their full name or username.
+- **Post Search**: Search for posts using keywords or hashtags.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Users Section
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Lists all registered users of the application.
 
-## Deploy on Vercel
+### Profile Section
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Users can:
+  - View anyone's profile.
+  - Edit his profile details (e.g., profile photo, cover photo, professional details).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Messaging
+
+- Users can send messages to each other if they follow each other.
+- Real-time messaging powered by **Socket.IO**.
+
+### Notifications
+
+- **Event Notifications**: A notification dot appears on the Events icon when a new event is created.
+- **Post Notifications**: A notification dot is shown on the Home icon when a new post is available.
+- **Message Notifications**: Real-time message alerts along with message counts on spesific user.
+
+## Tech Stack
+
+### Frontend
+
+- **Framework**: Next.js
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
+
+### Backend
+
+- **Framework**: Node.js with Express
+- **Language**: TypeScript
+- **WebSocket**: Socket.IO for real-time communication
+
+### Database
+
+- **PostgreSQL**: Used for storing application data.
+
+## Installation and Setup
+
+1. **Clone the Repository:**
+
+   ```bash
+   frontend - https://github.com/ishan-jaiswal-hiteshi/social-app-hiteshi
+   backend - https://github.com/ankita-arya11/Social_media_backend
+   git clone frontend || backend
+   cd socialize-hiteshi
+   ```
+
+2. **Install Dependencies:**
+
+   - Install frontend dependencies:
+     ```bash
+     cd frontend
+     npm install
+     ```
+   - Install backend dependencies:
+     ```bash
+     cd backend
+     npm install
+     ```
+
+3. **Environment Variables:**
+
+   - Create `.env` files in both `backend` directory.
+   - Define required environment variables:
+
+     - **Backend:**
+       ```env
+       DATABASE_URL=<PostgreSQL connection string>
+       ```
+
+4. **Run the Application:**
+
+   - Start the backend server:
+     ```bash
+     cd backend
+     npm run dev
+     ```
+   - Start the frontend server:
+     ```bash
+     cd frontend
+     npm run dev
+     ```
+
+5. **Access the Application:**
+   Open your browser and navigate to `http://localhost:3000`.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for more details.
+
+## Contact
+
+For questions or feedback, please contact the development team.

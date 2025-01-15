@@ -403,7 +403,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
           onClick={toggleComments}
           className="cursor-pointer flex items-center gap-1"
         >
-          <FaRegComment size={20} />
+          <FaRegComment className="text-gray-300" size={20} />
           <p>{commnetsCount} </p>
         </div>
       </div>
