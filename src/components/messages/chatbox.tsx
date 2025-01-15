@@ -1,6 +1,8 @@
 import { useNotification } from "@/context/notificationContext";
 import axiosInstance from "@/utils/axiosInstance";
 import socket, {
+  deleteMessage,
+  isMessageDelete,
   markMessagesAsRead,
   receiveMessages,
   sendMessage,
@@ -9,6 +11,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { MdMoreVert, MdDeleteOutline, MdOutlineFileCopy } from "react-icons/md";
 
 dayjs.extend(relativeTime);
 
@@ -24,7 +27,8 @@ interface Message {
   sender_id: number;
   receiver_id: number;
   message: string;
-  timestamp: string; // Unified timestamp for both API and socket messages
+  timestamp?: string;
+  createdAt?: string;
 }
 
 interface ChatBoxProps {
@@ -37,23 +41,51 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   const { resetMessageNotification } = useNotification();
   const [message, setMessage] = useState("");
   const latestMessageRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [hoveredMessageId, setHoveredMessageId] = useState<number | null>(null);
+  const [menuVisibleMessageId, setMenuVisibleMessageId] = useState<
+    number | null
+  >(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [messageToDelete, setMessageToDelete] = useState<Message | null>(null);
 
-  // Fetch messages from the API
+  const confirmDelete = () => {
+    if (messageToDelete) {
+      handleDelete(messageToDelete);
+    }
+    setShowConfirmation(false);
+    setMessageToDelete(null);
+  };
+
+  const handleCopyText = (msg: Message) => {
+    navigator.clipboard.writeText(msg.message);
+    setMenuVisibleMessageId(null);
+  };
+
+  const handleDelete = (message: Message) => {
+    setMenuVisibleMessageId(null);
+    setMessages((prevMessages) =>
+      prevMessages.filter((msg) => msg.id !== message?.id)
+    );
+    deleteMessage(message?.id);
+  };
+
   const fetchMessages = async () => {
     try {
       const response = await axiosInstance.get(
         `/get-messages/${currentUserId}/${chatUserId}`
       );
       if (response?.data?.messages) {
-        const normalizedMessages = response.data.messages.map((msg: any) => ({
-          id: msg.id,
-          sender_id: msg.sender_id,
-          receiver_id: msg.receiver_id,
-          message: msg.message,
+        const normalizedMessages = response.data.messages.map(
+          (msg: Message) => ({
+            id: msg.id,
+            sender_id: msg.sender_id,
+            receiver_id: msg.receiver_id,
+            message: msg.message,
 
-          timestamp: msg.createdAt, // Normalize `createdAt` as `timestamp`
-        }));
+            timestamp: msg?.createdAt,
+          })
+        );
         setMessages(normalizedMessages);
       }
     } catch (err) {
@@ -74,9 +106,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
       senderInfo: SenderInfo;
       timestamp: string;
     }) => {
-      // Add new messages directly to the normalized state
       const normalizedMessage: Message = {
-        id: Date.now(), // Temporary ID
+        id: Date.now(),
         sender_id: newMessage.sender_id,
         receiver_id: newMessage.receiver_id,
         message: newMessage.message,
@@ -102,21 +133,40 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   }, [chatUserId, currentUserId, resetMessageNotification]);
 
   useEffect(() => {
+    const handleDeletedMessage = (deletedMessage: Message) => {
+      if (
+        (deletedMessage.sender_id === chatUserId &&
+          deletedMessage.receiver_id === currentUserId) ||
+        (deletedMessage.sender_id === currentUserId &&
+          deletedMessage.receiver_id === chatUserId)
+      ) {
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg.id !== deletedMessage?.id)
+        );
+      }
+    };
+
+    isMessageDelete(handleDeletedMessage);
+    return () => {
+      socket.off("messageDeleted", handleDeletedMessage);
+    };
+  }, [chatUserId, currentUserId]);
+
+  useEffect(() => {
     resetMessageNotification(chatUserId);
     latestMessageRef.current?.scrollIntoView({ behavior: "smooth" });
     markMessagesAsRead(currentUserId, chatUserId);
   }, [messages]);
 
-  // Handle sending a message
   const handleSend = () => {
     if (message.trim()) {
       const newMessage: Message = {
-        id: Date.now(), // Temporary ID
+        id: Date.now(),
         sender_id: currentUserId,
         receiver_id: chatUserId,
         message,
 
-        timestamp: new Date().toISOString(), // Use current time as timestamp
+        timestamp: new Date().toISOString(),
       };
       sendMessage(newMessage);
       setMessages((prev) => [...prev, newMessage]);
@@ -125,13 +175,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
       handleSend();
     }
   };
 
-  // Group messages by date
   const categorizeMessagesByDate = () => {
     const groupedMessages: { [key: string]: Message[] } = {};
     messages.forEach((msg) => {
@@ -144,7 +194,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
     return groupedMessages;
   };
 
-  // Render date header
   const renderDateHeader = (date: string) => {
     const today = dayjs().format("YYYY-MM-DD");
     const yesterday = dayjs().subtract(1, "day").format("YYYY-MM-DD");
@@ -179,11 +228,16 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
             {groupedMessages[date].map((msg) => (
               <div
                 key={msg.id}
-                className={`mb-2 flex ${
+                className={`relative mb-2 flex ${
                   msg.sender_id === currentUserId
                     ? "justify-end"
                     : "justify-start"
                 }`}
+                onMouseEnter={() => setHoveredMessageId(msg.id)}
+                onMouseLeave={() => {
+                  if (hoveredMessageId === msg.id) setHoveredMessageId(null);
+                  setMenuVisibleMessageId(null);
+                }}
               >
                 <div
                   className={`max-w-xs px-3 pt-3 pb-1 rounded-lg text-white ${
@@ -192,10 +246,54 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
                       : "bg-gray-600 text-left"
                   }`}
                 >
-                  <p className="text-left">{msg.message}</p>
+                  <p
+                    className="text-left"
+                    dangerouslySetInnerHTML={{
+                      __html: msg?.message?.replace(/\n/g, "<br/>"),
+                    }}
+                    style={{
+                      wordWrap: "break-word",
+                      overflowWrap: "break-word",
+                      whiteSpace: "pre-wrap",
+                    }}
+                  ></p>
+
                   <div className="text-[10px] text-gray-300 mt-1 text-right">
                     {dayjs(msg.timestamp).format("h:mm A")}
                   </div>
+                  {msg.sender_id === currentUserId &&
+                    hoveredMessageId === msg.id && (
+                      <div
+                        className="absolute top-1 right-0 cursor-pointer"
+                        onClick={() =>
+                          setMenuVisibleMessageId(
+                            menuVisibleMessageId === msg.id ? null : msg.id
+                          )
+                        }
+                      >
+                        <MdMoreVert />
+                      </div>
+                    )}
+
+                  {menuVisibleMessageId === msg.id && (
+                    <div className="absolute top-6 right-2 bg-black text-white rounded shadow-lg z-10 py-2">
+                      <button
+                        onClick={() => handleCopyText(msg)}
+                        className="flex justify-start gap-1 px-3 py-1 text-sm hover:bg-gray-600 w-full text-left"
+                      >
+                        <MdOutlineFileCopy size={20} color="red" /> Copy
+                      </button>
+                      <button
+                        onClick={() => {
+                          setMessageToDelete(msg);
+                          setShowConfirmation(true);
+                        }}
+                        className=" px-3 flex justify-start gap-1 py-1 text-sm hover:bg-gray-600 w-full text-left"
+                      >
+                        <MdDeleteOutline size={20} color="red" /> Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -204,16 +302,16 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
         <div ref={latestMessageRef}></div>
       </div>
 
-      {/* Input Bar */}
-      <div className="p-2 bg-gray-700 flex rounded-full mx-7 ">
-        <input
-          type="text"
+      <div className="p-1 bg-gray-700 flex rounded-full mx-5 ">
+        <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
+          rows={1}
           placeholder="Type a message"
-          className="flex-grow p-2 border bg-black border-none text-white rounded-full focus:outline-none"
+          className="flex-grow p-2 border bg-black border-none text-white rounded-full focus:outline-none resize-none"
           ref={inputRef}
+          style={{ scrollbarWidth: "none" }}
         />
         <button
           onClick={handleSend}
@@ -227,6 +325,30 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
           <IoMdSend size={25} />
         </button>
       </div>
+
+      {showConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-black border border-gray-400 p-5 rounded-md shadow-md max-w-sm mx-auto">
+            <p className="text-center text-gray-300 mb-4 pb-3">
+              <strong>Are you sure you want to delete this message?</strong>
+            </p>
+            <div className="flex justify-center gap-5 ">
+              <button
+                className="px-3 py-2 bg-gray-600 text-gray-200 rounded hover:bg-gray-500 focus:outline-none transition"
+                onClick={() => setShowConfirmation(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none transition"
+                onClick={confirmDelete}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

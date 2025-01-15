@@ -60,7 +60,6 @@ export const ProfileSkeleton = () => (
 export const PostSkeleton = () => {
   return (
     <div className="w-96 border border-gray-600 rounded-lg max-w-md mx-auto my-5 bg-black animate-pulse">
-      {/* Header Skeleton */}
       <div className="flex items-center p-3">
         <div className="mr-3">
           <div className="w-10 h-10 rounded-full bg-gray-700"></div>
@@ -71,10 +70,7 @@ export const PostSkeleton = () => {
         </div>
       </div>
 
-      {/* Media Skeleton */}
       <div className="w-full h-56 bg-gray-700"></div>
-
-      {/* Interaction Bar Skeleton */}
       <div className="border-y border-gray-500 p-2 flex justify-start gap-5">
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 bg-gray-700 rounded"></div>
@@ -85,8 +81,6 @@ export const PostSkeleton = () => {
           <div className="w-6 h-3 bg-gray-700 rounded"></div>
         </div>
       </div>
-
-      {/* Content Skeleton */}
       <div className="px-3 py-2">
         <div className="w-full h-4 bg-gray-700 rounded mb-2"></div>
         <div className="w-3/4 h-4 bg-gray-700 rounded"></div>
@@ -165,7 +159,6 @@ export const UserCardSkeleton = () => {
 export const UserDynamicListSkeleton = () => {
   return (
     <div>
-      {/* Mobile UI Skeleton */}
       <div className="block md:hidden">
         {Array.from({ length: 5 }).map((_, index) => (
           <div
@@ -185,8 +178,6 @@ export const UserDynamicListSkeleton = () => {
           </div>
         ))}
       </div>
-
-      {/* Desktop UI Skeleton */}
       <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6 p-4">
         {Array.from({ length: 7 }).map((_, index) => (
           <div
@@ -236,7 +227,6 @@ export const EventsSkeleton = () => {
 
         <div className="h-4 bg-gray-700 rounded mb-2 w-1/2"></div>
 
-        {/* Date Placeholder */}
         <div className="h-4 bg-gray-700 rounded w-1/3"></div>
       </div>
     </div>
@@ -255,10 +245,8 @@ export const ChatSidebarSkeleton: React.FC = () => {
         {skeletonItems.map((_, index) => (
           <li key={index} className="cursor-pointer p-3 rounded animate-pulse">
             <div className="flex justify-start items-center">
-              {/* Circular skeleton for profile picture */}
               <div className="w-10 h-10 bg-gray-700 rounded-full mr-3"></div>
 
-              {/* Rectangular skeletons for text */}
               <div className="flex-1 space-y-2">
                 <div className="w-1/2 h-4 bg-gray-700 rounded"></div>
                 <div className="w-1/3 h-4 bg-gray-700 rounded"></div>
@@ -273,10 +261,8 @@ export const ChatSidebarSkeleton: React.FC = () => {
 
 export const EventListSkeleton: React.FC = () => {
   return (
-    <div className="p-5 py-7 mb-4 rounded-lg flex items-center space-x-4 animate-pulse bg-black">
-      {/* Skeleton for event image */}
+    <div className=" p-5 py-7 mb-4 rounded-lg flex items-center space-x-4 animate-pulse bg-black ">
       <div className="w-16 h-16 bg-gray-700 rounded-lg"></div>
-      {/* Skeleton for event details */}
       <div className="flex-1 space-y-2">
         <div className="w-3/4 h-4 bg-gray-700 rounded"></div>
         <div className="w-1/2 h-4 bg-gray-700 rounded"></div>

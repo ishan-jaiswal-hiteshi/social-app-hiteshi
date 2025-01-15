@@ -3,12 +3,12 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { Event } from "@/props/eventProps";
-import { EventListSkeleton, EventsSkeleton } from "@/utils/skeletons";
-import { IoIosMenu } from "react-icons/io"; // Import the menu icon
+import { EventListSkeleton } from "@/utils/skeletons";
+import { IoIosMenu } from "react-icons/io";
 
 interface AllEventsListProps {
   onEventSelect: (event: Event) => void;
-  selectedEventId: number | null; // Highlight the selected event
+  selectedEventId: number | null;
 }
 
 const AllEventsList: React.FC<AllEventsListProps> = ({
@@ -17,7 +17,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
 }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [menuOpen, setMenuOpen] = useState(false); // State to manage menu visibility
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const fetchAllEvents = async () => {
     setLoading(true);
@@ -26,7 +26,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
         "get-events"
       );
       if (response && response.data) {
-        setEvents(response.data.events); // Ensure the response matches the type
+        setEvents(response.data.events);
         setLoading(false);
       }
     } catch (err) {
@@ -40,16 +40,16 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
 
   const handleEventSelect = (event: Event) => {
     onEventSelect(event);
-    setMenuOpen(false); // Close the menu when an event is selected
+    setMenuOpen(false);
   };
 
   const toggleMenu = () => {
-    setMenuOpen((prev) => !prev); // Toggle the menu visibility
+    setMenuOpen((prev) => !prev);
   };
 
   if (loading) {
     return (
-      <div className="my-8">
+      <div className="my-8 md:block hidden">
         {Array.from({ length: 5 }).map((_, index) => (
           <EventListSkeleton key={index} />
         ))}
@@ -65,18 +65,16 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
 
   return (
     <div>
-      {/* Menu Button for Mobile */}
-      <div className="fixed top-7 right-2 lg:hidden">
+      <div className="fixed top-7 right-2 md:hidden">
         <button onClick={toggleMenu} className="text-white p-2 rounded-full">
           <IoIosMenu size={30} />
         </button>
       </div>
 
-      {/* Menu - Event List with Blur and Transition from Right to Left */}
       <div
         className={` fixed inset-0 bg-black bg-opacity-70 z-10 backdrop-blur-md transition-transform ${
           menuOpen ? "transform-none" : "transform translate-x-full"
-        } lg:hidden`}
+        } md:hidden`}
       >
         <div className="fixed top-0 right-0 h-full w-[70%] bg-black p-3 space-y-2 overflow-y-auto">
           {events.map((event) => (
@@ -89,7 +87,6 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
                   : "bg-black border-gray-700 border-2 hover:bg-gray-900"
               }`}
             >
-              {/* Event Image */}
               {event.mediaUrls && event.mediaUrls.length > 0 && (
                 <img
                   src={event.mediaUrls[0]}
@@ -99,7 +96,6 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
                 />
               )}
 
-              {/* Event Details */}
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-white line-clamp-1 ">
                   {event.name}
@@ -114,8 +110,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
         </div>
       </div>
 
-      {/* Event List for Desktop (Unchanged) */}
-      <div className="lg:block  hidden">
+      <div className="md:block  hidden">
         {events.map((event) => (
           <div
             key={event.id}
@@ -126,16 +121,15 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
                 : "bg-black border-gray-700 border-2 hover:bg-gray-900"
             }`}
           >
-            {/* Event Image */}
             {event.mediaUrls && event.mediaUrls.length > 0 && (
               <img
                 src={event.mediaUrls[0]}
                 alt={event.name}
                 className="w-16 h-16 object-cover rounded-lg"
+                onDragStart={(e) => e.preventDefault()}
               />
             )}
 
-            {/* Event Details */}
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-white mb-1 line-clamp-1 ">
                 {event.name}

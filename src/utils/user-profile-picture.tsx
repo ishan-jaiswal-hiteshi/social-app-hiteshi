@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface UserProfileProps {
   fullName?: string;
@@ -9,23 +9,25 @@ const UserProfilePicture: React.FC<UserProfileProps> = ({
   fullName = "Hiteshi User",
   size,
 }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   const generateHash = (str: string) => {
     let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
+    for (let i = 0; i < str?.length; i++) {
+      const char = str?.charCodeAt(i);
       hash = (hash << 5) - hash + char;
       hash &= hash;
     }
     return hash;
   };
 
-  const nameParts = fullName?.trim().split(" ");
-  const firstName = nameParts[0];
+  const nameParts = fullName?.trim().split(" ") || [];
+  const firstName = nameParts[0] || "Hiteshi";
   const lastName =
-    nameParts.length > 1 ? nameParts.slice(1).join(" ") : "Hiteshi";
+    nameParts?.length > 1 ? nameParts?.slice(1).join(" ") : "User";
 
-  const initials = `${firstName.charAt(0).toUpperCase()}${lastName
-    .charAt(0)
+  const initials = `${firstName?.charAt(0).toUpperCase()}${lastName
+    ?.charAt(0)
     .toUpperCase()}`;
 
   const colors = [
@@ -39,22 +41,48 @@ const UserProfilePicture: React.FC<UserProfileProps> = ({
     "bg-teal-500",
   ];
 
-  const colorIndex = Math.abs(generateHash(fullName)) % colors.length;
+  const colorIndex = Math?.abs(generateHash(fullName)) % colors?.length;
   const selectedColor = colors[colorIndex];
 
   const imageSize = `${size}px`;
 
   return (
     <div
-      className={`flex items-center justify-center rounded-full ${selectedColor}`}
-      style={{ width: imageSize, height: imageSize }}
+      className="flex items-center justify-center"
+      style={{
+        width: imageSize,
+        height: imageSize,
+        borderRadius: "50%",
+        overflow: "hidden",
+        position: "relative",
+      }}
     >
-      <span
-        className="text-white font-bold"
-        style={{ fontSize: `${size / 2}px` }}
-      >
-        {initials}
-      </span>
+      {!imageLoaded && (
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxFIGZTCDVxnV5EcAxwEik-tGmTdim5vyyAw&s"
+          alt="Default loading"
+          style={{
+            width: imageSize,
+            height: imageSize,
+            objectFit: "cover",
+            borderRadius: "50%",
+          }}
+          onLoad={() => setImageLoaded(true)}
+        />
+      )}
+      {imageLoaded && (
+        <div
+          className={`flex items-center justify-center rounded-full ${selectedColor}`}
+          style={{ width: imageSize, height: imageSize }}
+        >
+          <span
+            className="text-white font-bold"
+            style={{ fontSize: `${size / 2}px` }}
+          >
+            {initials}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

@@ -83,7 +83,6 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   return (
     <>
       <div>
-        {/* Mobile UI */}
         <div className="block md:hidden border border-gray-600 rounded-lg w-full mx-2 my-2 font-sans bg-black">
           <div className="flex justify-between items-center p-3">
             <div
@@ -153,7 +152,6 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
           </div>
         </div>
 
-        {/* Desktop UI */}
         <div className="hidden md:block w-60 h-64 m-2 max-w-sm bg-black border border-gray-600 rounded-lg shadow-lg">
           <div className="flex flex-col items-center pt-10">
             <div

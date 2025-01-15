@@ -26,7 +26,7 @@ const FollowingListModel: React.FC<FollowingListModelProps> = ({
           setFollowings(response?.data?.following);
         }
       } catch (err) {
-        console.log("Error In Fetching friends list", err);
+        console.error("Error In Fetching friends list", err);
       } finally {
       }
       setLoading(false);

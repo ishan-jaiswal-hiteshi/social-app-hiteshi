@@ -5,7 +5,7 @@ import { useAuth } from "@/context/authContext";
 import axiosInstance from "@/utils/axiosInstance";
 import { FaRegComment } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
-import { MdMoreVert } from "react-icons/md";
+import { MdMoreVert, MdDeleteOutline, MdOutlineFileCopy } from "react-icons/md";
 import { toast } from "react-toastify";
 import UserProfilePicture from "@/utils/user-profile-picture";
 
@@ -167,6 +167,19 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     setIsLiked(userLikedPost);
   }, [postData, user?.id]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && showOptions) {
+        setShowOptions(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showOptions]);
+
   const handleLikeClick = async () => {
     const postLikeData = {
       userId: user?.id,
@@ -271,7 +284,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
             />
             {showOptions && (
               <div
-                className="absolute bg-black  shadow-md border rounded-md p-2 right-0 top-4"
+                className="absolute bg-black  shadow-md border-2 border-gray-700 rounded-md p-2 right-0 top-4"
                 style={{ top: "100%", zIndex: 10 }}
               >
                 <button
@@ -281,7 +294,26 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                     setShowOptions(false);
                   }}
                 >
-                  Delete
+                  <div className="flex items-center space-x-1">
+                    <MdDeleteOutline color="red" size={20} />
+                    <span>Delete</span>
+                  </div>
+                </button>
+                <button
+                  className="text-gray-300 hover:text-red-500 text-sm"
+                  onClick={() => {
+                    const postLink = `${window.location.origin}/dashboard/user/${postData?.User?.id}/profile`;
+                    setShowOptions(false);
+                    navigator.clipboard
+                      .writeText(postLink)
+                      .then(() => toast.success("Link copied to clipboard!"))
+                      .catch(() => toast.error("Failed to copy the link."));
+                  }}
+                >
+                  <div className="flex items-center space-x-1">
+                    <MdOutlineFileCopy color="red" size={20} />
+                    <span>Copy</span>
+                  </div>
                 </button>
               </div>
             )}
