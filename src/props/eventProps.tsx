@@ -10,9 +10,9 @@ export interface Event {
   userId: number;
   name: string;
   description: string;
-  eventDate: string; // ISO string
+  eventDate: string;
   location: string;
   mediaUrls: string[] | null;
-  createdAt: string; // ISO string
-  user: User; // Add this property to the Event type
+  createdAt: string;
+  user: User;
 }

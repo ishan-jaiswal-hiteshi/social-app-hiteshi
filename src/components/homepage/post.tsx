@@ -259,6 +259,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
               src={postData?.User?.profile_picture}
               alt="profile"
               className="w-10 h-10 rounded-full  object-cover"
+              onDragStart={(e) => e.preventDefault()}
             />
           ) : (
             <UserProfilePicture
@@ -288,18 +289,6 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                 style={{ top: "100%", zIndex: 10 }}
               >
                 <button
-                  className="text-gray-300 hover:text-red-500 text-sm "
-                  onClick={() => {
-                    setShowConfirmation(true);
-                    setShowOptions(false);
-                  }}
-                >
-                  <div className="flex items-center space-x-1">
-                    <MdDeleteOutline color="red" size={20} />
-                    <span>Delete</span>
-                  </div>
-                </button>
-                <button
                   className="text-gray-300 hover:text-red-500 text-sm"
                   onClick={() => {
                     const postLink = `${window.location.origin}/dashboard/user/${postData?.User?.id}/profile`;
@@ -313,6 +302,18 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                   <div className="flex items-center space-x-1">
                     <MdOutlineFileCopy color="red" size={20} />
                     <span>Copy</span>
+                  </div>
+                </button>
+                <button
+                  className="text-gray-300 hover:text-red-500 text-sm "
+                  onClick={() => {
+                    setShowConfirmation(true);
+                    setShowOptions(false);
+                  }}
+                >
+                  <div className="flex items-center space-x-1">
+                    <MdDeleteOutline color="red" size={20} />
+                    <span>Delete</span>
                   </div>
                 </button>
               </div>
@@ -460,6 +461,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                         src={comment?.User?.profile_picture}
                         alt="profile"
                         className="w-6 h-6 rounded-full"
+                        onDragStart={(e) => e.preventDefault()}
                       />
                     ) : (
                       <UserProfilePicture

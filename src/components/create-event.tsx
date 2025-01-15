@@ -40,7 +40,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
     event.preventDefault();
 
     if (!eventName || !eventDate) {
-      //toast.error("Event name and date are required.");
       return;
     }
 
@@ -118,7 +117,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             e.key === "Enter" &&
             (e.target as HTMLElement).nodeName !== "TEXTAREA"
           ) {
-            e.preventDefault(); // Prevent accidental submission
+            e.preventDefault();
             handleSubmit(e as React.FormEvent);
           }
         }}

@@ -61,9 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
     };
 
     window.addEventListener("resize", handleResize);
-
     handleResize();
-
     return () => {
       window.removeEventListener("resize", handleResize);
     };

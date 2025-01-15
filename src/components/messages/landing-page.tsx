@@ -20,9 +20,8 @@ const LandingPage = () => {
   };
 
   const handleShareProfile = async () => {
-    const profileLink = `http://localhost:3000/dashboard/user/${user?.id}/profile`;
+    const profileLink = `${window.location.origin}/dashboard/user/${user?.id}/profile`;
 
-    // Check if the Web Share API is supported
     if (navigator.share) {
       try {
         await navigator.share({
@@ -30,12 +29,10 @@ const LandingPage = () => {
           text: `Hey, check out ${user?.full_name}'s profile.`,
           url: profileLink,
         });
-        alert("Profile link shared successfully!");
       } catch (error) {
         console.error("Error sharing profile link:", error);
       }
     } else {
-      // Fallback: Copy link to clipboard
       try {
         await navigator.clipboard.writeText(profileLink);
         alert("Profile link copied to clipboard!");
@@ -76,7 +73,7 @@ const LandingPage = () => {
       <main className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
         <div className="bg-black border-2 border-gray-700 rounded-lg shadow-lg p-6 flex flex-col items-center">
           <img
-            src="/gifs/connect.gif" // Replace with actual SVG/image path
+            src="/gifs/connect.gif"
             alt="Easy meetings"
             className="h-24 mb-4"
             onDragStart={(e) => e.preventDefault()}
@@ -84,7 +81,7 @@ const LandingPage = () => {
           <h3 className="text-lg font-semibold mb-2">
             Easy meetings with anyone
           </h3>
-          <p className="text-gray-600 text-sm text-center mb-4">
+          <p className="text-gray-500 text-sm text-center mb-4">
             Share the invite with anyone even if they aren’t on Skype. No sign
             ups or downloads required.
           </p>
@@ -97,13 +94,13 @@ const LandingPage = () => {
 
         <div className="bg-black border-2 border-gray-700 rounded-lg shadow-lg p-6 flex flex-col items-center">
           <img
-            src="/gifs/chats.gif" // Replace with actual SVG/image path
+            src="/gifs/chats.gif"
             alt="Dial pad"
             className="h-24 mb-4"
             onDragStart={(e) => e.preventDefault()}
           />
           <h3 className="text-lg font-semibold mb-2">Chat with anyone</h3>
-          <p className="text-gray-600 text-sm text-center mb-4">
+          <p className="text-gray-500 text-sm text-center mb-4">
             Skype to Skype calls are always free, but you can also call mobiles
             and landlines from Skype at great low rates.
           </p>

@@ -6,7 +6,7 @@ import { AuthProvider } from "@/context/authContext";
 import { NotificationProvider } from "@/context/notificationContext";
 
 export const metadata: Metadata = {
-  title: "Socialize @ Hiteshi",
+  title: "Socialize@Hiteshi",
   description: "Socialize at Hiteshi",
 };
 
@@ -19,7 +19,6 @@ export default function RootLayout({
     <html lang="en">
       <Head>
         <link rel="icon" href="./favicon.ico" />
-        <title>My App</title>
       </Head>
       <body className={`antialiased font-spaceGrotesk background`}>
         <AuthProvider>

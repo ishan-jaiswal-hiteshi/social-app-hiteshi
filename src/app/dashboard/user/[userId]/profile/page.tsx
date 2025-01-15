@@ -229,6 +229,7 @@ const UserProfile = () => {
                             alt="Profile"
                             src={userData?.profile_picture}
                             className="object-cover w-full h-full"
+                            onDragStart={(e) => e.preventDefault()}
                           />
                         ) : (
                           <UserProfilePicture
@@ -323,8 +324,8 @@ const UserProfile = () => {
                   </div>
                 </div>
 
-                <div className="text-center mt-5">
-                  <h3 className="text-2xl  leading-normal mb-2 text-blueGray-700">
+                <div className="text-center mt-3">
+                  <h3 className="text-2xl  leading-normal mb-2 text-gray-400">
                     @{userData?.username}
                   </h3>
                   <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
