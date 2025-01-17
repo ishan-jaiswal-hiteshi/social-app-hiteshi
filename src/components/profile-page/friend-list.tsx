@@ -48,7 +48,7 @@ const FriendsList: React.FC<FriendsListProps> = ({ users }) => {
     if (user) {
       fetchFollowing();
     }
-  }, [user]);
+  }, []);
 
   return (
     <div className="p-2">

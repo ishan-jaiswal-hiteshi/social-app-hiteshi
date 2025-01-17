@@ -85,7 +85,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
         setImage(null);
         setLocation("");
         setPreview(null);
-        router.push("/dashboard/events");
+        window.location.href = "/dashboard/events";
         onClose?.();
       }
     } catch (error) {
@@ -93,6 +93,18 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
       toast.error("Error in Creating Event.");
     } finally {
       setLoading(false);
+    }
+  };
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      if (file.type.startsWith("image/")) {
+        setImage(file);
+        setPreview(URL.createObjectURL(file));
+      } else {
+        toast.error("Only image files are allowed.");
+      }
     }
   };
 
@@ -140,6 +152,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             className="w-full p-2 rounded bg-gray-700 text-white"
             value={eventDate}
             onChange={(e) => setEventDate(e.target.value)}
+            min={new Date().toISOString().split("T")[0]}
           />
         </div>
         <div className="mb-4">
@@ -162,7 +175,11 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             onChange={(e) => setEventDescription(e.target.value)}
           ></textarea>
         </div>
-        <div className="mb-4">
+        <div
+          className="mb-4"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleDrop}
+        >
           <label className="block text-sm font-medium mb-2">
             Event Picture
           </label>
@@ -177,7 +194,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
                 className="h-full w-full object-cover"
               />
             ) : (
-              <span className="text-gray-500">Choose Picture</span>
+              <span className="text-gray-500">Drag or Choose image</span>
             )}
           </div>
           <input

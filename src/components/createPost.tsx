@@ -95,6 +95,16 @@ const CreatePost = () => {
     }
   };
 
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files); // Get files from drag-and-drop
+    if (images.length + files.length > 10) {
+      toast.error("You can only upload up to 10 images.");
+      return;
+    }
+    setImages((prevFiles) => [...prevFiles, ...files]);
+  };
+
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
       <div className="max-w-lg w-full space-y-8 bg-white opacity-90 shadow-lg rounded-lg p-8">
@@ -118,7 +128,11 @@ const CreatePost = () => {
           method="POST"
           onSubmit={handlePost}
         >
-          <div className="flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg p-4">
+          <div
+            className="flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg p-4"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+          >
             <input
               type="file"
               accept="image/*"
@@ -142,7 +156,7 @@ const CreatePost = () => {
                   <path d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q25-92 100-149t170-57q117 0 198.5 81.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H520q-33 0-56.5-23.5T440-240v-206l-64 62-56-56 160-160 160 160-56 56-64-62v206h220q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-80q0-83-58.5-141.5T480-720q-83 0-141.5 58.5T280-520h-20q-58 0-99 41t-41 99q0 58 41 99t99 41h100v80H260Zm220-280Z" />
                 </svg>
                 <p className="text-sm text-gray-500">
-                  Click to upload images (Max: 10)
+                  Drag or Chose images (Max: 10)
                 </p>
               </div>
             </label>

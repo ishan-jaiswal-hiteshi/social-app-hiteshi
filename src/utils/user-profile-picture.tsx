@@ -59,7 +59,7 @@ const UserProfilePicture: React.FC<UserProfileProps> = ({
     >
       {!imageLoaded && (
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxFIGZTCDVxnV5EcAxwEik-tGmTdim5vyyAw&s"
+          src="https://i.pinimg.com/474x/1a/09/3a/1a093a141eeecc720c24543f2c63eb8d.jpg"
           alt="Default loading"
           style={{
             width: imageSize,
