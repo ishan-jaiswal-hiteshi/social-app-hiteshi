@@ -40,13 +40,6 @@ const ChatPage: React.FC = () => {
     }
   }, [searchParams]);
 
-  // useEffect(() => {
-  //   if (currentUserId !== -1) {
-  //     initializeSocket();
-  //     userJoin(currentUserId);
-  //   }
-  // }, [currentUserId]);
-
   const handleUserSelect = (user: User) => {
     setSelectedUser(user);
     setSelectedUserId(user?.id);

@@ -17,8 +17,8 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedEvent }) => {
   }
 
   return (
-    <div className="my-8 p-4 md:p-6 bg-black rounded-xl border-2 border-gray-800 shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-primary">
+    <div className="my-8 p-4 md:p-6  rounded-xl  bg-gray-900 shadow-md">
+      <h2 className="text-2xl font-bold mb-4 text-red-600">
         {selectedEvent.name}
       </h2>
 
@@ -35,19 +35,19 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedEvent }) => {
 
       <div className="space-y-2">
         <p>
-          <span className="font-semibold text-gray-300">Description:</span>{" "}
+          <span className="font-semibold text-gray-400">Description:</span>{" "}
           {selectedEvent.description || "No description provided."}
         </p>
         <p>
-          <span className="font-semibold text-gray-300">Date:</span>{" "}
+          <span className="font-semibold text-gray-400">Date:</span>{" "}
           {new Date(selectedEvent.eventDate).toLocaleDateString()}
         </p>
         <p>
-          <span className="font-semibold text-gray-300">Location:</span>{" "}
+          <span className="font-semibold text-gray-400">Location:</span>{" "}
           {selectedEvent.location}
         </p>
         <p>
-          <span className="font-semibold text-gray-300">Created By:</span>{" "}
+          <span className="font-semibold text-gray-400">Created By:</span>{" "}
           {selectedEvent.user.full_name} (
           <span className="italic">{selectedEvent.user.username}</span>)
         </p>

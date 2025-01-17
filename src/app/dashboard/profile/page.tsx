@@ -1,5 +1,4 @@
 "use client";
-// import { FiEdit } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import Link from "next/link";
@@ -332,8 +331,8 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-center mt-5">
-                  <h3 className="text-2xl  leading-normal mb-2 text-blueGray-700">
+                <div className="text-center mt-3">
+                  <h3 className="text-2xl  leading-normal mb-2 text-gray-400">
                     @{profileData?.username}
                   </h3>
                   <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
@@ -521,6 +520,7 @@ export default function ProfilePage() {
                       src={previews.cover_picture}
                       alt="Cover Preview"
                       className="h-full w-full object-cover"
+                      onDragStart={(e) => e.preventDefault()}
                     />
                   ) : (
                     <span className="text-gray-500">Choose Picture</span>
