@@ -7,11 +7,13 @@ import { MdAddCircleOutline } from "react-icons/md";
 import { CreateEventForm } from "@/components/create-event";
 import axiosInstance from "@/utils/axiosInstance";
 import { Event } from "@/props/eventProps";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const router = useRouter();
 
   const handleModalToggle = () => {
     setShowModal((prev) => !prev);
@@ -19,6 +21,7 @@ const Page = () => {
 
   const handleEventSelect = (event: Event) => {
     setSelectedEvent(event);
+    router.push(`?eventId=${event?.id}`, undefined);
   };
 
   const fetchAllEvents = async () => {
@@ -31,6 +34,7 @@ const Page = () => {
 
         if (response.data.events.length > 0 && !selectedEvent) {
           setSelectedEvent(response.data.events[0]);
+          router.push(`?eventId=${response.data.events[0]?.id}`, undefined);
         }
       }
     } catch (err) {
