@@ -102,7 +102,7 @@ const UsersList: React.FC = () => {
       fetchFollowings();
       getAllUsers(offset);
     }
-  }, [offset]);
+  }, [offset, user?.id]);
 
   if (loading && offset === 0) {
     return <UserDynamicListSkeleton />;
