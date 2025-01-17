@@ -208,6 +208,34 @@ export default function ProfilePage() {
     return <ProfileSkeleton />;
   }
 
+  const handleProfileDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      setFiles((prev) => ({ ...prev, profile_picture: file }));
+      setPreviews((prev) => ({
+        ...prev,
+        profile_picture: URL.createObjectURL(file),
+      }));
+    } else {
+      toast.error("Please upload a valid image.");
+    }
+  };
+
+  const handleCoverDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      setFiles((prev) => ({ ...prev, cover_picture: file }));
+      setPreviews((prev) => ({
+        ...prev,
+        cover_picture: URL.createObjectURL(file),
+      }));
+    } else {
+      toast.error("Please upload a valid image.");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow flex flex-col">
@@ -420,7 +448,11 @@ export default function ProfilePage() {
               </h3>
             </div>
             <form onSubmit={handleSubmit} className="mt-2">
-              <div className="mb-4 flex flex-col items-center ">
+              <div
+                className="mb-4 flex flex-col items-center"
+                onDrop={handleProfileDrop}
+                onDragOver={(e) => e.preventDefault()}
+              >
                 <label className="block text-sm font-medium mb-2">
                   Profile Picture
                 </label>
@@ -445,7 +477,7 @@ export default function ProfilePage() {
                   name="profile_picture"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="hidden "
+                  className="hidden"
                 />
               </div>
               <div className="mb-4">
@@ -505,7 +537,11 @@ export default function ProfilePage() {
                 ></textarea>
               </div>
 
-              <div className="mb-4">
+              <div
+                className="mb-4"
+                onDrop={handleCoverDrop}
+                onDragOver={(e) => e.preventDefault()}
+              >
                 <label className="block text-sm font-medium mb-2">
                   Cover Photo
                 </label>

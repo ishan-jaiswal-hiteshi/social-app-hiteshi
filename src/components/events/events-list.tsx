@@ -108,6 +108,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
             </div>
           ))}
         </div>
+        <div className="w-[30%] h-screen" onClick={toggleMenu}></div>
       </div>
 
       <div className="md:block  hidden">

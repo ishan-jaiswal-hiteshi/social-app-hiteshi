@@ -103,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
           ✕
         </button>
 
-        <h2 className="text-lg font-bold p-4 mt-4 pt-4 border-b border-gray-700">
+        <h2 className="text-lg font-bold p-4 pt-4 border-b border-gray-700">
           Friends
         </h2>
         <ul className="p-4 space-y-2">
@@ -124,6 +124,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
                       src={userData.profile_picture}
                       alt="profile"
                       className="w-10 h-10 rounded-full object-cover"
+                      onDragStart={(e) => e.preventDefault()}
                     />
                   ) : (
                     <UserProfilePicture
@@ -156,7 +157,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
         </ul>
       </div>
 
-      <div className="hidden md:block w-52 md:w-72 bg-black text-white h-full mt-4 pt-4">
+      <div className="hidden md:block w-52 md:w-72 bg-black text-white h-full pt-7">
         <h2 className="text-lg font-bold p-4 border-b border-gray-700">
           Friends
         </h2>

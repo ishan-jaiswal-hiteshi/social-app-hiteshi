@@ -5,6 +5,7 @@ import EventCard from "./event-card";
 import axiosInstance from "@/utils/axiosInstance";
 import { Event } from "@/props/eventProps";
 import { EventCardSkeleton } from "@/utils/skeletons";
+import Link from "next/link";
 
 const EventList: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -43,13 +44,20 @@ const EventList: React.FC = () => {
   }
 
   return (
-    <div className="mt-8 mb-6">
-      <div className="w-full px-3 border-l border-gray-600">
-        <h2 className="text-2xlfont-semibold text-white mb-2">Top Events</h2>
+    <div className="mt-7 mb-6">
+      <div className="w-full px-3 pt-4 border-l border-gray-600">
+        <h2 className="text-lg font-semibold text-white mb-2">
+          Upcoming Events
+        </h2>
         <div className="space-y-2">
           {events.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
+        </div>
+        <div className="flex my-2 bg-black items-center justify-center p-4 border rounded-lg border-gray-700">
+          <button className="text-primary-light hover:text-red-700">
+            <Link href={"/dashboard/events"}>See More</Link>
+          </button>
         </div>
       </div>
     </div>

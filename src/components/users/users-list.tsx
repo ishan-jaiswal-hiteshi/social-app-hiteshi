@@ -53,7 +53,7 @@ const UsersList: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [user]);
+  }, [user?.id]);
 
   if (loading) {
     return <UserDynamicListSkeleton />;

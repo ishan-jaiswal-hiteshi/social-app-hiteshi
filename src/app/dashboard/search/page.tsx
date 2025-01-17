@@ -220,9 +220,9 @@ const SearchPage = () => {
                 !loadingUsers &&
                 users.length > 0 &&
                 searchQuery.trim() === "" && (
-                  <div className="flex my-2 mx-3 items-center justify-center p-4 border rounded-lg border-gray-700">
+                  <div className="flex bg-black my-2 mx-3 items-center justify-center p-4 border rounded-lg border-gray-700">
                     <button
-                      className="text-red-600 hover:text-red-700"
+                      className="text-primary-light hover:text-red-700"
                       onClick={userListNavigation}
                     >
                       See More
@@ -256,7 +256,7 @@ const SearchPage = () => {
               !loadingPosts &&
               posts.length > 0 &&
               searchQuery.trim() === "" && (
-                <div className="col-span-full flex items-center justify-center p-4 border rounded-lg border-gray-700 mb-4">
+                <div className="col-span-full bg-black flex items-center justify-center p-4 border rounded-lg border-gray-700 mb-4">
                   <button
                     className="text-primary-light hover:text-red-700"
                     onClick={postListNavigation}

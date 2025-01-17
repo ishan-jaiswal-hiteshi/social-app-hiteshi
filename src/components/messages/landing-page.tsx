@@ -47,7 +47,7 @@ const LandingPage = () => {
     <div className="h-screen my-8 flex flex-col items-center py-8  w-4/5">
       <div className="w-full max-w-4xl text-center mb-8 mt-8">
         <div className="flex flex-col items-center">
-          <div className="w-40 h-40 bg-blue-300 rounded-full flex items-center justify-center text-2xl font-bold text-white">
+          <div className="w-40 h-40 bg-black rounded-full flex items-center justify-center text-2xl font-bold text-white">
             {user?.profile_picture ? (
               <img
                 alt="Profile"

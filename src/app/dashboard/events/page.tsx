@@ -73,7 +73,7 @@ const Page = () => {
           <EventDetails selectedEvent={selectedEvent} />
         </div>
         <div
-          className="md:w-1/3 md:border-l-2 border-gray-700 overflow-y-auto h-[calc(100vh-80px)] px-4 mt-12 md:px-2"
+          className="md:w-1/3 md:border-l-2 border-gray-700 overflow-y-auto h-[calc(100vh-100px)] px-4 mt-12 md:px-2"
           style={{ scrollbarWidth: "none" }}
         >
           <AllEventsList
