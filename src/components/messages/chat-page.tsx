@@ -43,7 +43,6 @@ const ChatPage: React.FC = () => {
   const handleUserSelect = (user: User) => {
     setSelectedUser(user);
     setSelectedUserId(user?.id);
-
     router.push(`?userid=${user?.id}`, undefined);
   };
 

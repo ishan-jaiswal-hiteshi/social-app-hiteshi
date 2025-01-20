@@ -112,6 +112,9 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
       router.push(`/dashboard/user/${userId}/profile`);
     }
   };
+  const navigateToPost = (postId: number) => {
+    router.push(`${window.location.origin}/dashboard/home/${postId}`);
+  };
 
   const toggleContent = () => {
     setIsExpanded((prev) => !prev);
@@ -253,7 +256,10 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   return (
     <div className="border border-gray-600 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
       <div className="relative flex items-center p-3">
-        <div className="mr-3">
+        <div
+          className="mr-3 cursor-pointer"
+          onClick={() => navigateToProfile(postData?.userId)}
+        >
           {postData?.User?.profile_picture ? (
             <img
               src={postData?.User?.profile_picture}
@@ -270,7 +276,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
         </div>
         <div
           className="cursor-pointer"
-          onClick={() => navigateToProfile(postData?.userId)}
+          onClick={() => navigateToPost(postData?.id)}
         >
           <strong>@{postData?.User?.username}</strong>
           <p className="m-0 text-gray-500 text-sm">
@@ -291,12 +297,12 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                 <button
                   className="text-gray-300 hover:text-red-500 text-sm"
                   onClick={() => {
-                    const postLink = `${window.location.origin}/dashboard/user/${postData?.User?.id}/profile`;
+                    const postLink = `${window.location.origin}/dashboard/home/${postData?.id}`;
                     setShowOptions(false);
-                    navigator.clipboard
-                      .writeText(postLink)
-                      .then(() => toast.success("Link copied to clipboard!"))
-                      .catch(() => toast.error("Failed to copy the link."));
+                    navigator?.clipboard
+                      ?.writeText(postLink)
+                      ?.then(() => toast.success("Link copied to clipboard!"))
+                      ?.catch(() => toast.error("Failed to copy the link."));
                   }}
                 >
                   <div className="flex items-center space-x-1">
@@ -346,7 +352,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                   <img
                     src={url}
                     alt={`Post media ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     onDragStart={(e) => e.preventDefault()}
                   />
                 </div>
@@ -402,7 +408,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
         </div>
         <div
           onClick={toggleComments}
-          className="cursor-pointer flex items-center gap-1"
+          className="cursor-pointer flex items-center gap-2"
         >
           <FaRegComment className="text-gray-300" size={20} />
           <p>{commnetsCount} </p>

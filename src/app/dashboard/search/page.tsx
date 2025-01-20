@@ -242,14 +242,16 @@ const SearchPage = () => {
                   </div>
                 ))
               : posts.length > 0
-              ? posts.map((post) => (
-                  <div
-                    key={post.id}
-                    className="lg:w-96 md:w-80 sm:w-72 col-span-1"
-                  >
-                    <Post postData={post} onDeletePost={handlePostDelete} />
-                  </div>
-                ))
+              ? posts.map((post) => {
+                  return user?.id !== post.userId ? (
+                    <div
+                      key={post.id}
+                      className="lg:w-96 md:w-80 sm:w-72 col-span-1"
+                    >
+                      <Post postData={post} onDeletePost={handlePostDelete} />
+                    </div>
+                  ) : null;
+                })
               : !loadingPosts && <></>}
 
             {!isSearching &&

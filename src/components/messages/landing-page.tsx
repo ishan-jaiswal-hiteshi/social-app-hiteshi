@@ -38,7 +38,6 @@ const LandingPage = () => {
         alert("Profile link copied to clipboard!");
       } catch (error) {
         console.error("Failed to copy profile link:", error);
-        alert("Failed to copy the profile link. Please try again.");
       }
     }
   };
@@ -85,11 +84,11 @@ const LandingPage = () => {
             Share the invite with anyone even if they aren’t on Skype. No sign
             ups or downloads required.
           </p>
-          <Link href={"./users"}>
+          {/* <Link href={"./users"}>
             <button className="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700">
               Meet Now
             </button>
-          </Link>
+          </Link> */}
         </div>
 
         <div className="bg-black border-2 border-gray-700 rounded-lg shadow-lg p-6 flex flex-col items-center">
@@ -104,11 +103,11 @@ const LandingPage = () => {
             Skype to Skype calls are always free, but you can also call mobiles
             and landlines from Skype at great low rates.
           </p>
-          <Link href={"./messages"}>
+          {/* <Link href={"./messages"}>
             <button className="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700">
               Chat now
             </button>
-          </Link>
+          </Link> */}
         </div>
       </main>
     </div>
