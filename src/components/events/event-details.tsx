@@ -27,7 +27,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ selectedEvent }) => {
           <img
             src={selectedEvent.mediaUrls[0]}
             alt={selectedEvent.name}
-            className="w-full h-64 object-cover rounded-lg shadow-md"
+            className="w-full h-64 object-contain rounded-lg shadow-md"
             onDragStart={(e) => e.preventDefault()}
           />
         </div>

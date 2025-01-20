@@ -6,6 +6,8 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  Dispatch,
+  SetStateAction,
 } from "react";
 import socket, {
   newEvent,
@@ -13,6 +15,7 @@ import socket, {
   receiveNotifications,
 } from "@/utils/socket";
 import { useAuth } from "./authContext";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface MessageNotification {
   sender_id: number;
@@ -24,9 +27,13 @@ interface NotificationContextType {
   messageNotifications: Record<number, number>;
   postNotifications: number;
   eventNotifications: number;
+  myNotification: boolean;
+  isMessage: boolean;
   resetMessageNotification: (senderId: number) => void;
   resetPostNotification: () => void;
   resetEventNotification: () => void;
+  setIsMessage: Dispatch<SetStateAction<boolean>>;
+  setMyNotification: Dispatch<SetStateAction<boolean>>;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
@@ -47,6 +54,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     return {};
   });
+
+  const [myNotification, setMyNotification] = useState(false);
+  const [isMessage, setIsMessage] = useState(false);
 
   const [postNotifications, setPostNotifications] = useState<number>(0);
   const [eventNotifications, setEventNotifications] = useState<number>(0);
@@ -101,6 +111,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
           ...prev,
           [notification.sender_id]: (prev[notification.sender_id] || 0) + 1,
         }));
+        setIsMessage(true);
       }
     };
 
@@ -149,15 +160,50 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [postNotifications, eventNotifications]);
 
+  const getMyNotification = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/is-my-notification/${user?.id}`
+      );
+      if (response) {
+        setMyNotification(response?.data?.status);
+      }
+    } catch (err) {
+      console.error("Error in getting status of my notification", err);
+    }
+  };
+
+  const getMessageNotificationStatus = async () => {
+    try {
+      const response = await axiosInstance.get(`/is-new-message/${user?.id}`);
+      if (response) {
+        setIsMessage(response?.data?.status);
+      }
+    } catch (err) {
+      console.error("Error in getting status of message notification", err);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.id) {
+      getMyNotification();
+      getMessageNotificationStatus();
+    }
+  }, [user?.id]);
+
   return (
     <NotificationContext.Provider
       value={{
         messageNotifications,
         postNotifications,
         eventNotifications,
+        myNotification,
+        isMessage,
         resetMessageNotification,
         resetPostNotification,
         resetEventNotification,
+        setIsMessage,
+        setMyNotification,
       }}
     >
       {children}

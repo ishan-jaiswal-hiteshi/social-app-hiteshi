@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/context/authContext";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineHome } from "react-icons/ai";
 import { IoMdSearch, IoIosNotificationsOutline } from "react-icons/io";
 import { MdAddCircleOutline } from "react-icons/md";
@@ -11,21 +11,33 @@ import { FiLogOut } from "react-icons/fi";
 import { MdOutlineEvent } from "react-icons/md";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import UserProfilePicture from "@/utils/user-profile-picture";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useNotification } from "@/context/notificationContext";
-import Notifications from "@/app/dashboard/notifications/page";
+import Notifications from "@/components/notification";
 
 const SidebarLayout = () => {
   const { user } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const {
-    messageNotifications,
+    isMessage,
     postNotifications,
     eventNotifications,
     resetPostNotification,
     resetEventNotification,
+    myNotification,
+    setMyNotification,
   } = useNotification();
+
+  const handlNotificationClick = () => {
+    if (!showNotifications) {
+      setMyNotification(false);
+      setShowNotifications(true);
+    } else {
+      setShowNotifications(false);
+    }
+  };
 
   const navItems = [
     {
@@ -70,12 +82,12 @@ const SidebarLayout = () => {
       icon: (
         <div className="relative">
           <IoIosNotificationsOutline size={24} />
-          {eventNotifications > 0 && (
+          {myNotification && (
             <span className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full"></span>
           )}
         </div>
       ),
-      onClick: () => setShowNotifications(true),
+      onClick: () => handlNotificationClick(),
     },
     {
       name: "Users",
@@ -88,7 +100,7 @@ const SidebarLayout = () => {
       icon: (
         <div className="relative">
           <IoChatboxEllipsesOutline size={24} />
-          {Object.values(messageNotifications).some((count) => count > 0) && (
+          {isMessage && (
             <span className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full"></span>
           )}
         </div>
@@ -112,6 +124,40 @@ const SidebarLayout = () => {
       ),
     },
   ];
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setShowNotifications(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth > 768 && pathname === "/dashboard/notifications") {
+      router.push("/dashboard/home");
+    }
+  }, [pathname, router]);
+
+  if (window.innerWidth > 768 && pathname === "/dashboard/notifications") {
+    router.push("/dashboard/home");
+  }
+
+  useEffect(() => {
+    if (showNotifications) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [showNotifications]);
 
   const isActive = (path: string) => pathname === path;
 
@@ -159,10 +205,18 @@ const SidebarLayout = () => {
         </div>
       </aside>
       {showNotifications && (
-        <Notifications
-          visible={true}
-          onClose={() => setShowNotifications(false)}
-        />
+        <div className="fixed top-16 left-56 bottom-16   flex items-center justify-center z-50 w-80 ">
+          <div className="relative bg-black text-white px-1 py-4 rounded-lg shadow-lg max-w-md w-full mx-4 border h-full border-gray-500">
+            <button
+              onClick={() => setShowNotifications(false)}
+              className="absolute top-2 right-2 text-gray-300 hover:text-white"
+            >
+              ✕
+            </button>
+
+            <Notifications />
+          </div>
+        </div>
       )}
     </>
   );

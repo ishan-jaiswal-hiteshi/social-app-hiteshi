@@ -2,16 +2,19 @@
 
 import { useNotification } from "@/context/notificationContext";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { MdOutlineEvent } from "react-icons/md";
-import Notifications from "@/app/dashboard/notifications/page";
 import { IoIosNotificationsOutline } from "react-icons/io";
 
 const TopbarLayout = () => {
-  const { messageNotifications, eventNotifications, resetEventNotification } =
-    useNotification();
-  const [showNotifications, setShowNotifications] = useState(false);
+  const {
+    isMessage,
+    eventNotifications,
+    resetEventNotification,
+    myNotification,
+    setMyNotification,
+  } = useNotification();
   const navItems = [
     {
       path: "/dashboard/events",
@@ -30,20 +33,23 @@ const TopbarLayout = () => {
       icon: (
         <div className="relative">
           <IoChatboxEllipsesOutline size={24} />
-          {Object.values(messageNotifications).some((count) => count > 0) && (
+          {isMessage && (
             <span className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full"></span>
           )}
         </div>
       ),
     },
     {
-      path: "#",
+      path: "/dashboard/notifications",
       icon: (
         <div className="relative">
           <IoIosNotificationsOutline size={24} />
+          {myNotification && (
+            <span className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full"></span>
+          )}
         </div>
       ),
-      onClick: () => setShowNotifications(true),
+      onClick: () => setMyNotification(false),
     },
   ];
 
@@ -69,12 +75,6 @@ const TopbarLayout = () => {
           ))}
         </div>
       </header>
-      {showNotifications && (
-        <Notifications
-          visible={true}
-          onClose={() => setShowNotifications(false)} // Close the popup
-        />
-      )}
     </>
   );
 };

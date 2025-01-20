@@ -113,7 +113,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     }
   };
   const navigateToPost = (postId: number) => {
-    router.push(`${window.location.origin}/dashboard/home/${postData?.id}`);
+    router.push(`${window.location.origin}/dashboard/home/${postId}`);
   };
 
   const toggleContent = () => {
@@ -299,10 +299,10 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                   onClick={() => {
                     const postLink = `${window.location.origin}/dashboard/home/${postData?.id}`;
                     setShowOptions(false);
-                    navigator.clipboard
-                      .writeText(postLink)
-                      .then(() => toast.success("Link copied to clipboard!"))
-                      .catch(() => toast.error("Failed to copy the link."));
+                    navigator?.clipboard
+                      ?.writeText(postLink)
+                      ?.then(() => toast.success("Link copied to clipboard!"))
+                      ?.catch(() => toast.error("Failed to copy the link."));
                   }}
                 >
                   <div className="flex items-center space-x-1">
@@ -352,7 +352,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                   <img
                     src={url}
                     alt={`Post media ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     onDragStart={(e) => e.preventDefault()}
                   />
                 </div>

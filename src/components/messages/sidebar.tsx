@@ -81,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
     return <ChatSidebarSkeleton />;
   }
   return (
-    <div className="border-l-2 border-gray-700">
+    <div className="md:border-l-2 border-gray-700">
       <button
         onClick={() => setIsOpen(true)}
         className={`md:hidden p-2 text-white rounded fixed top-6 right-4 z-50 ${

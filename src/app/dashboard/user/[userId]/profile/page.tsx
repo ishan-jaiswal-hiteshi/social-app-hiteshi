@@ -242,7 +242,7 @@ const UserProfile = () => {
                   </div>
 
                   <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-28 lg:justify-end items-center gap-4 lg:mt-0 mt-28">
-                    {isfollowing ? (
+                    {isFriend && isfollowing ? (
                       <button
                         onClick={handleRemoveFollowing}
                         className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -257,6 +257,23 @@ const UserProfile = () => {
                           </div>
                         ) : (
                           "Following"
+                        )}
+                      </button>
+                    ) : isfollowing ? (
+                      <button
+                        onClick={handleRemoveFollowing}
+                        className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                      >
+                        {buttonLoading ? (
+                          <div
+                            className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
+                            role="status"
+                            aria-label="loading"
+                          >
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        ) : (
+                          "Pending"
                         )}
                       </button>
                     ) : (

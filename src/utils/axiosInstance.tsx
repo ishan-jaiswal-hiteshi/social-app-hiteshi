@@ -1,7 +1,8 @@
 import axios from "axios";
+import "dotenv/config";
 
 const axiosInstance = axios.create({
-  baseURL: "http://192.168.100.168:5000",
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   timeout: 100000,
   headers: {
     "Content-Type": "application/json",
