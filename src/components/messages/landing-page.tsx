@@ -38,7 +38,6 @@ const LandingPage = () => {
         alert("Profile link copied to clipboard!");
       } catch (error) {
         console.error("Failed to copy profile link:", error);
-        alert("Failed to copy the profile link. Please try again.");
       }
     }
   };

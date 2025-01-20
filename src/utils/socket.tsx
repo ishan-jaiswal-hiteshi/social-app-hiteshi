@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-const socket: Socket = io("http://192.168.100.218:5000");
+const socket: Socket = io("http://192.168.100.168:5000");
 
 export const initializeSocket = () => {
   socket.on("connect", () => {
