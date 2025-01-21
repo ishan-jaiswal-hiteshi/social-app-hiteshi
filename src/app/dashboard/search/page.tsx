@@ -220,11 +220,11 @@ const SearchPage = () => {
                 !loadingUsers &&
                 users.length > 0 &&
                 searchQuery.trim() === "" && (
-                  <div className="flex bg-black my-2 mx-3 items-center justify-center p-4 border rounded-lg border-gray-700">
-                    <button
-                      className="text-primary-light hover:text-red-700"
-                      onClick={userListNavigation}
-                    >
+                  <div
+                    className="flex bg-black my-2 mx-3 items-center justify-center p-4 border rounded-lg border-gray-700 cursor-pointer"
+                    onClick={userListNavigation}
+                  >
+                    <button className="text-primary-light hover:text-red-700">
                       See More
                     </button>
                   </div>
@@ -258,11 +258,11 @@ const SearchPage = () => {
               !loadingPosts &&
               posts.length > 0 &&
               searchQuery.trim() === "" && (
-                <div className="col-span-full bg-black flex items-center justify-center p-4 border rounded-lg border-gray-700 mb-4">
-                  <button
-                    className="text-primary-light hover:text-red-700"
-                    onClick={postListNavigation}
-                  >
+                <div
+                  className="col-span-full bg-black flex items-center justify-center p-4 border rounded-lg border-gray-700 mb-4 cursor-pointer"
+                  onClick={postListNavigation}
+                >
+                  <button className="text-primary-light hover:text-red-700">
                     See More
                   </button>
                 </div>

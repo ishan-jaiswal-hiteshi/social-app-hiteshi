@@ -105,6 +105,22 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
+    const handleNewNotification = () => {
+      setMyNotification(true);
+    };
+
+    socket.on("newLike", handleNewNotification);
+    socket.on("newComment", handleNewNotification);
+    socket.on("newFollow", handleNewNotification);
+
+    return () => {
+      socket.off("newLike", handleNewNotification);
+      socket.off("newComment", handleNewNotification);
+      socket.off("newFollow", handleNewNotification);
+    };
+  }, []);
+
+  useEffect(() => {
     const handleNotification = (notification: MessageNotification) => {
       if (notification.receiver_id === user?.id) {
         saveMessageNotifications((prev) => ({

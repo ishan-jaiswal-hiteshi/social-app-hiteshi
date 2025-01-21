@@ -11,7 +11,7 @@ const Page = () => {
       </div>
       <div className="min-h-screen text-white flex flex-row items-start justify-center  ">
         <div
-          className="above-1148:w-4/5 h-screen overflow-y-auto"
+          className="above-1148:w-4/5 h-screen overflow-y-auto w-full"
           style={{ scrollbarWidth: "none" }}
         >
           <PostList />
