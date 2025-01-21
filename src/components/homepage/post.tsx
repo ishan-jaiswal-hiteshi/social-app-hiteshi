@@ -36,9 +36,10 @@ type PostData = {
   content: string;
   mediaUrls: string[];
   timestamp: string;
+  reactionIds: number[];
   likesCount: number;
   commentsCount: number;
-  PostLikes: { userId: number }[];
+  PostLikes: { userId: number; reactionId: number }[];
 };
 
 type PostProps = {
@@ -61,6 +62,17 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showOptions, setShowOptions] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [currentReaction, setCurrentReaction] = useState<number | null>(null);
+  const [showReactions, setShowReactions] = useState(false);
+
+  const reactions = [
+    { id: 1, emoji: "👍" },
+    { id: 2, emoji: "❤️" },
+    { id: 3, emoji: "😂" },
+    { id: 4, emoji: "😮" },
+    { id: 5, emoji: "😢" },
+    { id: 6, emoji: "😡" },
+  ];
 
   const confirmDelete = () => {
     handleDeletePost();
@@ -164,10 +176,15 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   };
 
   useEffect(() => {
-    const userLikedPost = postData?.PostLikes?.some(
-      (like) => like?.userId === user?.id
-    );
-    setIsLiked(userLikedPost);
+    if (postData?.PostLikes && user?.id) {
+      const userLike = postData.PostLikes.find(
+        (like) => like?.userId === user?.id
+      );
+
+      setIsLiked(!!userLike);
+
+      setCurrentReaction(userLike?.reactionId || null);
+    }
   }, [postData, user?.id]);
 
   useEffect(() => {
@@ -183,15 +200,35 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     };
   }, [showOptions]);
 
-  const handleLikeClick = async () => {
+  const handleLikeClick = async (reactionId: number) => {
+    if (
+      (isLiked && currentReaction === null) ||
+      (isLiked && currentReaction === reactionId)
+    ) {
+      try {
+        await axiosInstance.post(`/post/like-unlike`, {
+          userId: user?.id,
+          postId: postData.id,
+        });
+        setLikesCount((prev) => prev - 1);
+        setIsLiked(false);
+        setCurrentReaction(null);
+      } catch (error) {
+        console.error("Error updating like status", error);
+      }
+      return;
+    }
+
     const postLikeData = {
       userId: user?.id,
       postId: postData.id,
+      reactionId: reactionId,
     };
     try {
       await axiosInstance.post(`/post/like-unlike`, postLikeData);
-      setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
-      setIsLiked((prev) => !prev);
+      setLikesCount((prev) => (isLiked ? prev : prev + 1));
+      setCurrentReaction(reactionId);
+      setIsLiked(true);
     } catch (error) {
       console.error("Error updating like status", error);
     }
@@ -275,6 +312,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
         fallbackCopyText(copyLink);
       }
     } catch (error) {
+      console.log("Error in copy profile", error);
       toast.error("Failed to copy");
     }
   };
@@ -366,7 +404,6 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                     currentSlide === index ? "opacity-100" : "opacity-0"
                   }`}
                   data-carousel-item={index}
-                  onDoubleClick={handleLikeClick}
                 >
                   <img
                     src={url}
@@ -399,31 +436,51 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
       </div>
 
       <div className="border-y border-gray-500 p-2 flex justify-start gap-5">
-        <div
-          onClick={handleLikeClick}
-          className="cursor-pointer flex items-center gap-1"
-        >
-          {isLiked ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="#E41B17"
-              className="size-6"
+        <div>
+          {/* Like Button */}
+          <div
+            onMouseEnter={() => setShowReactions(true)}
+            onMouseLeave={() => setShowReactions(false)}
+            className="relative cursor-pointer flex items-center gap-2"
+          >
+            <div
+              onClick={() => handleLikeClick(currentReaction || 1)}
+              className="flex items-center"
             >
-              <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-            </svg>
-          )}
+              {isLiked && currentReaction ? (
+                <span className="text-lg">
+                  {reactions.find((r) => r.id === currentReaction)?.emoji}
+                </span>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                </svg>
+              )}
+              <p>{likesCount}</p>
+            </div>
 
-          <p>{likesCount} </p>
+            {/* Reactions Popover */}
+            {showReactions && (
+              <div className="absolute bottom-6 left-0 flex space-x-2 bg-gray-800 p-2 rounded-lg shadow-lg">
+                {reactions.map((reaction) => (
+                  <div
+                    key={reaction.id}
+                    className={`cursor-pointer text-2xl hover:scale-110 hover:bg-red-500 transition-transform p-1 rounded-full ${
+                      currentReaction === reaction.id && "bg-red-500"
+                    }`}
+                    onClick={() => handleLikeClick(reaction.id)}
+                  >
+                    {reaction.emoji}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <div
           onClick={toggleComments}
