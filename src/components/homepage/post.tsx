@@ -253,6 +253,32 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     }
   };
 
+  const handleSharePost = async () => {
+    const copyLink = `${window.location.origin}/dashboard/home/${postData?.id}`;
+    setShowOptions(false);
+    const fallbackCopyText = (text: string) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      toast.success("link copied to clipboard!");
+    };
+
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(copyLink);
+        toast.success("link copied to clipboard!");
+      } else {
+        fallbackCopyText(copyLink);
+      }
+    } catch (error) {
+      toast.error("Failed to copy");
+    }
+  };
+
   return (
     <div className="border border-gray-600 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
       <div className="relative flex items-center p-3">
@@ -296,14 +322,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
               >
                 <button
                   className="text-gray-300 hover:text-red-500 text-sm"
-                  onClick={() => {
-                    const postLink = `${window.location.origin}/dashboard/home/${postData?.id}`;
-                    setShowOptions(false);
-                    navigator?.clipboard
-                      ?.writeText(postLink)
-                      ?.then(() => toast.success("Link copied to clipboard!"))
-                      ?.catch(() => toast.error("Failed to copy the link."));
-                  }}
+                  onClick={handleSharePost}
                 >
                   <div className="flex items-center space-x-1">
                     <MdOutlineFileCopy color="red" size={20} />

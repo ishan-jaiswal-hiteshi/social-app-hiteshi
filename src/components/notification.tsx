@@ -16,6 +16,7 @@ interface Notification {
   type: string;
   createdAt: string;
   notifyData?: {
+    postId?: number;
     user?: User;
     [key: string]: unknown;
   };
@@ -66,6 +67,18 @@ const Notifications = () => {
     router.push(`/dashboard/user/${userId}/profile`);
   };
 
+  const handleNotificationClick = (
+    type: string,
+    userId?: number,
+    postId?: number
+  ) => {
+    if (type === "like" || type === "comment") {
+      if (postId) router.push(`/dashboard/home/${postId}`);
+    } else {
+      router.push(`/dashboard/user/${userId}/profile`);
+    }
+  };
+
   return (
     <div className="w-full bg-black  rounded-lg overflow-y-auto p-2">
       <div className="flex items-center justify-between pz-4 py-2 border-b border-gray-400">
@@ -81,7 +94,7 @@ const Notifications = () => {
                 <div
                   className="mr-3 cursor-pointer"
                   onClick={() =>
-                    navigateToProfile(notification?.notifyData?.user?.id || 0)
+                    navigateToProfile(notification.notifyData?.user?.id || 0)
                   }
                 >
                   {notification?.notifyData?.user?.profile_picture ? (
@@ -98,8 +111,17 @@ const Notifications = () => {
                     />
                   )}
                 </div>
-                <div>
-                  <strong className="mr-2 cursor-pointer">
+                <div
+                  className="cursor-pointer"
+                  onClick={() =>
+                    handleNotificationClick(
+                      notification.type,
+                      notification?.notifyData?.user?.id || 0,
+                      notification?.notifyData?.postId || 0
+                    )
+                  }
+                >
+                  <strong className="mr-2">
                     @{notification?.notifyData?.user?.username}
                   </strong>
                   <span className="text-sm text-white">

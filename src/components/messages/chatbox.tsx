@@ -12,6 +12,7 @@ import { IoMdSend } from "react-icons/io";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { MdMoreVert, MdDeleteOutline, MdOutlineFileCopy } from "react-icons/md";
+import { toast } from "react-toastify";
 
 dayjs.extend(relativeTime);
 
@@ -57,9 +58,30 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
     setMessageToDelete(null);
   };
 
-  const handleCopyText = (msg: Message) => {
-    navigator.clipboard.writeText(msg.message);
+  const handleCopyText = async (msg: Message) => {
     setMenuVisibleMessageId(null);
+
+    const fallbackCopyText = (text: string) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      toast.success("copied to clipboard!");
+    };
+
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(msg.message);
+        toast.success("copied to clipboard!");
+      } else {
+        fallbackCopyText(msg.message);
+      }
+    } catch (error) {
+      toast.error("Failed to copy");
+    }
   };
 
   const handleDelete = (message: Message) => {

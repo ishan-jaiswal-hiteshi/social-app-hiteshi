@@ -28,7 +28,7 @@ interface PostData {
 
 const PostbyID: React.FC = () => {
   const pathname = usePathname();
-  const postId = pathname?.split("/")[3]; // Get postId from the URL
+  const postId = pathname?.split("/")[3];
 
   const [post, setPost] = useState<PostData | null>(null); // Change state to hold a single post
   const [loading, setLoading] = useState<boolean>(true);
@@ -40,18 +40,18 @@ const PostbyID: React.FC = () => {
       setLoading(true);
       const response = await axiosInstance.get(`/get-post/${postId}`);
       if (response?.data?.post) {
-        setPost(response.data.post); // Set the single post
+        setPost(response.data.post);
       }
     } catch (error) {
-      toast.error("Error in fetching post.");
-      console.error("Error in fetching posts.", error);
+      toast.error("Error in getting post.");
+      //console.error("Error in fetching posts.", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handlePostDelete = (postId: number) => {
-    setPost(null); // Handle post delete
+    setPost(null);
   };
 
   useEffect(() => {
@@ -74,7 +74,7 @@ const PostbyID: React.FC = () => {
           <Post key={post.id} postData={post} onDeletePost={handlePostDelete} />
         ) : (
           !loading && (
-            <p className="text-center text-gray-500">No Post Available</p>
+            <p className="text-center text-gray-500">Post not Available</p>
           )
         )}
       </div>

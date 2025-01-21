@@ -208,7 +208,7 @@ const SidebarLayout = () => {
         </div>
       </aside>
       {showNotifications && (
-        <div className="fixed top-16 left-56 bottom-16  flex items-center justify-center z-50 w-80 ">
+        <div className="fixed top-16 left-56 bottom-16 flex items-center justify-center z-50 w-96 ">
           <div className="relative bg-black text-white px-1 py-4 rounded-lg shadow-lg max-w-md w-full mx-4 border h-full border-gray-500">
             <button
               onClick={() => setShowNotifications(false)}
@@ -216,7 +216,6 @@ const SidebarLayout = () => {
             >
               ✕
             </button>
-
             <Notifications />
           </div>
         </div>
