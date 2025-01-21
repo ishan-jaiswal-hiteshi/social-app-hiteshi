@@ -8,6 +8,16 @@ import { IoSend } from "react-icons/io5";
 import { MdMoreVert, MdDeleteOutline, MdOutlineFileCopy } from "react-icons/md";
 import { toast } from "react-toastify";
 import UserProfilePicture from "@/utils/user-profile-picture";
+import ReactionModel, { reactions } from "../reactionModel";
+
+
+import LoveEmojiPath from "../../assets/reactions/love_emoji.png";
+import LaughingEmojiPath from "../../assets/reactions/laughing.png";
+import ThumbsEmojiPath from "../../assets/reactions/thumbsup.png";
+import AngryEmojiPath from "../../assets/reactions/angry.png";
+import WowEmojiPath from "../../assets/reactions/wow.png";
+import HeartEmoji from "../../assets/reactions/heart.png";
+import Image from "next/image";
 
 type Comment = {
   id: number;
@@ -41,6 +51,11 @@ type PostData = {
   PostLikes: { userId: number }[];
 };
 
+type ReactionProps = {
+  id : number,
+  path : string,
+}
+
 type PostProps = {
   postData: PostData;
   onDeletePost: (postId: number) => void;
@@ -61,11 +76,17 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showOptions, setShowOptions] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showReaction, setShowReaction] = useState(false);
+  const [selectedReactionId, setSelectedReactionId] = useState(0);
+  
+  const [otherReactions,setOtherReactions] = useState([3,4]);
+  const [totalReactions,setTotalReactions] = useState<number[]>();
 
   const confirmDelete = () => {
     handleDeletePost();
     setShowConfirmation(false);
   };
+ 
 
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [mouseStart, setMouseStart] = useState<number | null>(null);
@@ -162,6 +183,23 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     }
     setShowComments((prev) => !prev);
   };
+   
+  useEffect(()=>{
+    const filteredReactions = otherReactions.filter((reaction) => reaction !== selectedReactionId);
+
+    const shuffledReactions = filteredReactions.sort(() => 0.5 - Math.random()); // Shuffle the array
+    const selectedReactions = shuffledReactions.slice(0, 2); // Take the first two elements
+
+    if(selectedReactionId > 0)
+    {
+      const finalArray = [...selectedReactions,selectedReactionId];
+      setTotalReactions(finalArray);  
+    }else
+    {
+       setTotalReactions(selectedReactions);
+    }
+  },[selectedReactionId])
+
 
   useEffect(() => {
     const userLikedPost = postData?.PostLikes?.some(
@@ -184,12 +222,25 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   }, [showOptions]);
 
   const handleLikeClick = async () => {
+
+    setShowReaction(true); 
+
+
+
     const postLikeData = {
       userId: user?.id,
       postId: postData.id,
+      reactionId: selectedReactionId === 0 ? 1 : selectedReactionId
     };
+
+    const postDisLikeData = {
+      userId: user?.id,
+      postId: postData.id,
+    };
+
+    
     try {
-      await axiosInstance.post(`/post/like-unlike`, postLikeData);
+      await axiosInstance.post(`/post/like-unlike`, isLiked &&  selectedReactionId === 0 ? postDisLikeData : postLikeData);
       setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
       setIsLiked((prev) => !prev);
     } catch (error) {
@@ -346,7 +397,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
           </div>
         )}
       </div>
-      <div>
+      <div className="relative">
         {postData?.mediaUrls?.length > 0 && (
           <div
             className="relative w-full"
@@ -396,23 +447,40 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
             )}
           </div>
         )}
-      </div>
 
-      <div className="border-y border-gray-500 p-2 flex justify-start gap-5">
+        {
+          showReaction ? <ReactionModel setShowReaction={setShowReaction} selectedReactionId={selectedReactionId} setSelectedReactionId={setSelectedReactionId} setIsLike={setIsLiked}/> :<></>
+        }
+      </div>
+     
+      <div className="border-y border-gray-500 p-2 flex justify-start gap-5"
+        >
         <div
           onClick={handleLikeClick}
           className="cursor-pointer flex items-center gap-1"
+          onMouseEnter={()=>{setShowReaction(true)}}
+          onMouseLeave={()=>{setShowReaction(false)}}
         >
-          {isLiked ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="#E41B17"
-              className="size-6"
-            >
-              <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-            </svg>
-          ) : (
+          {isLiked && totalReactions ? 
+             (
+              <div className="relative overflow-hidden w-10 flex flex-row h-full items-center top-1"
+                  style={{width : totalReactions.length <= 1 ? "20px" : `${((totalReactions.length -1 ) * 13) +20} px` }}
+              >
+                 {totalReactions.map((item,index) => {
+                  return (
+                    <div 
+                      key={index} 
+                      className={`h-5 w-5 p-[2px] bg-[white] flex top-0 justify-center items-center rounded-full absolute`}
+                      style={{left: `${index * 10}px`,}} // Adjust offset for each button
+                    >
+                      <Image src={reactions[item - 1]?.path.src } width={reactions[item - 1]?.path.width} height={reactions[item - 1]?.path.height} className="w-full h-full" alt="reaction images" />
+                    </div>
+                  );
+                })}
+               
+              </div>
+             )
+           : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -422,6 +490,9 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
               <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
             </svg>
           )}
+         
+       
+            
 
           <p>{likesCount} </p>
         </div>
