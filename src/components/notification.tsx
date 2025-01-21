@@ -74,10 +74,10 @@ const Notifications = () => {
       {loading ? (
         <div className="p-4">Loading...</div>
       ) : notifications.length > 0 ? (
-        <ul className="divide-y divide-gray-500">
+        <ul className="">
           {notifications?.map((notification) => (
-            <li key={notification.id} className="px-1 py-4">
-              <div className="relative flex items-center p-3">
+            <li key={notification.id} className="px-1 py-2">
+              <div className="relative flex items-center px-3 py-2">
                 <div
                   className="mr-3 cursor-pointer"
                   onClick={() =>
@@ -98,8 +98,8 @@ const Notifications = () => {
                     />
                   )}
                 </div>
-                <div className="cursor-pointer">
-                  <strong className="mr-2">
+                <div>
+                  <strong className="mr-2 cursor-pointer">
                     @{notification?.notifyData?.user?.username}
                   </strong>
                   <span className="text-sm text-white">

@@ -18,6 +18,7 @@ import Notifications from "@/components/notification";
 const SidebarLayout = () => {
   const { user } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const {
@@ -159,6 +160,11 @@ const SidebarLayout = () => {
     };
   }, [showNotifications]);
 
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    router.push("/");
+  };
+
   const isActive = (path: string) => pathname === path;
 
   return (
@@ -190,22 +196,19 @@ const SidebarLayout = () => {
             </ul>
           </nav>
 
-          <div className="cursor-pointer bg-red-600 border hover:bg-red-700 border-gray-600 px-3 py-2 rounded-lg w-full">
-            <Link
-              href="/"
-              onClick={() => {
-                localStorage.removeItem("accessToken");
-              }}
-              className="flex gap-2 items-center"
-            >
+          <div
+            className="cursor-pointer border border-gray-600 hover:bg-gray-800 px-3 py-2 rounded-lg w-full"
+            onClick={() => setShowLogoutModal(true)}
+          >
+            <button className="flex gap-2 items-center">
               <FiLogOut size={20} color="white" />
               <p className="text-white ">Log out</p>
-            </Link>
+            </button>
           </div>
         </div>
       </aside>
       {showNotifications && (
-        <div className="fixed top-16 left-56 bottom-16   flex items-center justify-center z-50 w-80 ">
+        <div className="fixed top-16 left-56 bottom-16  flex items-center justify-center z-50 w-80 ">
           <div className="relative bg-black text-white px-1 py-4 rounded-lg shadow-lg max-w-md w-full mx-4 border h-full border-gray-500">
             <button
               onClick={() => setShowNotifications(false)}
@@ -215,6 +218,32 @@ const SidebarLayout = () => {
             </button>
 
             <Notifications />
+          </div>
+        </div>
+      )}
+
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className=" bg-black text-white px-4 py-4 rounded-lg shadow-lg max-w-md w-full mx-4 border  border-gray-500">
+            <p className="text-center text-gray-300 mb-4 pb-3">
+              <strong>
+                Are you sure you want Logout from Socialize@Hiteshi?
+              </strong>
+            </p>
+            <div className="flex justify-center gap-5 ">
+              <button
+                className="px-3 py-2 bg-gray-600 text-gray-200 rounded hover:bg-gray-500 focus:outline-none transition"
+                onClick={() => setShowLogoutModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none transition"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       )}
