@@ -3,7 +3,7 @@
 import { User } from "@/props/authProps";
 import axiosInstance from "@/utils/axiosInstance";
 import { initializeSocket, userJoin } from "@/utils/socket";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   createContext,
   ReactNode,
@@ -42,6 +42,16 @@ export function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (pathname === "/" && token) {
+      router.push("/dashboard/home");
+    } else if (!token) {
+      router.push("/");
+    }
+  }, [router, pathname]);
 
   const getCurrentUser = async () => {
     try {

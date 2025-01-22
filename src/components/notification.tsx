@@ -80,61 +80,66 @@ const Notifications = () => {
   };
 
   return (
-    <div className="w-full bg-black  rounded-lg overflow-y-auto p-2">
-      <div className="flex items-center justify-between pz-4 py-2 border-b border-gray-400">
+    <div className="w-full bg-black rounded-lg p-2 h-full">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-400 sticky">
         <h2 className="text-lg text-white font-semibold">Notifications</h2>
       </div>
       {loading ? (
         <div className="p-4">Loading...</div>
       ) : notifications.length > 0 ? (
-        <ul className="">
-          {notifications?.map((notification) => (
-            <li key={notification.id} className="px-1 py-2">
-              <div className="relative flex items-center px-3 py-2">
-                <div
-                  className="mr-3 cursor-pointer"
-                  onClick={() =>
-                    navigateToProfile(notification.notifyData?.user?.id || 0)
-                  }
-                >
-                  {notification?.notifyData?.user?.profile_picture ? (
-                    <img
-                      src={notification?.notifyData?.user?.profile_picture}
-                      alt="profile"
-                      className="w-10 h-10 rounded-full  object-cover"
-                      onDragStart={(e) => e.preventDefault()}
-                    />
-                  ) : (
-                    <UserProfilePicture
-                      fullName={notification?.notifyData?.user?.full_name}
-                      size={40}
-                    />
-                  )}
+        <div
+          className="overflow-y-auto h-full"
+          style={{ scrollbarWidth: "none" }}
+        >
+          <ul>
+            {notifications?.map((notification) => (
+              <li key={notification.id} className="px-1 py-2">
+                <div className="relative flex items-center px-3 py-2">
+                  <div
+                    className="mr-3 cursor-pointer"
+                    onClick={() =>
+                      navigateToProfile(notification.notifyData?.user?.id || 0)
+                    }
+                  >
+                    {notification?.notifyData?.user?.profile_picture ? (
+                      <img
+                        src={notification?.notifyData?.user?.profile_picture}
+                        alt="profile"
+                        className="w-10 h-10 rounded-full  object-cover"
+                        onDragStart={(e) => e.preventDefault()}
+                      />
+                    ) : (
+                      <UserProfilePicture
+                        fullName={notification?.notifyData?.user?.full_name}
+                        size={40}
+                      />
+                    )}
+                  </div>
+                  <div
+                    className="cursor-pointer"
+                    onClick={() =>
+                      handleNotificationClick(
+                        notification.type,
+                        notification?.notifyData?.user?.id || 0,
+                        notification?.notifyData?.postId || 0
+                      )
+                    }
+                  >
+                    <strong className="mr-2">
+                      @{notification?.notifyData?.user?.username}
+                    </strong>
+                    <span className="text-sm text-white">
+                      {renderNotificationMessage(notification.type)}
+                    </span>
+                    <span className="text-xs text-gray-300 mt-1 block">
+                      {dayjs(notification.createdAt).fromNow()}
+                    </span>
+                  </div>
                 </div>
-                <div
-                  className="cursor-pointer"
-                  onClick={() =>
-                    handleNotificationClick(
-                      notification.type,
-                      notification?.notifyData?.user?.id || 0,
-                      notification?.notifyData?.postId || 0
-                    )
-                  }
-                >
-                  <strong className="mr-2">
-                    @{notification?.notifyData?.user?.username}
-                  </strong>
-                  <span className="text-sm text-white">
-                    {renderNotificationMessage(notification.type)}
-                  </span>
-                  <span className="text-xs text-gray-300 mt-1 block">
-                    {dayjs(notification.createdAt).fromNow()}
-                  </span>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : (
         <div className="p-4 text-center text-gray-400">
           No notifications yet.

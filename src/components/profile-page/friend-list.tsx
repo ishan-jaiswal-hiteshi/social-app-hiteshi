@@ -51,7 +51,7 @@ const FriendsList: React.FC<FriendsListProps> = ({ users }) => {
   }, [user?.id]);
 
   return (
-    <div className="p-2">
+    <div className="py-2 px-1 md:px-2">
       {loading && (
         <div>
           <UserListSkeleton />

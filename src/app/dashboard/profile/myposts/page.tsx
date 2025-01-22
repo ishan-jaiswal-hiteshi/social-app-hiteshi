@@ -6,25 +6,7 @@ import axiosInstance from "@/utils/axiosInstance";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/authContext";
 import { PostSkeleton } from "@/utils/skeletons";
-interface PostData {
-  id: number;
-  userId: number;
-  User: {
-    id: number;
-    name: string;
-    username: string;
-    full_name: string;
-    profile_picture: string;
-  };
-
-  content: string;
-  mediaUrls: string[];
-  createdAt: string;
-  timestamp: string;
-  likesCount: number;
-  commentsCount: number;
-  PostLikes: { userId: number }[];
-}
+import { PostData } from "@/props/postProps";
 
 const MyPosts: React.FC = () => {
   const { user } = useAuth();

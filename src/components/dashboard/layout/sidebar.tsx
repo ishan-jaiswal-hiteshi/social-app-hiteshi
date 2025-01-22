@@ -144,10 +144,6 @@ const SidebarLayout = () => {
     }
   }, [pathname, router]);
 
-  if (window.innerWidth > 768 && pathname === "/dashboard/notifications") {
-    router.push("/dashboard/home");
-  }
-
   useEffect(() => {
     if (showNotifications) {
       document.body.classList.add("overflow-hidden");
@@ -208,7 +204,7 @@ const SidebarLayout = () => {
         </div>
       </aside>
       {showNotifications && (
-        <div className="fixed top-16 left-56 bottom-16 flex items-center justify-center z-50 w-96 ">
+        <div className="fixed top-16 left-56 bottom-16 flex items-center justify-center z-50 w-96">
           <div className="relative bg-black text-white px-1 py-4 rounded-lg shadow-lg max-w-md w-full mx-4 border h-full border-gray-500">
             <button
               onClick={() => setShowNotifications(false)}
@@ -216,7 +212,9 @@ const SidebarLayout = () => {
             >
               ✕
             </button>
-            <Notifications />
+            <div className="h-full overflow-hidden pb-10">
+              <Notifications />
+            </div>
           </div>
         </div>
       )}

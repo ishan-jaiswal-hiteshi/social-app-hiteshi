@@ -79,8 +79,8 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   };
 
   return (
-    <div className="block border border-gray-600 rounded-lg w-full mx-2 my-2 font-sans bg-black">
-      <div className="flex justify-between items-center p-3">
+    <div className="block border border-gray-600 rounded-lg w-full md:mx-2 my-2 font-sans bg-black">
+      <div className="flex justify-between items-center py-3 px-1 md:px-3">
         <div
           className="flex items-center cursor-pointer"
           onClick={profileNavigation}
@@ -89,16 +89,18 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
             <img
               src={userData?.profile_picture}
               alt="profile"
-              className="w-16 h-16 rounded-full mr-3"
+              className="md:w-16 w-10 h-10 md:h-16 rounded-full md:mr-3 mr-1"
               onDragStart={(e) => e.preventDefault()}
             />
           ) : (
-            <div className="mr-3">
-              <UserProfilePicture fullName={userData?.full_name} size={64} />
+            <div className="md:mr-3 mr-1">
+              <UserProfilePicture fullName={userData?.full_name} size={60} />
             </div>
           )}
           <div>
-            <strong>@{userData?.username}</strong>
+            <strong className="md:truncate w-[ch-12]">
+              @{userData?.username}
+            </strong>
             <p className="m-0 text-gray-500 text-sm truncate w-[ch-20]">
               {userData?.full_name}
             </p>
@@ -111,7 +113,7 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
           ) : isFollowing ? (
             <button
               onClick={handleUnfollow}
-              className="border-gray-500 border active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs w-[100px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+              className="border-gray-500 border active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
             >
               {buttonLoading ? (
                 <div
@@ -128,7 +130,7 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
           ) : (
             <button
               onClick={handleFollow}
-              className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs w-[100px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+              className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
             >
               {buttonLoading ? (
                 <div

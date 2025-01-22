@@ -84,7 +84,7 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
     <>
       <div>
         <div className="block md:hidden border border-gray-600 rounded-lg w-full mx-2 my-2 font-sans bg-black">
-          <div className="flex justify-between items-center p-3">
+          <div className="flex justify-between items-center py-3 px-1">
             <div
               className="flex items-center cursor-pointer"
               onClick={profileNavigation}
@@ -116,7 +116,7 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
               {isFollowing ? (
                 <button
                   onClick={handleUnfollow}
-                  className="border-gray-500 border active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs w-[100px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                  className="border-gray-500 border active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
                   {buttonLoading ? (
                     <div
@@ -133,7 +133,7 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
               ) : (
                 <button
                   onClick={handleFollow}
-                  className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs w-[100px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                  className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
                   {buttonLoading ? (
                     <div

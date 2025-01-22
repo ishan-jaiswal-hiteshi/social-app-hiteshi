@@ -7,6 +7,7 @@ import { PostSkeleton, UserCardSkeleton } from "@/utils/skeletons";
 import UserCardGrid from "@/components/users/user-card-grid";
 import Post from "@/components/homepage/post";
 import { useAuth } from "@/context/authContext";
+import { PostData } from "@/props/postProps";
 
 interface UserData {
   id: number;
@@ -15,25 +16,6 @@ interface UserData {
   profile_picture: string;
   createdAt: string;
   updatedAt: string;
-}
-
-interface PostData {
-  id: number;
-  userId: number;
-  User: {
-    id: number;
-    name: string;
-    username: string;
-    full_name: string;
-    profile_picture: string;
-  };
-  content: string;
-  mediaUrls: string[];
-  createdAt: string;
-  timestamp: string;
-  likesCount: number;
-  commentsCount: number;
-  PostLikes: { userId: number }[];
 }
 
 const SearchPage = () => {

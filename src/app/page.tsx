@@ -1,19 +1,5 @@
-"use client";
-
-import { useEffect } from "react";
 import Auth from "../components/Auth/authLogic";
-import { useRouter } from "next/navigation";
-
 export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      router.push("/dashboard/home");
-    }
-  }, [router]);
-
   return (
     <div
       className="min-h-screen bg-black text-white flex items-center justify-center"

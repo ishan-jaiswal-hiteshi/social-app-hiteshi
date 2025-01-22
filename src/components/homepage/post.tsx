@@ -17,6 +17,7 @@ import WowEmojiPath from "../../assets/reactions/wow.png";
 import HeartEmoji from "../../assets/reactions/heart.png";
 
 import Image from "next/image";
+import { PostData } from "@/props/postProps";
 
 type Comment = {
   id: number;
@@ -31,24 +32,6 @@ type Comment = {
     profile_picture: string | undefined;
     full_name: string;
   };
-};
-
-type PostData = {
-  id: number;
-  User: {
-    id: number;
-    full_name: string;
-    username: string;
-    profile_picture: string | undefined;
-  };
-  userId: number;
-  content: string;
-  mediaUrls: string[];
-  timestamp: string;
-  reactionIds: number[];
-  likesCount: number;
-  commentsCount: number;
-  PostLikes: { userId: number; reactionId: number }[];
 };
 
 type PostProps = {

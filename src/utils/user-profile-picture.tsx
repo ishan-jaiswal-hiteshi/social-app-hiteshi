@@ -77,7 +77,7 @@ const UserProfilePicture: React.FC<UserProfileProps> = ({
         >
           <span
             className="text-white font-bold"
-            style={{ fontSize: `${size / 2}px` }}
+            style={{ fontSize: `${size / 3}px` }}
           >
             {initials}
           </span>

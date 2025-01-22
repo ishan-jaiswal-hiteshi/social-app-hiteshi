@@ -6,26 +6,7 @@ import { toast } from "react-toastify";
 import { PostSkeleton } from "@/utils/skeletons";
 import Post from "@/components/homepage/post";
 import { usePathname } from "next/navigation";
-
-interface PostData {
-  id: number;
-  userId: number;
-  User: {
-    id: number;
-    name: string;
-    username: string;
-    full_name: string;
-    profile_picture: string;
-  };
-  content: string;
-  mediaUrls: string[];
-  reactionIds: number[];
-  createdAt: string;
-  timestamp: string;
-  likesCount: number;
-  commentsCount: number;
-  PostLikes: { userId: number }[];
-}
+import { PostData } from "@/props/postProps";
 
 const PostbyID: React.FC = () => {
   const pathname = usePathname();
@@ -45,13 +26,13 @@ const PostbyID: React.FC = () => {
       }
     } catch (error) {
       toast.error("Error in getting post.");
-      //console.error("Error in fetching posts.", error);
+      console.error("Error in fetching posts.", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePostDelete = (postId: number) => {
+  const handlePostDelete = () => {
     setPost(null);
   };
 
