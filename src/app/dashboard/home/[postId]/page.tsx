@@ -19,6 +19,7 @@ interface PostData {
   };
   content: string;
   mediaUrls: string[];
+  reactionIds: number[];
   createdAt: string;
   timestamp: string;
   likesCount: number;
@@ -30,7 +31,7 @@ const PostbyID: React.FC = () => {
   const pathname = usePathname();
   const postId = pathname?.split("/")[3];
 
-  const [post, setPost] = useState<PostData | null>(null); // Change state to hold a single post
+  const [post, setPost] = useState<PostData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const getPostbyID = async () => {

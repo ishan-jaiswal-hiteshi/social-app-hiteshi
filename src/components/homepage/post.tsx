@@ -75,11 +75,11 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   const [showReactions, setShowReactions] = useState(false);
 
   const reactions = [
-    { id: 1, emoji: LoveEmojiPath },
+    { id: 1, emoji: HeartEmoji },
     { id: 2, emoji: ThumbsEmojiPath },
     { id: 3, emoji: LaughingEmojiPath },
     { id: 4, emoji: WowEmojiPath },
-    { id: 5, emoji: HeartEmoji },
+    { id: 5, emoji: LoveEmojiPath },
     { id: 6, emoji: AngryEmojiPath },
   ];
 
@@ -232,11 +232,6 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
       userId: user?.id,
       postId: postData.id,
       reactionId: reactionId,
-    };
-
-    const postDisLikeData = {
-      userId: user?.id,
-      postId: postData.id,
     };
 
     try {
@@ -451,7 +446,6 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
 
         <div className="border-y border-gray-500 p-2 flex justify-start gap-5">
           <div>
-            {/* Like Button */}
             <div
               onMouseEnter={() => setShowReactions(true)}
               onMouseLeave={() => setShowReactions(false)}
@@ -459,7 +453,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
             >
               <div
                 onClick={() => handleLikeClick(currentReaction || 1)}
-                className="flex items-center"
+                className="flex items-center gap-2"
               >
                 {isLiked && currentReaction ? (
                   <Image
@@ -483,17 +477,20 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                 <p>{likesCount}</p>
               </div>
 
-              {/* Reactions Popover */}
               {showReactions && (
                 <div className="absolute bottom-6 left-0 flex space-x-2 bg-gray-800 p-2 rounded-lg">
                   {reactions.map((reaction) => (
-                    <div className={` h-7 w-7 cursor-pointer p-[2px] hover:scale-110 hover:bg-red-500  rounded-full ${
-                      currentReaction === reaction.id && "bg-red-500"
-                    }`} key={reaction.id}>
+                    <div
+                      className={` h-7 w-7 cursor-pointer p-[2px] hover:scale-110 hover:bg-gray-500 rounded-full ${
+                        currentReaction === reaction.id && "bg-gray-500"
+                      }`}
+                      onClick={() => handleLikeClick(reaction.id)}
+                      key={reaction.id}
+                    >
                       <Image
                         src={reaction.emoji}
                         alt="emoji"
-                        onClick={() => handleLikeClick(reaction.id)}
+                        className="w-6 h-6"
                       ></Image>
                     </div>
                   ))}
