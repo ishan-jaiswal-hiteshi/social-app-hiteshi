@@ -107,12 +107,12 @@ const CreatePost = () => {
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
-      <div className="max-w-lg w-full space-y-8 bg-white opacity-90 shadow-lg rounded-lg p-8">
+      <div className="relative max-w-lg w-full space-y-8 bg-white opacity-90 shadow-lg rounded-lg p-8">
         <h2 className="text-2xl font-bold text-center text-gray-900">
           Create a New Post
         </h2>
         {loading && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="absolute inset-0 flex items-center justify-center  z-50">
             <div
               className="animate-spin inline-block text-center w-12 h-12 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
               role="status"

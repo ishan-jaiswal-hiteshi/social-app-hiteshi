@@ -54,11 +54,13 @@ const EventList: React.FC = () => {
             <EventCard key={event.id} event={event} />
           ))}
         </div>
-        <div className="flex my-2 bg-black items-center justify-center p-4 border rounded-lg border-gray-700">
-          <button className="text-primary-light hover:text-red-700">
-            <Link href={"/dashboard/events"}>See More</Link>
-          </button>
-        </div>
+        <Link href={"/dashboard/events"}>
+          <div className="flex my-2 bg-black items-center justify-center p-4 border rounded-lg border-gray-700">
+            <button className="text-primary-light hover:text-red-700">
+              See More
+            </button>
+          </div>
+        </Link>
       </div>
     </div>
   );

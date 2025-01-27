@@ -3,8 +3,10 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="overflow-y-auto mt-5  text-white bg-black mb-10">
-      <Notifications />
+    <div className="mt-5 text-white bg-black mb-10">
+      <div className="max-w-lg mx-auto p-4 bg-gray-800 rounded-md">
+        <Notifications />
+      </div>
     </div>
   );
 };

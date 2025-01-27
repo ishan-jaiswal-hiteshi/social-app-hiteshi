@@ -4,6 +4,7 @@ import React from "react";
 import { useAuth } from "@/context/authContext";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 const LandingPage = () => {
   const { user } = useAuth();
@@ -20,25 +21,28 @@ const LandingPage = () => {
   };
 
   const handleShareProfile = async () => {
-    const profileLink = `${window.location.origin}/dashboard/user/${user?.id}/profile`;
+    const copyLink = `${window.location.origin}/dashboard/user/${user?.id}/profile`;
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "Check out this profile!",
-          text: `Hey, check out ${user?.full_name}'s profile.`,
-          url: profileLink,
-        });
-      } catch (error) {
-        console.error("Error sharing profile link:", error);
+    const fallbackCopyText = (text: string) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      toast.success("link copied to clipboard!");
+    };
+
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(copyLink);
+        toast.success("link copied to clipboard!");
+      } else {
+        fallbackCopyText(copyLink);
       }
-    } else {
-      try {
-        await navigator.clipboard.writeText(profileLink);
-        alert("Profile link copied to clipboard!");
-      } catch (error) {
-        console.error("Failed to copy profile link:", error);
-      }
+    } catch (error) {
+      toast.error("Failed to copy");
     }
   };
 

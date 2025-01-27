@@ -4,25 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Post from "./post";
 import axiosInstance from "@/utils/axiosInstance";
 import { PostSkeleton } from "@/utils/skeletons";
-interface PostData {
-  id: number;
-  userId: number;
-  User: {
-    id: number;
-    name: string;
-    username: string;
-    full_name: string;
-    profile_picture: string;
-  };
-
-  content: string;
-  mediaUrls: string[];
-  createdAt: string;
-  timestamp: string;
-  likesCount: number;
-  commentsCount: number;
-  PostLikes: { userId: number }[];
-}
+import { PostData } from "@/props/postProps";
 
 const PostList = () => {
   const [posts, setPosts] = useState<PostData[] | []>([]);

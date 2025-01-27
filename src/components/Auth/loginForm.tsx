@@ -18,7 +18,7 @@ export default function AuthForm({
     }
   };
   return (
-    <div className="flex items-center justify-center h-96 w-96">
+    <div className="flex items-center justify-center md:h-96 h-full md:w-96 w-full">
       <form
         onSubmit={emailSubmitted ? handleSubmit : handleEmailSubmit}
         className="w-full max-w-md  p-6 rounded-lg"

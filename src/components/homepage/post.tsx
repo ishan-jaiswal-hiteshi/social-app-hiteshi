@@ -9,6 +9,16 @@ import { MdMoreVert, MdDeleteOutline, MdOutlineFileCopy } from "react-icons/md";
 import { toast } from "react-toastify";
 import UserProfilePicture from "@/utils/user-profile-picture";
 
+import LoveEmojiPath from "../../assets/reactions/love_emoji.png";
+import LaughingEmojiPath from "../../assets/reactions/laughing.png";
+import ThumbsEmojiPath from "../../assets/reactions/thumbsup.png";
+import AngryEmojiPath from "../../assets/reactions/angry.png";
+import WowEmojiPath from "../../assets/reactions/wow.png";
+import HeartEmoji from "../../assets/reactions/heart.png";
+
+import Image from "next/image";
+import { PostData } from "@/props/postProps";
+
 type Comment = {
   id: number;
   userId: number;
@@ -22,23 +32,6 @@ type Comment = {
     profile_picture: string | undefined;
     full_name: string;
   };
-};
-
-type PostData = {
-  id: number;
-  User: {
-    id: number;
-    full_name: string;
-    username: string;
-    profile_picture: string | undefined;
-  };
-  userId: number;
-  content: string;
-  mediaUrls: string[];
-  timestamp: string;
-  likesCount: number;
-  commentsCount: number;
-  PostLikes: { userId: number }[];
 };
 
 type PostProps = {
@@ -61,6 +54,17 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showOptions, setShowOptions] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [currentReaction, setCurrentReaction] = useState<number | null>(null);
+  const [showReactions, setShowReactions] = useState(false);
+
+  const reactions = [
+    { id: 1, emoji: HeartEmoji },
+    { id: 2, emoji: ThumbsEmojiPath },
+    { id: 3, emoji: LaughingEmojiPath },
+    { id: 4, emoji: WowEmojiPath },
+    { id: 5, emoji: LoveEmojiPath },
+    { id: 6, emoji: AngryEmojiPath },
+  ];
 
   const confirmDelete = () => {
     handleDeletePost();
@@ -164,10 +168,15 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   };
 
   useEffect(() => {
-    const userLikedPost = postData?.PostLikes?.some(
-      (like) => like?.userId === user?.id
-    );
-    setIsLiked(userLikedPost);
+    if (postData?.PostLikes && user?.id) {
+      const userLike = postData.PostLikes.find(
+        (like) => like?.userId === user?.id
+      );
+
+      setIsLiked(!!userLike);
+
+      setCurrentReaction(userLike?.reactionId || null);
+    }
   }, [postData, user?.id]);
 
   useEffect(() => {
@@ -183,15 +192,36 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     };
   }, [showOptions]);
 
-  const handleLikeClick = async () => {
+  const handleLikeClick = async (reactionId: number) => {
+    if (
+      (isLiked && currentReaction === null) ||
+      (isLiked && currentReaction === reactionId)
+    ) {
+      try {
+        await axiosInstance.post(`/post/like-unlike`, {
+          userId: user?.id,
+          postId: postData.id,
+        });
+        setLikesCount((prev) => prev - 1);
+        setIsLiked(false);
+        setCurrentReaction(null);
+      } catch (error) {
+        console.error("Error updating like status", error);
+      }
+      return;
+    }
+
     const postLikeData = {
       userId: user?.id,
       postId: postData.id,
+      reactionId: reactionId,
     };
+
     try {
       await axiosInstance.post(`/post/like-unlike`, postLikeData);
-      setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
-      setIsLiked((prev) => !prev);
+      setLikesCount((prev) => (isLiked ? prev : prev + 1));
+      setCurrentReaction(reactionId);
+      setIsLiked(true);
     } catch (error) {
       console.error("Error updating like status", error);
     }
@@ -253,6 +283,33 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     }
   };
 
+  const handleSharePost = async () => {
+    const copyLink = `${window.location.origin}/dashboard/home/${postData?.id}`;
+    setShowOptions(false);
+    const fallbackCopyText = (text: string) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      toast.success("link copied to clipboard!");
+    };
+
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(copyLink);
+        toast.success("link copied to clipboard!");
+      } else {
+        fallbackCopyText(copyLink);
+      }
+    } catch (error) {
+      console.log("Error in copy profile", error);
+      toast.error("Failed to copy");
+    }
+  };
+
   return (
     <div className="border border-gray-600 rounded-lg max-w-md mx-auto my-5 font-sans bg-black">
       <div className="relative flex items-center p-3">
@@ -296,14 +353,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
               >
                 <button
                   className="text-gray-300 hover:text-red-500 text-sm"
-                  onClick={() => {
-                    const postLink = `${window.location.origin}/dashboard/home/${postData?.id}`;
-                    setShowOptions(false);
-                    navigator?.clipboard
-                      ?.writeText(postLink)
-                      ?.then(() => toast.success("Link copied to clipboard!"))
-                      ?.catch(() => toast.error("Failed to copy the link."));
-                  }}
+                  onClick={handleSharePost}
                 >
                   <div className="flex items-center space-x-1">
                     <MdOutlineFileCopy color="red" size={20} />
@@ -327,7 +377,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
           </div>
         )}
       </div>
-      <div>
+      <div className="relative">
         {postData?.mediaUrls?.length > 0 && (
           <div
             className="relative w-full"
@@ -347,7 +397,6 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                     currentSlide === index ? "opacity-100" : "opacity-0"
                   }`}
                   data-carousel-item={index}
-                  onDoubleClick={handleLikeClick}
                 >
                   <img
                     src={url}
@@ -377,158 +426,185 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
             )}
           </div>
         )}
-      </div>
 
-      <div className="border-y border-gray-500 p-2 flex justify-start gap-5">
-        <div
-          onClick={handleLikeClick}
-          className="cursor-pointer flex items-center gap-1"
-        >
-          {isLiked ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="#E41B17"
-              className="size-6"
+        <div className="border-y border-gray-500 p-2 flex justify-start gap-5">
+          <div>
+            <div
+              onMouseEnter={() => setShowReactions(true)}
+              onMouseLeave={() => setShowReactions(false)}
+              className="relative cursor-pointer flex items-center gap-2"
             >
-              <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-            </svg>
-          )}
+              <div
+                onClick={() => handleLikeClick(currentReaction || 1)}
+                className="flex items-center gap-2"
+              >
+                {isLiked && currentReaction ? (
+                  <Image
+                    alt="emojis"
+                    src={
+                      reactions.find((r) => r.id === currentReaction)?.emoji ||
+                      HeartEmoji
+                    }
+                    className="text-[19px] p-0 h-6 w-6"
+                  ></Image>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                  </svg>
+                )}
+                <p>{likesCount}</p>
+              </div>
 
-          <p>{likesCount} </p>
+              {showReactions && (
+                <div className="absolute bottom-6 left-0 flex space-x-2 bg-gray-800 p-2 rounded-lg">
+                  {reactions.map((reaction) => (
+                    <div
+                      className={` h-7 w-7 cursor-pointer p-[2px] hover:scale-110 hover:bg-gray-500 rounded-full ${
+                        currentReaction === reaction.id && "bg-gray-500"
+                      }`}
+                      onClick={() => handleLikeClick(reaction.id)}
+                      key={reaction.id}
+                    >
+                      <Image
+                        src={reaction.emoji}
+                        alt="emoji"
+                        className="w-6 h-6"
+                      ></Image>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div
+            onClick={toggleComments}
+            className="cursor-pointer flex items-center gap-2"
+          >
+            <FaRegComment className="text-gray-300" size={20} />
+            <p>{commnetsCount} </p>
+          </div>
         </div>
-        <div
-          onClick={toggleComments}
-          className="cursor-pointer flex items-center gap-2"
-        >
-          <FaRegComment className="text-gray-300" size={20} />
-          <p>{commnetsCount} </p>
-        </div>
-      </div>
-      {postData?.content && (
-        <div className=" px-3 py-2">
-          <span className="text-sm text-gray-300">
-            {getDisplayContent()}
-            {shouldTruncate && !isExpanded && (
+        {postData?.content && (
+          <div className=" px-3 py-2">
+            <span className="text-sm text-gray-300">
+              {getDisplayContent()}
+              {shouldTruncate && !isExpanded && (
+                <button
+                  onClick={() => {
+                    toggleContent();
+                  }}
+                  className=" text-opacity-85 focus:outline-none ml-1 tracking-[0.1rem]"
+                >
+                  ...
+                </button>
+              )}
+            </span>
+            {shouldTruncate && isExpanded && (
               <button
                 onClick={() => {
                   toggleContent();
                 }}
-                className=" text-opacity-85 focus:outline-none ml-1 tracking-[0.1rem]"
+                className="text-opacity-85 focus:outline-none ml-1 tracking-[0.1rem]"
               >
                 ...
               </button>
             )}
-          </span>
-          {shouldTruncate && isExpanded && (
-            <button
-              onClick={() => {
-                toggleContent();
-              }}
-              className="text-opacity-85 focus:outline-none ml-1 tracking-[0.1rem]"
-            >
-              ...
-            </button>
-          )}
-        </div>
-      )}
+          </div>
+        )}
 
-      {showComments && (
-        <div className="p-3 border-t border-gray-600 ">
-          {loadingComments ? (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
-              <div
-                className="animate-spin inline-block text-center w-12 h-12 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
-                role="status"
-                aria-label="loading"
-              >
-                <span className="sr-only">Loading...</span>
-              </div>
-            </div>
-          ) : (
-            comments?.map((comment) => (
-              <div key={comment?.id} className="mb-3">
+        {showComments && (
+          <div className="p-3 border-t border-gray-600 ">
+            {loadingComments ? (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
                 <div
-                  className=" flex cursor-pointer"
-                  onClick={() => navigateToProfile(comment?.userId)}
+                  className="animate-spin inline-block text-center w-12 h-12 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
+                  role="status"
+                  aria-label="loading"
                 >
-                  <div className="mr-3 ">
-                    {comment?.User?.profile_picture ? (
-                      <img
-                        src={comment?.User?.profile_picture}
-                        alt="profile"
-                        className="w-6 h-6 rounded-full"
-                        onDragStart={(e) => e.preventDefault()}
-                      />
-                    ) : (
-                      <UserProfilePicture
-                        fullName={comment.User?.full_name}
-                        size={28}
-                      />
-                    )}
-                  </div>
-
-                  <span className="m-0 font-bold  text-gray-500 text-sm">
-                    @{comment.User?.username}
-                  </span>
+                  <span className="sr-only">Loading...</span>
                 </div>
-                <p className="ml-10 text-sm text-gray-300">
-                  {comment?.comment}
-                </p>
               </div>
-            ))
-          )}
+            ) : (
+              comments?.map((comment) => (
+                <div key={comment?.id} className="mb-3">
+                  <div
+                    className=" flex cursor-pointer"
+                    onClick={() => navigateToProfile(comment?.userId)}
+                  >
+                    <div className="mr-3 ">
+                      {comment?.User?.profile_picture ? (
+                        <img
+                          src={comment?.User?.profile_picture}
+                          alt="profile"
+                          className="w-6 h-6 rounded-full"
+                          onDragStart={(e) => e.preventDefault()}
+                        />
+                      ) : (
+                        <UserProfilePicture
+                          fullName={comment.User?.full_name}
+                          size={28}
+                        />
+                      )}
+                    </div>
 
-          <div className="mt-3 flex items-center gap-2">
-            <input
-              type="text"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              onKeyDown={(e) => handleKeyDown(e)}
-              placeholder="Write a comment..."
-              className="flex-grow bg-black rounded px-2 py-1 text-white"
-            />
-            <button
-              onClick={handleCommentSubmit}
-              disabled={!commentText.trim()}
-            >
-              <IoSend size={20} />
-            </button>
-          </div>
-        </div>
-      )}
-      {showConfirmation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-black border border-gray-400 p-5 rounded-md shadow-md max-w-sm mx-auto">
-            <p className="text-center text-gray-300 mb-4 pb-3">
-              <strong>Are you sure you want to delete this post?</strong>
-            </p>
-            <div className="flex justify-center gap-5 ">
+                    <span className="m-0 font-bold  text-gray-500 text-sm">
+                      @{comment.User?.username}
+                    </span>
+                  </div>
+                  <p className="ml-10 text-sm text-gray-300">
+                    {comment?.comment}
+                  </p>
+                </div>
+              ))
+            )}
+
+            <div className="mt-3 flex items-center gap-2">
+              <input
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e)}
+                placeholder="Write a comment..."
+                className="flex-grow bg-black rounded px-2 py-1 text-white"
+              />
               <button
-                className="px-3 py-2 bg-gray-600 text-gray-200 rounded hover:bg-gray-500 focus:outline-none transition"
-                onClick={() => setShowConfirmation(false)}
+                onClick={handleCommentSubmit}
+                disabled={!commentText.trim()}
               >
-                Cancel
-              </button>
-              <button
-                className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none transition"
-                onClick={confirmDelete}
-              >
-                Delete
+                <IoSend size={20} />
               </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+        {showConfirmation && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-black border border-gray-400 p-5 rounded-md shadow-md max-w-sm mx-auto">
+              <p className="text-center text-gray-300 mb-4 pb-3">
+                <strong>Are you sure you want to delete this post?</strong>
+              </p>
+              <div className="flex justify-center gap-5 ">
+                <button
+                  className="px-3 py-2 bg-gray-600 text-gray-200 rounded hover:bg-gray-500 focus:outline-none transition"
+                  onClick={() => setShowConfirmation(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none transition"
+                  onClick={confirmDelete}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
