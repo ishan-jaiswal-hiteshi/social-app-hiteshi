@@ -25,8 +25,8 @@ export default {
         spaceGrotesk: ["Space Grotesk", "sans-serif"],
       },
       screens: {
-        'above-1148': '1148px', 
-        'above-1450': '1450px', 
+        "above-1148": "1148px",
+        "above-1450": "1450px",
       },
     },
   },

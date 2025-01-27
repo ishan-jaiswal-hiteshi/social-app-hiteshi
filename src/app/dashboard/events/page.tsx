@@ -26,7 +26,7 @@ const Page = () => {
   const fetchAllEvents = async () => {
     try {
       const response = await axiosInstance.get<{ events: Event[] }>(
-        "get-events"
+        "get-events",
       );
       if (response && response.data) {
         if (response.data.events.length > 0 && !selectedEvent) {

@@ -1,3 +1,5 @@
+"use client";
+
 import Auth from "../components/Auth/authLogic";
 export default function Home() {
   return (

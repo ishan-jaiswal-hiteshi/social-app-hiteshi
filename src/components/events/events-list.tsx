@@ -23,7 +23,7 @@ const AllEventsList: React.FC<AllEventsListProps> = ({
     setLoading(true);
     try {
       const response = await axiosInstance.get<{ events: Event[] }>(
-        "get-events"
+        "get-events",
       );
       if (response && response.data) {
         setEvents(response.data.events);

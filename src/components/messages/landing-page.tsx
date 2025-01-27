@@ -85,8 +85,8 @@ const LandingPage = () => {
             Easy meetings with anyone
           </h3>
           <p className="text-gray-500 text-sm text-center mb-4">
-            Share the invite with anyone even if they aren’t on Skype. No sign
-            ups or downloads required.
+            Share the invite with anyone even if they aren't on
+            Socialize@Hiteshi. No downloads required.
           </p>
           {/* <Link href={"./users"}>
             <button className="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700">
@@ -104,8 +104,8 @@ const LandingPage = () => {
           />
           <h3 className="text-lg font-semibold mb-2">Chat with anyone</h3>
           <p className="text-gray-500 text-sm text-center mb-4">
-            Skype to Skype calls are always free, but you can also call mobiles
-            and landlines from Skype at great low rates.
+            Chats on Socialize@Hiteshi are always free. Stay connected anytime,
+            anywhere with seamless messaging.
           </p>
           {/* <Link href={"./messages"}>
             <button className="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700">

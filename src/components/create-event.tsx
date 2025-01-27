@@ -56,7 +56,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         );
         if (mediaResponse && mediaResponse.data?.mediaUrl) {
           mediaUrls.push(mediaResponse.data?.mediaUrl);
@@ -74,7 +74,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
 
       const eventResponse = await axiosInstance.post(
         "/create-event",
-        uploadData
+        uploadData,
       );
 
       if (eventResponse) {

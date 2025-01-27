@@ -26,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(
-        `/get-connected-user/${user?.id}`
+        `/get-connected-user/${user?.id}`,
       );
       if (response && response?.data) {
         setUsers(response?.data?.users);

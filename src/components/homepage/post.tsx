@@ -100,11 +100,11 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     const swipeThreshold = 50;
     if (start - end > swipeThreshold) {
       setCurrentSlide((prev) =>
-        prev === postData.mediaUrls.length - 1 ? 0 : prev + 1
+        prev === postData.mediaUrls.length - 1 ? 0 : prev + 1,
       );
     } else if (end - start > swipeThreshold) {
       setCurrentSlide((prev) =>
-        prev === 0 ? postData.mediaUrls.length - 1 : prev - 1
+        prev === 0 ? postData.mediaUrls.length - 1 : prev - 1,
       );
     }
   };
@@ -170,7 +170,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   useEffect(() => {
     if (postData?.PostLikes && user?.id) {
       const userLike = postData.PostLikes.find(
-        (like) => like?.userId === user?.id
+        (like) => like?.userId === user?.id,
       );
 
       setIsLiked(!!userLike);
@@ -236,7 +236,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   const handleDeletePost = async () => {
     try {
       const response = await axiosInstance.delete(
-        `/delete-post/${postData?.id}`
+        `/delete-post/${postData?.id}`,
       );
 
       if (response) {

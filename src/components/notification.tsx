@@ -35,7 +35,7 @@ const Notifications = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        `/get-my-notification/${user?.id}`
+        `/get-my-notification/${user?.id}`,
       );
       setNotifications(response?.data?.notifications || []);
     } catch (error) {
@@ -70,7 +70,7 @@ const Notifications = () => {
   const handleNotificationClick = (
     type: string,
     userId?: number,
-    postId?: number
+    postId?: number,
   ) => {
     if (type === "like" || type === "comment") {
       if (postId) router.push(`/dashboard/home/${postId}`);
@@ -121,7 +121,7 @@ const Notifications = () => {
                       handleNotificationClick(
                         notification.type,
                         notification?.notifyData?.user?.id || 0,
-                        notification?.notifyData?.postId || 0
+                        notification?.notifyData?.postId || 0,
                       )
                     }
                   >

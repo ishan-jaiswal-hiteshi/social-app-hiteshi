@@ -37,7 +37,7 @@ interface NotificationContextType {
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -62,14 +62,14 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   const [eventNotifications, setEventNotifications] = useState<number>(0);
 
   const saveMessageNotifications = (
-    updater: (prev: Record<number, number>) => Record<number, number>
+    updater: (prev: Record<number, number>) => Record<number, number>,
   ) => {
     setMessageNotifications((prev) => {
       const updatedNotifications = updater(prev);
       if (typeof window !== "undefined") {
         localStorage.setItem(
           "messageNotifications",
-          JSON.stringify(updatedNotifications)
+          JSON.stringify(updatedNotifications),
         );
       }
       return updatedNotifications;
@@ -82,7 +82,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
       if (typeof window !== "undefined") {
         localStorage.setItem(
           "messageNotifications",
-          JSON.stringify(updatedNotifications)
+          JSON.stringify(updatedNotifications),
         );
       }
 
@@ -148,7 +148,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
       if (typeof window !== "undefined") {
         localStorage.setItem(
           "postNotifications",
-          JSON.stringify(postNotifications)
+          JSON.stringify(postNotifications),
         );
       }
     };
@@ -162,7 +162,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
       if (typeof window !== "undefined") {
         localStorage.setItem(
           "eventNotifications",
-          JSON.stringify(eventNotifications)
+          JSON.stringify(eventNotifications),
         );
       }
     };
@@ -179,7 +179,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   const getMyNotification = async () => {
     try {
       const response = await axiosInstance.get(
-        `/is-my-notification/${user?.id}`
+        `/is-my-notification/${user?.id}`,
       );
       if (response) {
         setMyNotification(response?.data?.status);
@@ -231,7 +231,7 @@ export const useNotification = () => {
   const context = useContext(NotificationContext);
   if (!context) {
     throw new Error(
-      "useNotification must be used within a NotificationProvider"
+      "useNotification must be used within a NotificationProvider",
     );
   }
   return context;
