@@ -224,7 +224,7 @@ const SidebarLayout = () => {
           <div className=" bg-black text-white px-4 py-4 rounded-lg shadow-lg max-w-md w-full mx-4 border  border-gray-500">
             <p className="text-center text-gray-300 mb-4 pb-3">
               <strong>
-                Are you sure you want Logout from Socialize@Hiteshi?
+                Are you sure you want to log out from Socialize@Hiteshi?
               </strong>
             </p>
             <div className="flex justify-center gap-5 ">

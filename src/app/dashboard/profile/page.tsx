@@ -409,7 +409,7 @@ export default function ProfilePage() {
           <div className="bg-black border border-gray-400 p-5 rounded-md shadow-md max-w-sm mx-auto">
             <p className="text-center text-gray-300 mb-4 pb-3">
               <strong>
-                Are you sure you want Logout from Socialize@Hiteshi?
+                Are you sure you want to log out from Socialize@Hiteshi?
               </strong>
             </p>
             <div className="flex justify-center gap-5 ">
