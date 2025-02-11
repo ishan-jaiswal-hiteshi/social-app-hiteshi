@@ -33,7 +33,7 @@ export const receiveMessages = (
       profile_picture: string;
     };
     timestamp: string;
-  }) => void
+  }) => void,
 ) => {
   socket.off("receiveMessage");
   socket.on("receiveMessage", callback);
@@ -44,7 +44,7 @@ export const receiveNotifications = (
     sender_id: number;
     receiver_id: number;
     unreadMessagesCount: number;
-  }) => void
+  }) => void,
 ) => {
   socket.off("newNotification");
   socket.on("newNotification", callback);
@@ -87,7 +87,7 @@ export const isMessageDelete = (
     receiver_id: number;
     message: string;
     timestamp: string;
-  }) => void
+  }) => void,
 ) => {
   socket.off("messageDeleted");
   socket.on("messageDeleted", callback);

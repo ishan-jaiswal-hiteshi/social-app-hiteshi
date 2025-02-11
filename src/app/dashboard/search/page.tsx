@@ -67,7 +67,7 @@ const SearchPage = () => {
       setLoadingPosts(true);
 
       const response = await axiosInstance.get(
-        `/search/${query.toLowerCase()}`
+        `/search/${query.toLowerCase()}`,
       );
       if (response?.data?.results) {
         setUsers(response.data.results.users || []);
@@ -93,7 +93,7 @@ const SearchPage = () => {
         timer = setTimeout(() => handleSearch(query), 500);
       };
     })(),
-    []
+    [],
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,14 +190,16 @@ const SearchPage = () => {
                     <UserCardSkeleton key={index} />
                   ))
                 : users.length > 0
-                ? users.map((userData) => {
-                    return user?.id !== userData.id ? (
-                      <UserCardGrid key={userData.id} userData={userData} />
-                    ) : null;
-                  })
-                : !loadingUsers && (
-                    <p className="col-span-full text-center">No users found</p>
-                  )}
+                  ? users.map((userData) => {
+                      return user?.id !== userData.id ? (
+                        <UserCardGrid key={userData.id} userData={userData} />
+                      ) : null;
+                    })
+                  : !loadingUsers && (
+                      <p className="col-span-full text-center">
+                        No users found
+                      </p>
+                    )}
               {!isSearching &&
                 !loadingUsers &&
                 users.length > 0 &&
@@ -224,17 +226,17 @@ const SearchPage = () => {
                   </div>
                 ))
               : posts.length > 0
-              ? posts.map((post) => {
-                  return user?.id !== post.userId ? (
-                    <div
-                      key={post.id}
-                      className="lg:w-96 md:w-80 sm:w-72 col-span-1"
-                    >
-                      <Post postData={post} onDeletePost={handlePostDelete} />
-                    </div>
-                  ) : null;
-                })
-              : !loadingPosts && <></>}
+                ? posts.map((post) => {
+                    return user?.id !== post.userId ? (
+                      <div
+                        key={post.id}
+                        className="lg:w-96 md:w-80 sm:w-72 col-span-1"
+                      >
+                        <Post postData={post} onDeletePost={handlePostDelete} />
+                      </div>
+                    ) : null;
+                  })
+                : !loadingPosts && <></>}
 
             {!isSearching &&
               !loadingPosts &&

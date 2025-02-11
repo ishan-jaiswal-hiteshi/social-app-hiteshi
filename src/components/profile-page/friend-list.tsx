@@ -66,7 +66,7 @@ const FriendsList: React.FC<FriendsListProps> = ({ users }) => {
         {!loading && users && users.length > 0
           ? users.map((user) => {
               const isFollowing = followings.some(
-                (data) => data.id === user.id
+                (data) => data.id === user.id,
               );
               return (
                 <UserCardList

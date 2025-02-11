@@ -29,7 +29,7 @@ const PostList = () => {
 
       if (fetchedPosts.length > 0) {
         setPosts((prev) =>
-          pageNumber === 1 ? fetchedPosts : [...prev, ...fetchedPosts]
+          pageNumber === 1 ? fetchedPosts : [...prev, ...fetchedPosts],
         );
         setHasMore(fetchedPosts.length >= 4);
         setLoading(false);

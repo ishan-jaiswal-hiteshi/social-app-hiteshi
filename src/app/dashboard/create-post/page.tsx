@@ -1,3 +1,4 @@
+"use client";
 import CreatePost from "@/components/createPost";
 import React from "react";
 

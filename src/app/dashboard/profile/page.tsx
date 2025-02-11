@@ -80,7 +80,7 @@ export default function ProfilePage() {
   }, [user]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -166,7 +166,7 @@ export default function ProfilePage() {
       }
       if (files.cover_picture) {
         updateData.other_data.cover_picture = await uploadFile(
-          files.cover_picture
+          files.cover_picture,
         );
       }
 
@@ -391,7 +391,7 @@ export default function ProfilePage() {
                         dangerouslySetInnerHTML={{
                           __html: profileData?.other_data?.bio?.replace(
                             /\n/g,
-                            "<br/>"
+                            "<br/>",
                           ),
                         }}
                       ></p>
@@ -409,7 +409,7 @@ export default function ProfilePage() {
           <div className="bg-black border border-gray-400 p-5 rounded-md shadow-md max-w-sm mx-auto">
             <p className="text-center text-gray-300 mb-4 pb-3">
               <strong>
-                Are you sure you want Logout from Socialize@Hiteshi?
+                Are you sure you want to log out from Socialize@Hiteshi?
               </strong>
             </p>
             <div className="flex justify-center gap-5 ">

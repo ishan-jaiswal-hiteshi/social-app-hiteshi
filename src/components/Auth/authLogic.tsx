@@ -60,7 +60,7 @@ export default function Auth() {
       }
     } catch (err: any) {
       setError(
-        err?.response?.data?.message || "Failed to send OTP. Please try again."
+        err?.response?.data?.message || "Failed to send OTP. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -115,7 +115,8 @@ export default function Auth() {
       }
     } catch (err: any) {
       setError(
-        err.response?.data?.message || "Failed to verify OTP. Please try again."
+        err.response?.data?.message ||
+          "Failed to verify OTP. Please try again.",
       );
       setLoading(false);
     }

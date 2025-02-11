@@ -158,7 +158,7 @@ const UserProfile = () => {
   const checkFollowingStatus = async () => {
     try {
       const response = await axiosInstance.get(
-        `check-following/${user?.id}/${userId}`
+        `check-following/${user?.id}/${userId}`,
       );
       if (response && response.data) {
         setIsFollowing(response?.data?.isFollowing);
@@ -171,7 +171,7 @@ const UserProfile = () => {
   const checkFriends = async () => {
     try {
       const response = await axiosInstance.get(
-        `is-user-connected/${user?.id}/${userId}`
+        `is-user-connected/${user?.id}/${userId}`,
       );
       if (response && response.data) {
         setIsFriend(response?.data?.isConnected);
@@ -373,7 +373,7 @@ const UserProfile = () => {
                         dangerouslySetInnerHTML={{
                           __html: userData?.other_data?.bio?.replace(
                             /\n/g,
-                            "<br/>"
+                            "<br/>",
                           ),
                         }}
                       ></p>

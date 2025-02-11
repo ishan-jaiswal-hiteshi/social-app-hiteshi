@@ -27,7 +27,7 @@ const CreatePost = () => {
   };
 
   const handleContentChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     setContent(event.target.value);
   };
@@ -55,7 +55,7 @@ const CreatePost = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       if (mediaResponse && mediaResponse.data?.mediaUrls) {
@@ -67,7 +67,7 @@ const CreatePost = () => {
 
         const postResponse = await axiosInstance.post(
           "/create-post",
-          uploadData
+          uploadData,
         );
 
         if (postResponse) {

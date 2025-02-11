@@ -94,7 +94,7 @@ const UsersList: React.FC = () => {
 
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore]
+    [loading, hasMore],
   );
 
   useEffect(() => {
@@ -113,7 +113,7 @@ const UsersList: React.FC = () => {
       <div className="m-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {users.map((userData, index) => {
           const isFollowing = followings.some(
-            (data) => data.id === userData.id
+            (data) => data.id === userData.id,
           );
 
           const isLastUser = users.length === index + 1;

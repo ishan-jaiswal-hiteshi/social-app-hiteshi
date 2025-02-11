@@ -6,7 +6,7 @@ interface UserProfileProps {
 }
 
 const UserProfilePicture: React.FC<UserProfileProps> = ({
-  fullName = "Hiteshi User",
+  fullName = "Hiteshi",
   size,
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -24,7 +24,7 @@ const UserProfilePicture: React.FC<UserProfileProps> = ({
   const nameParts = fullName?.trim().split(" ") || [];
   const firstName = nameParts[0] || "Hiteshi";
   const lastName =
-    nameParts?.length > 1 ? nameParts?.slice(1).join(" ") : "User";
+    nameParts?.length > 1 ? nameParts?.slice(1).join(" ") : "";
 
   const initials = `${firstName?.charAt(0).toUpperCase()}${lastName
     ?.charAt(0)

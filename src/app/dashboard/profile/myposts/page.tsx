@@ -19,7 +19,7 @@ const MyPosts: React.FC = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        `/get-post-by-userId/${user.id}`
+        `/get-post-by-userId/${user.id}`,
       );
       if (response?.data) {
         setPosts(response?.data?.posts);
