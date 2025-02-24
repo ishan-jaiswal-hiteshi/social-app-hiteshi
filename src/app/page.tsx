@@ -1,7 +1,21 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
 import Auth from "../components/Auth/authLogic";
+import { useEffect } from "react";
+
 export default function Home() {
+  const router = useRouter();
+  const pathname = usePathname();
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (pathname === "/" && token) {
+      router.push("/dashboard/home");
+    } else if (!token) {
+      router.push("/");
+    }
+  }, [router, pathname]);
+
   return (
     <div
       className="min-h-screen bg-black text-white flex items-center justify-center"

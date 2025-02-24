@@ -17,6 +17,7 @@ export const sendMessage = (message: {
   sender_id: number;
   receiver_id: number;
   message: string;
+  media: string;
 }) => {
   socket.emit("sendMessage", JSON.stringify(message));
 };
@@ -26,6 +27,8 @@ export const receiveMessages = (
     sender_id: number;
     receiver_id: number;
     message: string;
+    media: string;
+
     senderInfo: {
       id: number;
       username: string;
@@ -33,7 +36,7 @@ export const receiveMessages = (
       profile_picture: string;
     };
     timestamp: string;
-  }) => void,
+  }) => void
 ) => {
   socket.off("receiveMessage");
   socket.on("receiveMessage", callback);
@@ -44,7 +47,7 @@ export const receiveNotifications = (
     sender_id: number;
     receiver_id: number;
     unreadMessagesCount: number;
-  }) => void,
+  }) => void
 ) => {
   socket.off("newNotification");
   socket.on("newNotification", callback);
@@ -86,8 +89,9 @@ export const isMessageDelete = (
     sender_id: number;
     receiver_id: number;
     message: string;
+    media: string;
     timestamp: string;
-  }) => void,
+  }) => void
 ) => {
   socket.off("messageDeleted");
   socket.on("messageDeleted", callback);

@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import Head from "next/head";
-import { AuthProvider } from "@/context/authContext";
-import { NotificationProvider } from "@/context/notificationContext";
 
 export const metadata: Metadata = {
   title: "Socialize@Hiteshi",
@@ -21,9 +19,7 @@ export default function RootLayout({
         <link rel="icon" href="./favicon.ico" />
       </Head>
       <body className={`antialiased font-spaceGrotesk background`}>
-        <AuthProvider>
-          <NotificationProvider>{children}</NotificationProvider>
-        </AuthProvider>
+        {children}
       </body>
     </html>
   );

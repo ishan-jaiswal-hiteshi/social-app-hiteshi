@@ -23,6 +23,7 @@ export default function ProfilePage() {
   const [isFollowingOpen, setIsFollowingOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [files, setFiles] = useState<FilesState>({});
+
   const [previews, setPreviews] = useState<{
     profile_picture?: string;
     cover_picture?: string;
@@ -32,16 +33,15 @@ export default function ProfilePage() {
     full_name: "",
     username: "",
     profile_picture: "",
-    other_data: {
-      cover_picture: "",
-      location: "",
-      job_title: "",
-      university: "",
-      bio: "",
-      friends: 0,
-      followings: 0,
-      posts: 0,
-    },
+    cover_picture: "",
+    location: "",
+    job_title: "",
+    university: "",
+    bio: "",
+    friends: 0,
+    followings: 0,
+    posts: 0,
+    other_data: {},
   });
 
   const [editData, setEditData] = useState(profileData);
@@ -63,16 +63,15 @@ export default function ProfilePage() {
         full_name: user.full_name || "",
         username: user.username || "",
         profile_picture: user?.profile_picture || "",
-        other_data: {
-          cover_picture: user?.other_data?.cover_picture || "",
-          location: user?.other_data?.location || "",
-          job_title: user?.other_data?.job_title || "",
-          university: user?.other_data?.university || "",
-          bio: user?.other_data?.bio || "",
-          friends: user?.other_data?.friends || 0,
-          followings: user?.other_data?.followings || 0,
-          posts: user?.other_data?.posts || 0,
-        },
+        cover_picture: user?.cover_picture || "",
+        location: user?.location || "",
+        job_title: user?.job_title || "",
+        university: user?.university || "",
+        bio: user?.bio || "",
+        friends: user?.friends || 0,
+        followings: user?.followings || 0,
+        posts: user?.posts || 0,
+        other_data: user.other_data || {},
       });
 
       setLoading(false);
@@ -80,19 +79,11 @@ export default function ProfilePage() {
   }, [user]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
 
-    if (name === "full_name" || name === "username") {
-      setEditData((prev) => ({ ...prev, [name]: value }));
-    } else if (name.startsWith("other_data.")) {
-      const field = name.split(".")[1];
-      setEditData((prev) => ({
-        ...prev,
-        other_data: { ...prev.other_data, [field]: value },
-      }));
-    }
+    setEditData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,9 +126,8 @@ export default function ProfilePage() {
         if (profileData?.profile_picture) {
           initialPreviews["profile_picture"] = profileData?.profile_picture;
         }
-        if (profileData?.other_data?.cover_picture) {
-          initialPreviews["cover_picture"] =
-            profileData?.other_data?.cover_picture;
+        if (profileData?.cover_picture) {
+          initialPreviews["cover_picture"] = profileData?.cover_picture;
         }
 
         setPreviews(initialPreviews);
@@ -165,9 +155,7 @@ export default function ProfilePage() {
         updateData.profile_picture = await uploadFile(files.profile_picture);
       }
       if (files.cover_picture) {
-        updateData.other_data.cover_picture = await uploadFile(
-          files.cover_picture,
-        );
+        updateData.cover_picture = await uploadFile(files.cover_picture);
       }
 
       const response = await axiosInstance.post("/profile-update", updateData);
@@ -243,7 +231,7 @@ export default function ProfilePage() {
           <div
             className="absolute top-0 w-full h-full bg-center bg-cover"
             style={{
-              backgroundImage: `url(${profileData?.other_data?.cover_picture})`,
+              backgroundImage: `url(${profileData?.cover_picture})`,
               backgroundSize: "contain",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
@@ -328,7 +316,7 @@ export default function ProfilePage() {
                       <div className="mr-4 p-3 text-center">
                         <button onClick={handleFriendsToggle}>
                           <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                            {profileData?.other_data?.friends}
+                            {profileData?.friends}
                           </span>
                           <span className="text-sm text-blueGray-400">
                             Friends
@@ -339,7 +327,7 @@ export default function ProfilePage() {
                       <div className="mr-4 p-3 text-center">
                         <Link href="/dashboard/profile//myposts">
                           <span className="cursor-pointer text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                            {profileData?.other_data?.posts}
+                            {profileData?.posts}
                           </span>
                           <span className="text-sm text-blueGray-400">
                             Posts
@@ -349,7 +337,7 @@ export default function ProfilePage() {
                       <div className="lg:mr-4 p-3 text-center">
                         <button onClick={handleFollowingToggle}>
                           <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                            {profileData?.other_data?.followings}
+                            {profileData?.followings}
                           </span>
                           <span className="text-sm text-blueGray-400">
                             Following
@@ -367,20 +355,19 @@ export default function ProfilePage() {
                     {profileData?.full_name}
                   </h3>
                   <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
-                    {profileData?.other_data?.location}
+                    {profileData?.location}
                   </div>
-                  {(profileData?.other_data?.job_title ||
-                    profileData?.other_data?.university) && (
+                  {(profileData?.job_title || profileData?.university) && (
                     <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
                   )}
                   <div className="mb-2 text-blueGray-600 mt-2">
-                    {profileData?.other_data?.job_title}
+                    {profileData?.job_title}
                   </div>
                   <div className="mb-2 text-blueGray-600">
-                    {profileData?.other_data?.university}
+                    {profileData?.university}
                   </div>
                 </div>
-                {profileData?.other_data?.bio && (
+                {profileData?.bio && (
                   <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
                 )}
                 <div className="text-center mb-4">
@@ -389,10 +376,7 @@ export default function ProfilePage() {
                       <p
                         className="text-lg leading-relaxed text-blueGray-700"
                         dangerouslySetInnerHTML={{
-                          __html: profileData?.other_data?.bio?.replace(
-                            /\n/g,
-                            "<br/>",
-                          ),
+                          __html: profileData?.bio?.replace(/\n/g, "<br/>"),
                         }}
                       ></p>
                     </div>
@@ -496,8 +480,8 @@ export default function ProfilePage() {
                 <label className="block text-sm font-medium">Location</label>
                 <input
                   type="text"
-                  name="other_data.location"
-                  value={editData.other_data.location}
+                  name="location"
+                  value={editData?.location}
                   placeholder="Indore."
                   onChange={handleInputChange}
                   className="w-full p-2  rounded bg-gray-700 text-white"
@@ -507,8 +491,8 @@ export default function ProfilePage() {
                 <label className="block text-sm font-medium">Job Title</label>
                 <input
                   type="text"
-                  name="other_data.job_title"
-                  value={editData.other_data.job_title}
+                  name="job_title"
+                  value={editData?.job_title}
                   placeholder="Marketing Manager."
                   onChange={handleInputChange}
                   className="w-full p-2  rounded bg-gray-700 text-white"
@@ -518,8 +502,8 @@ export default function ProfilePage() {
                 <label className="block text-sm font-medium">University</label>
                 <input
                   type="text"
-                  name="other_data.university"
-                  value={editData.other_data.university}
+                  name="university"
+                  value={editData?.university}
                   placeholder="University of Florida."
                   onChange={handleInputChange}
                   className="w-full p-2  rounded bg-gray-700 text-white"
@@ -528,8 +512,8 @@ export default function ProfilePage() {
               <div className="mb-4">
                 <label className="block text-sm font-medium">Bio</label>
                 <textarea
-                  name="other_data.bio"
-                  value={editData.other_data.bio}
+                  name="bio"
+                  value={editData?.bio}
                   placeholder="Birth day on 02 Aug."
                   onChange={handleInputChange}
                   className="w-full p-2  rounded bg-gray-700 text-white"
