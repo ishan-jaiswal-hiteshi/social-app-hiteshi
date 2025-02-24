@@ -100,11 +100,11 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     const swipeThreshold = 50;
     if (start - end > swipeThreshold) {
       setCurrentSlide((prev) =>
-        prev === postData.mediaUrls.length - 1 ? 0 : prev + 1,
+        prev === postData.mediaUrls.length - 1 ? 0 : prev + 1
       );
     } else if (end - start > swipeThreshold) {
       setCurrentSlide((prev) =>
-        prev === 0 ? postData.mediaUrls.length - 1 : prev - 1,
+        prev === 0 ? postData.mediaUrls.length - 1 : prev - 1
       );
     }
   };
@@ -128,26 +128,34 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
 
   const formatContentWithHashtags = (content: string) => {
     const hashtagRegex = /#\w+/g;
-    const parts = content?.split(hashtagRegex);
 
-    const hashtags = content?.match(hashtagRegex) || [];
-
-    return parts?.map((part, index) => (
-      <span key={index}>
-        {part}
-        {hashtags[index] && (
-          <span className="text-blue-400">{` ${hashtags[index]}`}</span>
-        )}
-      </span>
+    return content.split("\n").map((line, lineIndex) => (
+      <p key={lineIndex} className="whitespace-pre-line">
+        {line.split(hashtagRegex).map((part, index) => (
+          <span key={index}>
+            {part}
+            {line.match(hashtagRegex)?.[index] && (
+              <span className="text-blue-400">{` ${
+                line.match(hashtagRegex)?.[index] || ""
+              }`}</span>
+            )}
+          </span>
+        ))}
+      </p>
     ));
   };
 
   const getDisplayContent = () => {
     if (!postData?.content) return "";
+
     if (isExpanded || !shouldTruncate)
       return formatContentWithHashtags(postData.content);
 
-    return postData.content.split(" ").slice(0, wordLimit).join(" ");
+    const truncatedText = postData.content
+      .split(" ")
+      .slice(0, wordLimit)
+      .join(" ");
+    return formatContentWithHashtags(truncatedText);
   };
 
   const toggleComments = async () => {
@@ -167,10 +175,44 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
     setShowComments((prev) => !prev);
   };
 
+  const renderCommentWithLinks = (text: string) => {
+    const urlRegex =
+      /(https?:\/\/[^\s]+)|((www\.[^\s]+)|([^\s]+\.(com|in|net|org|io|co|edu|gov|info|me|xyz|dev|app)))/gi;
+
+    let lastIndex = 0;
+    const parts = [];
+
+    for (const match of text.matchAll(urlRegex)) {
+      const url = match[0];
+
+      parts.push(text.slice(lastIndex, match.index));
+
+      const formattedUrl = url.startsWith("http") ? url : `https://${url}`;
+
+      parts.push(
+        <a
+          key={lastIndex}
+          href={formattedUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 hover:underline"
+        >
+          {url}
+        </a>
+      );
+
+      lastIndex = (match.index ?? 0) + url.length;
+    }
+
+    parts.push(text.slice(lastIndex));
+
+    return <>{parts}</>;
+  };
+
   useEffect(() => {
     if (postData?.PostLikes && user?.id) {
       const userLike = postData.PostLikes.find(
-        (like) => like?.userId === user?.id,
+        (like) => like?.userId === user?.id
       );
 
       setIsLiked(!!userLike);
@@ -236,7 +278,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
   const handleDeletePost = async () => {
     try {
       const response = await axiosInstance.delete(
-        `/delete-post/${postData?.id}`,
+        `/delete-post/${postData?.id}`
       );
 
       if (response) {
@@ -244,10 +286,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
           if (!prevUser) return null;
           return {
             ...prevUser,
-            other_data: {
-              ...prevUser.other_data,
-              posts: (prevUser.other_data?.posts || 0) - 1,
-            },
+            posts: (prevUser?.posts || 0) - 1,
           };
         });
         toast.success(response?.data?.message);
@@ -557,7 +596,7 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                     </span>
                   </div>
                   <p className="ml-10 text-sm text-gray-300">
-                    {comment?.comment}
+                    {renderCommentWithLinks(comment?.comment)}
                   </p>
                 </div>
               ))

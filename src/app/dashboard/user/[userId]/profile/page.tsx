@@ -26,20 +26,18 @@ const UserProfile = () => {
     username: "",
     id: 0,
     email: "",
-    otp: "",
     createdAt: "",
     updatedAt: "",
     profile_picture: "",
-    other_data: {
-      cover_picture: "",
-      location: "",
-      job_title: "",
-      university: "",
-      bio: "",
-      friends: 0,
-      followings: 0,
-      posts: 0,
-    },
+    cover_picture: "",
+    location: "",
+    job_title: "",
+    university: "",
+    bio: "",
+    friends: 0,
+    followings: 0,
+    posts: 0,
+    other_data: {},
   });
 
   useEffect(() => {
@@ -103,18 +101,12 @@ const UserProfile = () => {
         if (!prevUser) return null;
         return {
           ...prevUser,
-          other_data: {
-            ...prevUser.other_data,
-            followings: (prevUser.other_data?.followings || 0) + 1,
-          },
+          followings: (prevUser?.followings || 0) + 1,
         };
       });
       setUserData((prevUserData) => ({
         ...prevUserData,
-        other_data: {
-          ...prevUserData.other_data,
-          friends: (prevUserData?.other_data?.friends || 0) + 1,
-        },
+        friends: (prevUserData?.friends || 0) + 1,
       }));
       setIsFollowing(true);
     } catch (err) {
@@ -134,18 +126,12 @@ const UserProfile = () => {
         if (!prevUser) return null;
         return {
           ...prevUser,
-          other_data: {
-            ...prevUser?.other_data,
-            followings: (prevUser?.other_data?.followings || 0) - 1,
-          },
+          followings: (prevUser?.followings || 0) - 1,
         };
       });
       setUserData((prevUserData) => ({
         ...prevUserData,
-        other_data: {
-          ...prevUserData.other_data,
-          friends: (prevUserData?.other_data?.friends || 0) - 1,
-        },
+        friends: (prevUserData?.friends || 0) - 1,
       }));
       setIsFollowing(false);
     } catch (err) {
@@ -158,7 +144,7 @@ const UserProfile = () => {
   const checkFollowingStatus = async () => {
     try {
       const response = await axiosInstance.get(
-        `check-following/${user?.id}/${userId}`,
+        `check-following/${user?.id}/${userId}`
       );
       if (response && response.data) {
         setIsFollowing(response?.data?.isFollowing);
@@ -171,7 +157,7 @@ const UserProfile = () => {
   const checkFriends = async () => {
     try {
       const response = await axiosInstance.get(
-        `is-user-connected/${user?.id}/${userId}`,
+        `is-user-connected/${user?.id}/${userId}`
       );
       if (response && response.data) {
         setIsFriend(response?.data?.isConnected);
@@ -204,7 +190,7 @@ const UserProfile = () => {
             className="absolute top-0 w-full h-full bg-center bg-cover"
             style={{
               backgroundImage: `url(${
-                userData?.other_data?.cover_picture ||
+                userData?.cover_picture ||
                 "https://hiteshi.com/_next/static/media/logo.9b8ca92c.png"
               })`,
               backgroundSize: "contain",
@@ -310,7 +296,7 @@ const UserProfile = () => {
                       <div className="mr-4 p-3 text-center">
                         <button onClick={handleFriendsToggle}>
                           <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                            {userData?.other_data?.friends || 0}
+                            {userData?.friends || 0}
                           </span>
                           <span className="text-sm text-blueGray-400">
                             Friends
@@ -320,7 +306,7 @@ const UserProfile = () => {
                       <div className="mr-4 p-3 text-center">
                         <Link href={`./posts`}>
                           <span className="cursor-pointer text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                            {userData?.other_data?.posts || 0}
+                            {userData?.posts || 0}
                           </span>
                           <span className="text-sm text-blueGray-400">
                             Posts
@@ -330,7 +316,7 @@ const UserProfile = () => {
                       <div className="lg:mr-4 p-3 text-center">
                         <button onClick={handleFollowingToggle}>
                           <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                            {userData?.other_data?.followings || 0}
+                            {userData?.followings || 0}
                           </span>
                           <span className="text-sm text-blueGray-400">
                             Following
@@ -349,20 +335,19 @@ const UserProfile = () => {
                     {userData?.full_name}
                   </h3>
                   <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
-                    {userData?.other_data?.location}
+                    {userData?.location}
                   </div>
-                  {(userData?.other_data?.job_title ||
-                    userData?.other_data?.university) && (
+                  {(userData?.job_title || userData?.university) && (
                     <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
                   )}
                   <div className="mb-2 text-blueGray-600 mt-2">
-                    {userData?.other_data?.job_title}
+                    {userData?.job_title}
                   </div>
                   <div className="mb-2 text-blueGray-600">
-                    {userData?.other_data?.university}
+                    {userData?.university}
                   </div>
                 </div>
-                {userData?.other_data?.bio && (
+                {userData?.bio && (
                   <hr className="w-72 h-0.5 mx-auto my-5 bg-red-500 border-0 rounded md:my-5" />
                 )}
                 <div className="text-center mb-4">
@@ -371,10 +356,7 @@ const UserProfile = () => {
                       <p
                         className="text-lg leading-relaxed text-blueGray-700"
                         dangerouslySetInnerHTML={{
-                          __html: userData?.other_data?.bio?.replace(
-                            /\n/g,
-                            "<br/>",
-                          ),
+                          __html: userData?.bio?.replace(/\n/g, "<br/>"),
                         }}
                       ></p>
                     </div>

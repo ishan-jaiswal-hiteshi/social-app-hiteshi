@@ -40,12 +40,18 @@ const EventList: React.FC = () => {
   }
 
   if (!events || events.length === 0) {
-    return <p className="text-gray-500 text-center">No events available.</p>;
+    return (
+      <div className="mt-7 mb-6 ">
+        <div className="w-full px-3 pt-4  text-center text-gray-500 my-8">
+          No events available.
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="mt-7 mb-6">
-      <div className="w-full px-3 pt-4 border-l border-gray-600">
+    <div className="mt-7 mb-6 ">
+      <div className="w-full px-3 pt-4 ">
         <h2 className="text-lg font-semibold text-white mb-2">
           Upcoming Events
         </h2>

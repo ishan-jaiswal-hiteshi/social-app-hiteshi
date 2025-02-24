@@ -27,7 +27,7 @@ const CreatePost = () => {
   };
 
   const handleContentChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
+    event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setContent(event.target.value);
   };
@@ -55,7 +55,7 @@ const CreatePost = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        },
+        }
       );
 
       if (mediaResponse && mediaResponse.data?.mediaUrls) {
@@ -67,7 +67,7 @@ const CreatePost = () => {
 
         const postResponse = await axiosInstance.post(
           "/create-post",
-          uploadData,
+          uploadData
         );
 
         if (postResponse) {
@@ -75,10 +75,7 @@ const CreatePost = () => {
             if (!prevUser) return null;
             return {
               ...prevUser,
-              other_data: {
-                ...prevUser.other_data,
-                posts: (prevUser.other_data?.posts || 0) + 1,
-              },
+              posts: (prevUser?.posts || 0) + 1,
             };
           });
           toast.success("Post Created Successfully!");

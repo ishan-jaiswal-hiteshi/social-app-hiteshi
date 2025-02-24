@@ -74,7 +74,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
 
     try {
       if (navigator.clipboard) {
-        await navigator.clipboard.writeText(msg.message);
+        await navigator.clipboard.writeText(msg?.message);
         toast.success("copied to clipboard!");
       } else {
         fallbackCopyText(msg.message);
@@ -87,7 +87,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   const handleDelete = (message: Message) => {
     setMenuVisibleMessageId(null);
     setMessages((prevMessages) =>
-      prevMessages.filter((msg) => msg.id !== message?.id),
+      prevMessages.filter((msg) => msg.id !== message?.id)
     );
     deleteMessage(message?.id);
   };
@@ -95,18 +95,18 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   const fetchMessages = async () => {
     try {
       const response = await axiosInstance.get(
-        `/get-messages/${currentUserId}/${chatUserId}`,
+        `/get-messages/${currentUserId}/${chatUserId}`
       );
       if (response?.data?.messages) {
-        const normalizedMessages = response.data.messages.map(
+        const normalizedMessages = response?.data?.messages?.map(
           (msg: Message) => ({
-            id: msg.id,
-            sender_id: msg.sender_id,
-            receiver_id: msg.receiver_id,
-            message: msg.message,
+            id: msg?.id,
+            sender_id: msg?.sender_id,
+            receiver_id: msg?.receiver_id,
+            message: msg?.message,
 
             timestamp: msg?.createdAt,
-          }),
+          })
         );
         setMessages(normalizedMessages);
       }
@@ -163,7 +163,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
           deletedMessage.receiver_id === chatUserId)
       ) {
         setMessages((prevMessages) =>
-          prevMessages.filter((msg) => msg.id !== deletedMessage?.id),
+          prevMessages.filter((msg) => msg.id !== deletedMessage?.id)
         );
       }
     };
@@ -289,7 +289,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
                         className="absolute top-1 right-0 cursor-pointer"
                         onClick={() =>
                           setMenuVisibleMessageId(
-                            menuVisibleMessageId === msg.id ? null : msg.id,
+                            menuVisibleMessageId === msg.id ? null : msg.id
                           )
                         }
                       >

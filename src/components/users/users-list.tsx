@@ -44,11 +44,16 @@ const UsersList: React.FC = () => {
       const response = await axiosInstance.get("/get-all-users", {
         params: { limit: LIMIT, offset: offsetValue },
       });
-      const fetchedUsers = response?.data?.users || [];
+
+      let fetchedUsers = response?.data?.users || [];
+
+      // Filter out the current user
+      fetchedUsers = fetchedUsers.filter((u: UserData) => u.id !== user?.id);
+
       if (fetchedUsers.length > 0) {
         setUsers((prevUsers) => {
           const updatedUsers = [...prevUsers];
-          fetchedUsers.forEach((user: any) => {
+          fetchedUsers.forEach((user: UserData) => {
             if (
               !updatedUsers.some((existingUser) => existingUser.id === user.id)
             ) {
@@ -94,7 +99,7 @@ const UsersList: React.FC = () => {
 
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore],
+    [loading, hasMore]
   );
 
   useEffect(() => {
@@ -113,27 +118,25 @@ const UsersList: React.FC = () => {
       <div className="m-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {users.map((userData, index) => {
           const isFollowing = followings.some(
-            (data) => data.id === userData.id,
+            (data) => data.id === userData.id
           );
-
           const isLastUser = users.length === index + 1;
-          const uniqueKey = `${userData.id}-${isLastUser ? "last" : ""}`;
 
           if (isLastUser) {
             return (
-              <div ref={lastUserElementRef} key={uniqueKey}>
+              <div ref={lastUserElementRef} key={userData.id}>
                 <UserCard userData={userData} followStatus={isFollowing} />
               </div>
             );
           }
 
-          return user?.id !== userData.id ? (
+          return (
             <UserCard
-              key={uniqueKey}
+              key={userData.id}
               userData={userData}
               followStatus={isFollowing}
             />
-          ) : null;
+          );
         })}
       </div>
 

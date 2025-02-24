@@ -10,7 +10,7 @@ interface EventDetailsProps {
 const EventDetails: React.FC<EventDetailsProps> = ({ selectedEvent }) => {
   if (!selectedEvent) {
     return (
-      <div className="text-gray-500 text-center my-8">
+      <div className="text-gray-500 text-center my-16">
         No event selected. Click on an event to view details.
       </div>
     );

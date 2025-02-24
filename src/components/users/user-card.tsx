@@ -42,10 +42,7 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
         if (!prevUser) return null;
         return {
           ...prevUser,
-          other_data: {
-            ...prevUser.other_data,
-            followings: (prevUser.other_data?.followings || 0) + 1,
-          },
+          followings: (prevUser?.followings || 0) + 1,
         };
       });
 
@@ -67,10 +64,7 @@ const UserCard: React.FC<UserDataProps> = ({ userData, followStatus }) => {
         if (!prevUser) return null;
         return {
           ...prevUser,
-          other_data: {
-            ...prevUser.other_data,
-            followings: (prevUser.other_data?.followings || 0) - 1,
-          },
+          followings: (prevUser?.followings || 0) - 1,
         };
       });
       setIsFollowing(false);
