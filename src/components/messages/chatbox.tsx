@@ -11,7 +11,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { IoMdSend } from "react-icons/io";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { MdMoreVert, MdDeleteOutline, MdOutlineFileCopy } from "react-icons/md";
+import {
+  MdMoreVert,
+  MdDeleteOutline,
+  MdOutlineFileCopy,
+  MdImage,
+} from "react-icons/md";
 import { toast } from "react-toastify";
 
 dayjs.extend(relativeTime);
@@ -28,6 +33,7 @@ interface Message {
   sender_id: number;
   receiver_id: number;
   message: string;
+  media: string;
   timestamp?: string;
   createdAt?: string;
 }
@@ -41,8 +47,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const { resetMessageNotification } = useNotification();
   const [message, setMessage] = useState("");
+  const [media, setMedia] = useState("");
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
   const [hoveredMessageId, setHoveredMessageId] = useState<number | null>(null);
   const [menuVisibleMessageId, setMenuVisibleMessageId] = useState<
     number | null
@@ -56,6 +65,34 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
     }
     setShowConfirmation(false);
     setMessageToDelete(null);
+  };
+
+  const uploadImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setUploading(true);
+      const response = await axiosInstance.post("/single-upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (response.data?.mediaUrl) {
+        setMedia(response?.data?.mediaUrl);
+      }
+    } catch (error) {
+      toast.error("Image upload failed!");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      uploadImage(file);
+    }
+
+    event.target.value = "";
   };
 
   const handleCopyText = async (msg: Message) => {
@@ -104,7 +141,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
             sender_id: msg?.sender_id,
             receiver_id: msg?.receiver_id,
             message: msg?.message,
-
+            media: msg?.media,
             timestamp: msg?.createdAt,
           })
         );
@@ -125,6 +162,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
       sender_id: number;
       receiver_id: number;
       message: string;
+      media: string;
       senderInfo: SenderInfo;
       timestamp: string;
     }) => {
@@ -133,6 +171,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
         sender_id: newMessage.sender_id,
         receiver_id: newMessage.receiver_id,
         message: newMessage.message,
+        media: newMessage.media,
         timestamp: newMessage.timestamp,
       };
 
@@ -176,23 +215,28 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
 
   useEffect(() => {
     resetMessageNotification(chatUserId);
-    latestMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      latestMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
     markMessagesAsRead(currentUserId, chatUserId);
   }, [messages]);
 
   const handleSend = () => {
-    if (message.trim()) {
+    if (message.trim() || media) {
       const newMessage: Message = {
         id: Date.now(),
         sender_id: currentUserId,
         receiver_id: chatUserId,
         message,
+        media,
 
         timestamp: new Date().toISOString(),
       };
       sendMessage(newMessage);
       setMessages((prev) => [...prev, newMessage]);
       setMessage("");
+      setMedia("");
+      fileInputRef.current?.focus();
       inputRef.current?.focus();
     }
   };
@@ -268,6 +312,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
                       : "bg-gray-600 text-left"
                   }`}
                 >
+                  {msg.media && (
+                    <img
+                      src={msg.media}
+                      alt="Sent media"
+                      className="mt-2 rounded-lg w-40 h-auto object-cover"
+                    />
+                  )}
                   <p
                     className="text-left"
                     dangerouslySetInnerHTML={{
@@ -325,6 +376,43 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
       </div>
 
       <div className="p-1 bg-gray-700 flex rounded-full mx-5 ">
+        <button
+          className="p-2 rounded-full text-gray-300 hover:bg-gray-600 transition "
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+        >
+          {uploading ? (
+            <div className=" flex items-center justify-center ">
+              <div
+                className="animate-spin inline-block text-center w-6 h-6 border-[3px] border-current border-t-transparent text-red-600 rounded-full dark:text-red-500"
+                role="status"
+                aria-label="loading"
+              ></div>
+            </div>
+          ) : (
+            <MdImage size={24} />
+          )}
+        </button>
+
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+        />
+
+        {media && (
+          <div className="mx-2 relative">
+            <img src={media} alt="Preview" className="w-10 h-10 rounded" />
+            <button
+              className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 text-xs"
+              onClick={() => setMedia("")}
+            >
+              ×
+            </button>
+          </div>
+        )}
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -338,11 +426,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
         <button
           onClick={handleSend}
           className={`ml-2 p-2 rounded-full ${
-            message.trim()
+            message.trim() || media
               ? "bg-red-600 text-white"
               : "bg-gray-500 text-gray-300 cursor-not-allowed"
           }`}
-          disabled={!message.trim()}
+          disabled={!message.trim() && !media}
         >
           <IoMdSend size={25} />
         </button>
