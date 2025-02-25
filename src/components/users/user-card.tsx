@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/authContext";
 import axiosInstance from "@/utils/axiosInstance";
+import { LoadingSpinner } from "@/utils/buttonLoading";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -112,68 +113,28 @@ const UserCard: React.FC<UserDataProps> = ({ userData }) => {
                   onClick={handleUnfollow}
                   className="border-gray-500 border active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  {buttonLoading ? (
-                    <div
-                      className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                      role="status"
-                      aria-label="loading"
-                    >
-                      <span className="sr-only">Loading...</span>
-                    </div>
-                  ) : (
-                    "Following"
-                  )}
+                  {buttonLoading ? <LoadingSpinner /> : "Following"}
                 </button>
-              ) : following === "pending" ? (
+              ) : following === "requested" ? (
                 <button
                   onClick={handleUnfollow}
                   className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  {buttonLoading ? (
-                    <div
-                      className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                      role="status"
-                      aria-label="loading"
-                    >
-                      <span className="sr-only">Loading...</span>
-                    </div>
-                  ) : (
-                    "Pending"
-                  )}
+                  {buttonLoading ? <LoadingSpinner /> : "Requested"}
                 </button>
               ) : following === "follow_back" ? (
                 <button
                   onClick={handleFollow}
                   className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  {buttonLoading ? (
-                    <div
-                      className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                      role="status"
-                      aria-label="loading"
-                    >
-                      <span className="sr-only">Loading...</span>
-                    </div>
-                  ) : (
-                    "Follow Back"
-                  )}
+                  {buttonLoading ? <LoadingSpinner /> : "Follow Back"}
                 </button>
               ) : (
                 <button
                   onClick={handleFollow}
                   className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  {buttonLoading ? (
-                    <div
-                      className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                      role="status"
-                      aria-label="loading"
-                    >
-                      <span className="sr-only">Loading...</span>
-                    </div>
-                  ) : (
-                    "Follow"
-                  )}
+                  {buttonLoading ? <LoadingSpinner /> : "Follow"}
                 </button>
               )}
             </div>
@@ -214,68 +175,28 @@ const UserCard: React.FC<UserDataProps> = ({ userData }) => {
                   onClick={handleUnfollow}
                   className="border-gray-500 border active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  {buttonLoading ? (
-                    <div
-                      className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                      role="status"
-                      aria-label="loading"
-                    >
-                      <span className="sr-only">Loading...</span>
-                    </div>
-                  ) : (
-                    "Following"
-                  )}
+                  {buttonLoading ? <LoadingSpinner /> : "Following"}
                 </button>
-              ) : following === "pending" ? (
+              ) : following === "requested" ? (
                 <button
                   onClick={handleUnfollow}
                   className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  {buttonLoading ? (
-                    <div
-                      className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                      role="status"
-                      aria-label="loading"
-                    >
-                      <span className="sr-only">Loading...</span>
-                    </div>
-                  ) : (
-                    "Pending"
-                  )}
+                  {buttonLoading ? <LoadingSpinner /> : "Requested"}
                 </button>
               ) : following === "follow_back" ? (
                 <button
                   onClick={handleFollow}
                   className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  {buttonLoading ? (
-                    <div
-                      className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                      role="status"
-                      aria-label="loading"
-                    >
-                      <span className="sr-only">Loading...</span>
-                    </div>
-                  ) : (
-                    "Follow Back"
-                  )}
+                  {buttonLoading ? <LoadingSpinner /> : "Follow Back"}
                 </button>
               ) : (
                 <button
                   onClick={handleFollow}
                   className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                  {buttonLoading ? (
-                    <div
-                      className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                      role="status"
-                      aria-label="loading"
-                    >
-                      <span className="sr-only">Loading...</span>
-                    </div>
-                  ) : (
-                    "Follow"
-                  )}
+                  {buttonLoading ? <LoadingSpinner /> : "Follow"}
                 </button>
               )}
             </div>

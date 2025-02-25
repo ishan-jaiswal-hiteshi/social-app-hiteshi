@@ -9,6 +9,7 @@ import FollowingListModel from "@/components/profile-page/followinglist-model";
 import Link from "next/link";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import { useAuth } from "@/context/authContext";
+import { LoadingSpinner } from "@/utils/buttonLoading";
 
 const UserProfile = () => {
   const pathname = usePathname();
@@ -38,6 +39,13 @@ const UserProfile = () => {
     posts: 0,
     other_data: {},
   });
+
+  useEffect(() => {
+    const numericUserId = Number(userId);
+    if (user?.id === numericUserId) {
+      router.push("/dashboard/profile");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -200,68 +208,28 @@ const UserProfile = () => {
                         onClick={handleRemoveFollowing}
                         className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
-                        {buttonLoading ? (
-                          <div
-                            className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                            role="status"
-                            aria-label="loading"
-                          >
-                            <span className="sr-only">Loading...</span>
-                          </div>
-                        ) : (
-                          "Following"
-                        )}
+                        {buttonLoading ? <LoadingSpinner /> : "Following"}
                       </button>
-                    ) : following === "pending" ? (
+                    ) : following === "requested" ? (
                       <button
                         onClick={handleRemoveFollowing}
                         className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
-                        {buttonLoading ? (
-                          <div
-                            className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                            role="status"
-                            aria-label="loading"
-                          >
-                            <span className="sr-only">Loading...</span>
-                          </div>
-                        ) : (
-                          "Pending"
-                        )}
+                        {buttonLoading ? <LoadingSpinner /> : "Requested"}
                       </button>
                     ) : following === "follow_back" ? (
                       <button
                         onClick={handleConnect}
                         className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
-                        {buttonLoading ? (
-                          <div
-                            className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                            role="status"
-                            aria-label="loading"
-                          >
-                            <span className="sr-only">Loading...</span>
-                          </div>
-                        ) : (
-                          "Follow Back"
-                        )}
+                        {buttonLoading ? <LoadingSpinner /> : "Follow Back"}
                       </button>
                     ) : (
                       <button
                         onClick={handleConnect}
                         className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
-                        {buttonLoading ? (
-                          <div
-                            className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                            role="status"
-                            aria-label="loading"
-                          >
-                            <span className="sr-only">Loading...</span>
-                          </div>
-                        ) : (
-                          "Follow"
-                        )}
+                        {buttonLoading ? <LoadingSpinner /> : "Follow"}
                       </button>
                     )}
 
