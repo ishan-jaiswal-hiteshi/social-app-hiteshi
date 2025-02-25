@@ -56,7 +56,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          },
+          }
         );
         if (mediaResponse && mediaResponse.data?.mediaUrl) {
           mediaUrls.push(mediaResponse.data?.mediaUrl);
@@ -74,7 +74,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
 
       const eventResponse = await axiosInstance.post(
         "/create-event",
-        uploadData,
+        uploadData
       );
 
       if (eventResponse) {
@@ -109,7 +109,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
   };
 
   return (
-    <div className="bg-black text-white p-6 rounded-lg shadow-lg ">
+    <div className="bg-black text-white p-2 rounded-lg shadow-lg ">
       <h2 className="text-xl font-bold mb-4">Create Event</h2>
       {loading && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

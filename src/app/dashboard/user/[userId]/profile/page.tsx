@@ -9,6 +9,7 @@ import FollowingListModel from "@/components/profile-page/followinglist-model";
 import Link from "next/link";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import { useAuth } from "@/context/authContext";
+import { LoadingSpinner } from "@/utils/buttonLoading";
 
 const UserProfile = () => {
   const pathname = usePathname();
@@ -17,9 +18,8 @@ const UserProfile = () => {
   const router = useRouter();
   const [isFriendsOpen, setIsFriendsOpen] = useState(false);
   const [isFollowingOpen, setIsFollowingOpen] = useState(false);
-  const [isfollowing, setIsFollowing] = useState(false);
+  const [following, setFollowing] = useState("none");
   const [loading, setLoading] = useState(true);
-  const [isFriend, setIsFriend] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [userData, setUserData] = useState({
     full_name: "",
@@ -41,6 +41,13 @@ const UserProfile = () => {
   });
 
   useEffect(() => {
+    const numericUserId = Number(userId);
+    if (user?.id === numericUserId) {
+      router.push("/dashboard/profile");
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
@@ -48,6 +55,7 @@ const UserProfile = () => {
           const response = await axiosInstance.get(`/get-user-by-id/${userId}`);
           setUserData(response.data?.user);
           setLoading(false);
+          setFollowing(response.data?.user?.follow_status);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -93,7 +101,7 @@ const UserProfile = () => {
     try {
       setButtonLoading(true);
 
-      await axiosInstance.post(`/add-following/${user?.id}`, {
+      const response = await axiosInstance.post(`/add-following`, {
         followingId: userData?.id,
       });
 
@@ -108,7 +116,7 @@ const UserProfile = () => {
         ...prevUserData,
         friends: (prevUserData?.friends || 0) + 1,
       }));
-      setIsFollowing(true);
+      setFollowing(response?.data?.follow_status);
     } catch (err) {
       console.error("Error in following user: ", err);
     } finally {
@@ -119,7 +127,7 @@ const UserProfile = () => {
   const handleRemoveFollowing = async () => {
     try {
       setButtonLoading(true);
-      await axiosInstance.post(`/remove-following/${user?.id}`, {
+      const response = await axiosInstance.post(`/remove-following`, {
         followingId: userData?.id,
       });
       setUser((prevUser) => {
@@ -133,46 +141,13 @@ const UserProfile = () => {
         ...prevUserData,
         friends: (prevUserData?.friends || 0) - 1,
       }));
-      setIsFollowing(false);
+      setFollowing(response?.data?.follow_status);
     } catch (err) {
       console.error("Error in unfollowing user: ", err);
     } finally {
       setButtonLoading(false);
     }
   };
-
-  const checkFollowingStatus = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `check-following/${user?.id}/${userId}`
-      );
-      if (response && response.data) {
-        setIsFollowing(response?.data?.isFollowing);
-      }
-    } catch (err) {
-      console.error("Error While Checking following Status", err);
-    }
-  };
-
-  const checkFriends = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `is-user-connected/${user?.id}/${userId}`
-      );
-      if (response && response.data) {
-        setIsFriend(response?.data?.isConnected);
-      }
-    } catch (err) {
-      console.error("Error While Checking Friends Status", err);
-    }
-  };
-
-  useEffect(() => {
-    if (user && userId) {
-      checkFollowingStatus();
-      checkFriends();
-    }
-  }, [user, userId]);
 
   if (loading) {
     return <ProfileSkeleton />;
@@ -228,60 +203,37 @@ const UserProfile = () => {
                   </div>
 
                   <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-28 lg:justify-end items-center gap-4 lg:mt-0 mt-28">
-                    {isFriend && isfollowing ? (
+                    {following === "followed" ? (
                       <button
                         onClick={handleRemoveFollowing}
                         className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
-                        {buttonLoading ? (
-                          <div
-                            className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                            role="status"
-                            aria-label="loading"
-                          >
-                            <span className="sr-only">Loading...</span>
-                          </div>
-                        ) : (
-                          "Following"
-                        )}
+                        {buttonLoading ? <LoadingSpinner /> : "Following"}
                       </button>
-                    ) : isfollowing ? (
+                    ) : following === "requested" ? (
                       <button
                         onClick={handleRemoveFollowing}
                         className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
-                        {buttonLoading ? (
-                          <div
-                            className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                            role="status"
-                            aria-label="loading"
-                          >
-                            <span className="sr-only">Loading...</span>
-                          </div>
-                        ) : (
-                          "Pending"
-                        )}
+                        {buttonLoading ? <LoadingSpinner /> : "Requested"}
+                      </button>
+                    ) : following === "follow_back" ? (
+                      <button
+                        onClick={handleConnect}
+                        className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                      >
+                        {buttonLoading ? <LoadingSpinner /> : "Follow Back"}
                       </button>
                     ) : (
                       <button
                         onClick={handleConnect}
                         className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
-                        {buttonLoading ? (
-                          <div
-                            className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
-                            role="status"
-                            aria-label="loading"
-                          >
-                            <span className="sr-only">Loading...</span>
-                          </div>
-                        ) : (
-                          "Follow"
-                        )}
+                        {buttonLoading ? <LoadingSpinner /> : "Follow"}
                       </button>
                     )}
 
-                    {isFriend && (
+                    {following === "followed" && (
                       <button
                         className="border-2 border-red-500 active:border-red-300 active:text-red-300 uppercase text-red-400 font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                         onClick={handleRedirectToMessage}

@@ -26,7 +26,7 @@ const Page = () => {
   const fetchAllEvents = async () => {
     try {
       const response = await axiosInstance.get<{ events: Event[] }>(
-        "get-events",
+        "get-events"
       );
       if (response && response.data) {
         if (response.data.events.length > 0 && !selectedEvent) {
@@ -70,7 +70,7 @@ const Page = () => {
       </div>
 
       <div className="flex flex-grow mt-12 md:mt-7">
-        <div className="md:w-2/3 w-full h-auto px-4 md:px-6 mt-4">
+        <div className="md:w-2/3 w-full h-auto px-4 md:px-6 mt-4 mb-10 md:mb-0">
           <EventDetails selectedEvent={selectedEvent} />
         </div>
         <div
@@ -85,7 +85,7 @@ const Page = () => {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center  justify-center z-50">
           <div className="relative bg-black text-white p-4 rounded-lg shadow-lg max-w-md w-full mx-4 border border-gray-500">
             <CreateEventForm onClose={handleModalToggle} />
           </div>
