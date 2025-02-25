@@ -306,7 +306,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ currentUserId, chatUserId }) => {
                 }}
               >
                 <div
-                  className={`max-w-xs px-3 pt-3 pb-1 rounded-lg text-white ${
+                  className={`max-w-xs px-3 pt-1 pb-1 rounded-lg text-white ${
                     msg.sender_id === currentUserId
                       ? "bg-red-800 text-right"
                       : "bg-gray-600 text-left"

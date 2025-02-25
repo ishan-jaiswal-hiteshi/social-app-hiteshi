@@ -14,6 +14,7 @@ interface UserData {
   username: string;
   full_name: string;
   profile_picture: string;
+  follow_status: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -249,7 +250,7 @@ const SearchPage = () => {
               posts.length > 0 &&
               searchQuery.trim() === "" && (
                 <div
-                  className="col-span-full bg-black flex items-center justify-center p-4 border rounded-lg border-gray-700 mb-4 cursor-pointer"
+                  className="col-span-full bg-black flex items-center justify-center p-4 border rounded-lg border-gray-700 mb-8 md:mb-8 cursor-pointer"
                   onClick={postListNavigation}
                 >
                   <button className="text-primary-light hover:text-red-700">

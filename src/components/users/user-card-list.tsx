@@ -9,16 +9,17 @@ type UserData = {
   username: string;
   full_name: string;
   profile_picture: string;
+  follow_status: string;
 };
 
 type UserDataProps = {
   userData: UserData;
-  followStatus: boolean;
 };
 
-const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
+const UserCardList: React.FC<UserDataProps> = ({ userData }) => {
   const { user, setUser } = useAuth();
-  const [isFollowing, setIsFollowing] = useState<boolean>(followStatus);
+  const [following, setFollowing] = useState<string>(userData?.follow_status);
+
   const [buttonLoading, setButtonLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -33,9 +34,10 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
     try {
       setButtonLoading(true);
 
-      await axiosInstance.post(`/add-following/${user?.id}`, {
+      const response = await axiosInstance.post(`/add-following`, {
         followingId: userData?.id,
       });
+
       setUser((prevUser) => {
         if (!prevUser) return null;
         return {
@@ -43,7 +45,8 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
           followings: (prevUser?.followings || 0) + 1,
         };
       });
-      setIsFollowing(true);
+
+      setFollowing(response?.data?.follow_status);
     } catch (err) {
       console.error("Error in following user: ", err);
     } finally {
@@ -54,7 +57,7 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
   const handleUnfollow = async () => {
     try {
       setButtonLoading(true);
-      await axiosInstance.post(`/remove-following/${user?.id}`, {
+      const response = await axiosInstance.post(`/remove-following`, {
         followingId: userData?.id,
       });
       setUser((prevUser) => {
@@ -64,12 +67,11 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
           followings: (prevUser?.followings || 0) - 1,
         };
       });
-      setIsFollowing(false);
+      setFollowing(response?.data?.follow_status);
     } catch (err) {
       console.error("Error in unfollowing user: ", err);
-    } finally {
-      setButtonLoading(false);
     }
+    setButtonLoading(false);
   };
 
   return (
@@ -104,7 +106,7 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
         <div className="cursor-pointer w-[100px]">
           {user && user?.id === userData?.id ? (
             <></>
-          ) : isFollowing ? (
+          ) : following === "followed" ? (
             <button
               onClick={handleUnfollow}
               className="border-gray-500 border active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -119,6 +121,40 @@ const UserCardList: React.FC<UserDataProps> = ({ userData, followStatus }) => {
                 </div>
               ) : (
                 "Following"
+              )}
+            </button>
+          ) : following === "pending" ? (
+            <button
+              onClick={handleUnfollow}
+              className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+            >
+              {buttonLoading ? (
+                <div
+                  className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
+                  role="status"
+                  aria-label="loading"
+                >
+                  <span className="sr-only">Loading...</span>
+                </div>
+              ) : (
+                "Pending"
+              )}
+            </button>
+          ) : following === "follow_back" ? (
+            <button
+              onClick={handleFollow}
+              className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+            >
+              {buttonLoading ? (
+                <div
+                  className="animate-spin inline-block w-5 h-5 border-[2px] border-current border-t-transparent text-white rounded-full"
+                  role="status"
+                  aria-label="loading"
+                >
+                  <span className="sr-only">Loading...</span>
+                </div>
+              ) : (
+                "Follow Back"
               )}
             </button>
           ) : (

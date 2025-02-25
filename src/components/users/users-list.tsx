@@ -12,6 +12,7 @@ interface UserData {
   username: string;
   full_name: string;
   profile_picture: string;
+  follow_status: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,23 +22,10 @@ const LIMIT = 10;
 const UsersList: React.FC = () => {
   const { user } = useAuth();
   const [users, setUsers] = useState<UserData[]>([]);
-  const [followings, setFollowings] = useState<UserData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [offset, setOffset] = useState<number>(0);
   const observer = useRef<IntersectionObserver | null>(null);
-
-  const fetchFollowings = async () => {
-    if (!user?.id) return;
-
-    try {
-      const response = await axiosInstance.get(`/get-followings/${user.id}`);
-      setFollowings(response?.data?.following || []);
-    } catch (error) {
-      console.error("Error fetching followings:", error);
-      toast.error("Failed to fetch followings.");
-    }
-  };
 
   const getAllUsers = async (offsetValue: number) => {
     try {
@@ -46,9 +34,6 @@ const UsersList: React.FC = () => {
       });
 
       let fetchedUsers = response?.data?.users || [];
-
-      // Filter out the current user
-      fetchedUsers = fetchedUsers.filter((u: UserData) => u.id !== user?.id);
 
       if (fetchedUsers.length > 0) {
         setUsers((prevUsers) => {
@@ -80,7 +65,6 @@ const UsersList: React.FC = () => {
       setUsers([]);
       setOffset(0);
       setHasMore(true);
-      fetchFollowings();
       getAllUsers(0);
     }
   }, [user?.id]);
@@ -104,7 +88,6 @@ const UsersList: React.FC = () => {
 
   useEffect(() => {
     if (offset > 0) {
-      fetchFollowings();
       getAllUsers(offset);
     }
   }, [offset, user?.id]);
@@ -117,26 +100,17 @@ const UsersList: React.FC = () => {
     <div className="p-2">
       <div className="m-0 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {users.map((userData, index) => {
-          const isFollowing = followings.some(
-            (data) => data.id === userData.id
-          );
           const isLastUser = users.length === index + 1;
 
           if (isLastUser) {
             return (
               <div ref={lastUserElementRef} key={userData.id}>
-                <UserCard userData={userData} followStatus={isFollowing} />
+                <UserCard userData={userData} />
               </div>
             );
           }
 
-          return (
-            <UserCard
-              key={userData.id}
-              userData={userData}
-              followStatus={isFollowing}
-            />
-          );
+          return <UserCard key={userData.id} userData={userData} />;
         })}
       </div>
 
