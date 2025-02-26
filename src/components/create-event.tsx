@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "@/utils/axiosInstance";
 import { useAuth } from "@/context/authContext";
-import { useRouter } from "next/navigation";
 
 interface CreateEventFormProps {
   onClose?: () => void;
@@ -20,7 +19,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const router = useRouter();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -85,7 +83,6 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
         setImage(null);
         setLocation("");
         setPreview(null);
-        window.location.href = "/dashboard/events";
         onClose?.();
       }
     } catch (error) {

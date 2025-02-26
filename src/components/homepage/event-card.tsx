@@ -13,7 +13,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   return (
     <div
       className="bg-black p-4 py-5 rounded-lg shadow-lg mx-auto  flex justify-start gap-4 text-left cursor-pointer border border-gray-600"
-      onClick={() => router.push("/dashboard/events")}
+      onClick={() => router.push(`/dashboard/events?eventId=${event?.id}`)}
     >
       {mediaUrls && mediaUrls.length > 0 && (
         <div className="">

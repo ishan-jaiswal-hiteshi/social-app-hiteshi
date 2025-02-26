@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import axiosInstance from "@/utils/axiosInstance";
+import React, { useState } from "react";
 import { Event } from "@/props/eventProps";
 import { EventListSkeleton } from "@/utils/skeletons";
 import { IoIosMenu } from "react-icons/io";
@@ -9,34 +8,17 @@ import { IoIosMenu } from "react-icons/io";
 interface AllEventsListProps {
   onEventSelect: (event: Event) => void;
   selectedEventId: number | null;
+  events: Event[];
+  loading: boolean;
 }
 
 const AllEventsList: React.FC<AllEventsListProps> = ({
   onEventSelect,
   selectedEventId,
+  events,
+  loading,
 }) => {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const fetchAllEvents = async () => {
-    setLoading(true);
-    try {
-      const response = await axiosInstance.get<{ events: Event[] }>(
-        "get-events",
-      );
-      if (response && response.data) {
-        setEvents(response.data.events);
-        setLoading(false);
-      }
-    } catch (err) {
-      console.error("Error in Fetching Events", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllEvents();
-  }, []);
 
   const handleEventSelect = (event: Event) => {
     onEventSelect(event);

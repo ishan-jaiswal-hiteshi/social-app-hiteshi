@@ -110,7 +110,7 @@ const UserCardList: React.FC<UserDataProps> = ({ userData }) => {
           ) : following === "followed" ? (
             <button
               onClick={handleUnfollow}
-              className="border-gray-500 border active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+              className="border-gray-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
             >
               {buttonLoading ? <LoadingSpinner /> : "Following"}
             </button>

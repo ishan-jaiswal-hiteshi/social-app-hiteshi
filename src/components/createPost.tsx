@@ -1,7 +1,7 @@
 import { useAuth } from "@/context/authContext";
 import axiosInstance from "@/utils/axiosInstance";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const CreatePost = () => {
@@ -10,6 +10,17 @@ const CreatePost = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { user, setUser } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (
+      user &&
+      user.role !== "admin" &&
+      user.role !== "manager" &&
+      !user.permissions?.can_create_post
+    ) {
+      router.push("/dashboard/home");
+    }
+  }, [user, router]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {

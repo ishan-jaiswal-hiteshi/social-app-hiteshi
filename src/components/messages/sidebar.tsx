@@ -25,9 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
   const fetchConnectedUsers = async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(
-        `/get-connected-user/${user?.id}`
-      );
+      const response = await axiosInstance.get(`/get-connected-user`);
       if (response && response?.data) {
         setUsers(response?.data?.users);
         setLoading(false);
@@ -49,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onUserSelect, selectedUserId }) => {
   useEffect(() => {
     if (user) {
       fetchConnectedUsers();
-      userJoin(user.id);
+      userJoin(user?.id);
     }
   }, [user]);
 

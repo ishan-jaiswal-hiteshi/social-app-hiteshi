@@ -35,11 +35,17 @@ const BottombarLayout = () => {
       icon: <IoMdSearch size={26} />,
       name: "Search",
     },
-    {
-      path: "/dashboard/create-post",
-      icon: <MdAddCircleOutline size={26} />,
-      name: "Create Post",
-    },
+    ...(user?.role === "admin" ||
+    user?.role === "manager" ||
+    user?.permissions?.can_create_post
+      ? [
+          {
+            name: "Create Post",
+            path: "/dashboard/create-post",
+            icon: <MdAddCircleOutline size={26} />,
+          },
+        ]
+      : []),
     {
       path: "/dashboard/users",
       icon: <LuUsersRound size={26} />,
