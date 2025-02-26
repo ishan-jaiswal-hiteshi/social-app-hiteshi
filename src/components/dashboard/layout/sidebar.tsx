@@ -9,6 +9,7 @@ import { MdAddCircleOutline } from "react-icons/md";
 import { LuUsersRound } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
 import { MdOutlineEvent } from "react-icons/md";
+import { MdOutlineSettings } from "react-icons/md";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import UserProfilePicture from "@/utils/user-profile-picture";
 import { usePathname, useRouter } from "next/navigation";
@@ -59,11 +60,18 @@ const SidebarLayout = () => {
       path: "/dashboard/search",
       icon: <IoMdSearch size={24} />,
     },
-    {
-      name: "Create Post",
-      path: "/dashboard/create-post",
-      icon: <MdAddCircleOutline size={24} />,
-    },
+    ...(user?.role === "admin" ||
+    user?.role === "manager" ||
+    user?.permissions?.can_create_post
+      ? [
+          {
+            name: "Create Post",
+            path: "/dashboard/create-post",
+            icon: <MdAddCircleOutline size={24} />,
+          },
+        ]
+      : []),
+
     {
       name: "Events",
       path: "/dashboard/events",
@@ -107,6 +115,16 @@ const SidebarLayout = () => {
         </div>
       ),
     },
+    ...(user?.role === "admin"
+      ? [
+          {
+            name: "User Permissions",
+            path: "/dashboard/user-permissions",
+            icon: <MdOutlineSettings size={24} />,
+          },
+        ]
+      : []),
+
     {
       name: "Profile",
       path: "/dashboard/profile",

@@ -38,6 +38,7 @@ const UserProfile = () => {
     followings: 0,
     posts: 0,
     other_data: {},
+    role: "user",
   });
 
   useEffect(() => {
@@ -182,7 +183,7 @@ const UserProfile = () => {
             <div className="relative flex flex-col min-w-0 break-words bg-black text-white w-full mb-6 shadow-xl rounded-lg -mt-64">
               <div className="px-6">
                 <div className="flex flex-wrap justify-center">
-                  <div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
+                  <div className="w-full lg:w-4/12 px-4 lg:order-2 flex justify-center">
                     <div className="relative">
                       <div className="rounded-full shadow-xl overflow-hidden h-[150px] w-[150px] absolute -m-16 -ml-20 lg:-ml-16">
                         {userData?.profile_picture ? (
@@ -202,32 +203,32 @@ const UserProfile = () => {
                     </div>
                   </div>
 
-                  <div className="w-full lg:w-4/12 px-4 lg:order-3 flex flex-wrap justify-center sm:mt-28 lg:justify-end items-center gap-4 lg:mt-0 mt-28">
+                  <div className="w-full lg:w-4/12 px-2 lg:order-3 flex flex-wrap justify-center sm:mt-28 lg:justify-end items-center gap-4 lg:mt-0 mt-28">
                     {following === "followed" ? (
                       <button
                         onClick={handleRemoveFollowing}
-                        className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                        className="border-gray-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
                         {buttonLoading ? <LoadingSpinner /> : "Following"}
                       </button>
                     ) : following === "requested" ? (
                       <button
                         onClick={handleRemoveFollowing}
-                        className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                        className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
                         {buttonLoading ? <LoadingSpinner /> : "Requested"}
                       </button>
                     ) : following === "follow_back" ? (
                       <button
                         onClick={handleConnect}
-                        className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                        className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
                         {buttonLoading ? <LoadingSpinner /> : "Follow Back"}
                       </button>
                     ) : (
                       <button
                         onClick={handleConnect}
-                        className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                        className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                       >
                         {buttonLoading ? <LoadingSpinner /> : "Follow"}
                       </button>
@@ -235,7 +236,7 @@ const UserProfile = () => {
 
                     {following === "followed" && (
                       <button
-                        className="border-2 border-red-500 active:border-red-300 active:text-red-300 uppercase text-red-400 font-bold hover:shadow-md shadow text-xs px-6 py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
+                        className="bg-red-500 border-red-500 border-2 active:bg-red-600 uppercase text-white font-bold hover:shadow-md shadow text-xs md:w-[100px] w-[80px] py-2 rounded outline-none focus:outline-none ease-linear transition-all duration-150"
                         onClick={handleRedirectToMessage}
                       >
                         Message

@@ -379,26 +379,29 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
             {postData?.User?.full_name}
           </p>
         </div>
-        {user?.id === postData?.userId && (
-          <div className="absolute top-4 right-2 cursor-pointer">
-            <MdMoreVert
-              size={20}
-              onClick={() => setShowOptions((prev) => !prev)}
-            />
-            {showOptions && (
-              <div
-                className="absolute bg-black  shadow-md border-2 border-gray-700 rounded-md p-2 right-0 top-4"
-                style={{ top: "100%", zIndex: 10 }}
+
+        <div className="absolute top-4 right-2 cursor-pointer">
+          <MdMoreVert
+            size={20}
+            onClick={() => setShowOptions((prev) => !prev)}
+          />
+          {showOptions && (
+            <div
+              className="absolute bg-black  shadow-md border-2 border-gray-700 rounded-md p-2 right-0 top-4"
+              style={{ top: "100%", zIndex: 10 }}
+            >
+              <button
+                className="text-gray-300 hover:text-red-500 text-sm"
+                onClick={handleSharePost}
               >
-                <button
-                  className="text-gray-300 hover:text-red-500 text-sm"
-                  onClick={handleSharePost}
-                >
-                  <div className="flex items-center space-x-1">
-                    <MdOutlineFileCopy color="red" size={20} />
-                    <span>Copy</span>
-                  </div>
-                </button>
+                <div className="flex items-center space-x-1">
+                  <MdOutlineFileCopy color="red" size={20} />
+                  <span>Copy</span>
+                </div>
+              </button>
+              {(user?.id === postData?.userId ||
+                user?.role === "admin" ||
+                user?.role === "manager") && (
                 <button
                   className="text-gray-300 hover:text-red-500 text-sm "
                   onClick={() => {
@@ -411,10 +414,10 @@ const Post: React.FC<PostProps> = ({ postData, onDeletePost }) => {
                     <span>Delete</span>
                   </div>
                 </button>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
+        </div>
       </div>
       <div className="relative">
         {postData?.mediaUrls?.length > 0 && (

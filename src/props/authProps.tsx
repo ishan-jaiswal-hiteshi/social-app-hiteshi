@@ -28,9 +28,16 @@ export interface User {
   university?: string | null;
   bio?: string | null;
   friends?: number;
+  follow_status?: string | "none";
   followings?: number;
   posts?: number;
   otp?: number | null;
+  role?: string | "user";
+  permissions?: {
+    can_create_post: boolean;
+    can_create_event: boolean;
+    [key: string]: any;
+  };
   other_data?: Record<string, any> | null;
   createdAt?: string;
   updatedAt?: string;
